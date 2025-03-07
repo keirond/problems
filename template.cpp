@@ -51,8 +51,19 @@ constexpr char nl [[maybe_unused]] = '\n';
 template <class T> using max_heap = priority_queue<T>;
 template <class T> using min_heap = priority_queue<T, vector<T>, greater<T>>;
 
-string to_upper(string a) { return transform(a.begin(), a.end(), a.begin(), ::toupper), a; }
-string to_lower(string a) { return transform(a.begin(), a.end(), a.begin(), ::tolower), a; }
+string to_upper(string a) {
+  return transform(a.begin(), a.end(), a.begin(), ::toupper), a;
+}
+string to_lower(string a) {
+  return transform(a.begin(), a.end(), a.begin(), ::tolower), a;
+}
+
+template <typename T>
+void __print(const T &x);
+template <typename T, typename V>
+void __print(const pair<T, V> &x);
+template <typename T, typename V, typename K>
+void __print(const tuple<T, V, K> &x);
 
 void __print(int x) { cerr << x; }
 void __print(long x) { cerr << x; }
@@ -68,17 +79,38 @@ void __print(const char *x) { cerr << '\"' << x << '\"'; }
 void __print(const string &x) { cerr << '\"' << x << '\"'; }
 void __print(bool x) { cerr << (x ? "true" : "false"); }
 
-template<typename T, typename V>
-void __print(const pair<T, V> &x);
-template<typename T>
-void __print(const T &x) { int f = 0; cerr << '{'; for (auto &i: x) cerr << (f++ ? ", " : ""), __print(i); cerr << "}"; }
-template<typename T, typename V>
-void __print(const pair<T, V> &x) { cerr << '{'; __print(x.first); cerr << ", "; __print(x.second); cerr << '}'; }
-void _print() {cerr << "]\n";}
+template <typename T>
+void __print(const T &x) {
+  int f = 0;
+  cerr << '{';
+  for (auto &i : x) cerr << (f++ ? ", " : ""), __print(i);
+  cerr << "}";
+}
+
+template <typename T, typename V>
+void __print(const pair<T, V> &x) {
+  cerr << '{', __print(x.first), cerr << ", ", __print(x.second), cerr << '}';
+}
+
+template <typename T, typename V, typename K>
+void __print(const tuple<T, K, V> &x) {
+  cerr << '{', __print(get<0>(x)), cerr << ", ", __print(get<1>(x)),
+      cerr << ", ", __print(get<2>(x)), cerr << '}';
+}
+
+void _print() { cerr << ']' << nl; }
 template <typename T, typename... V>
-void _print(T t, V... v) { __print(t); if (sizeof...(v)) cerr << ", "; _print(v...); }
+void _print(T t, V... v) {
+  __print(t);
+  if (sizeof...(v)) cerr << ", ";
+  _print(v...);
+}
+
 #ifdef DEBUG
-#define dbg(x...) cerr << "\e[91m"<<__func__<<":"<<__LINE__<<" [" << #x << "] = ["; _print(x); cerr << "\e[39m" << endl;
+#define dbg(x...)                                                           \
+  cerr << "\e[91m" << __func__ << ":" << __LINE__ << " [" << #x << "] = ["; \
+  _print(x);                                                                \
+  cerr << "\e[39m";
 #else
 #define dbg(x...) 
 #endif
@@ -91,6 +123,9 @@ int main() {
   ios::sync_with_stdio(0), cin.tie(0), cout.tie(0);
   int test_cases = 1;
   cin >> test_cases;
-  while (test_cases--) solve(test_cases);
+  while (test_cases--) {
+    solve(test_cases);
+    cout << flush;
+  }
   return 0;
 }
