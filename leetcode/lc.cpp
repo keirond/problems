@@ -52,7 +52,8 @@ template <class T> using max_heap = priority_queue<T>;
 template <class T> using min_heap = priority_queue<T, vector<T>, greater<T>>;
 
 // Linked List (only Leetcode)
-template <typename T> struct Node;
+template <typename T> struct LinkedListNode;
+template <typename T> struct BinaryTreeNode;
 
 string to_upper(string a) {
   return transform(a.begin(), a.end(), a.begin(), ::toupper), a;
@@ -84,10 +85,15 @@ void __print(bool x) { cerr << (x ? "true" : "false"); }
 
 // Linked List (only Leetcode)
 template <typename T>
-void __print(Node<T> *x) {
+void __print(LinkedListNode<T> *x) {
   int f = 0;
   auto *y = x;
   while (y) cerr << (f++ ? " -> " : ""), __print(y->val), y = y->next;
+}
+
+template <typename T>
+void __print(BinaryTreeNode<T> *x) {
+  if(x) while(x) __print(x->val), cerr << " [ ", __print(x->left), __print(x->right), cerr << " ] ";
 }
 
 template <typename T>
@@ -128,18 +134,30 @@ void _print(T t, V... v) {
 
 // Linked List (only Leetcode)
 template <typename T>
-struct Node {
+struct LinkedListNode {
   T val;
-  Node *next;
+  LinkedListNode *next;
 
-  Node() : val(T()), next(nullptr) {}
-  Node(T x) : val(x), next(nullptr) {}
-  Node(T x, Node *next) : val(x), next(next) {}
+  LinkedListNode() : val(T()), next(nullptr) {}
+  LinkedListNode(T x) : val(x), next(nullptr) {}
+  LinkedListNode(T x, LinkedListNode *next) : val(x), next(next) {}
+};
+
+template <typename T>
+struct BinaryTreeNode {
+  T val;
+  BinaryTreeNode *left;
+  BinaryTreeNode *right;
+
+  BinaryTreeNode() : val(T()), left(nullptr), right(nullptr) {}
+  BinaryTreeNode(T x) : val(x), left(nullptr), right(nullptr) {}
+  BinaryTreeNode(T x, BinaryTreeNode *left, BinaryTreeNode *right) : val(x), left(left), right(right) {}
 };
 
 // clang-format on
 
-#define ListNode Node<int>
+#define ListNode LinkedListNode<int>
+#define TreeNode BinaryTreeNode<int>
 
 void solve(int test_case [[maybe_unused]]) {}
 
