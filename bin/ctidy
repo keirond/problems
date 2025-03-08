@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# Ensure an argument is provided
+if [[ -z "$1" ]]; then
+    echo "Usage: ctidy <filename (without .cpp)>"
+    exit 1
+fi
+
+filename="$1.cpp"
+
+# Check if the file exists
+if [[ ! -f "$filename" ]]; then
+    echo "Error: File '$filename' not found!"
+    exit 1
+fi
+
+echo "Syntax checking $filename with C++20."
+
+# Check
+clang++ -std=c++20 -fsyntax-only -Wall -Wextra -Werror -Wshadow -Wconversion "$filename"
+
+echo "-- Done."
