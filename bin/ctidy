@@ -2,7 +2,7 @@
 
 # Ensure an argument is provided
 if [[ -z "$1" ]]; then
-    echo "Usage: ctidy <filename (without .cpp)> [optional flags]"
+    echo "Usage: ctidy <filename (without .cpp)> [optional flags]" >&2
     exit 1
 fi
 
@@ -11,7 +11,7 @@ output="$1"
 
 # Check if the file exists
 if [[ ! -f "$filename" ]]; then
-    echo "Error: File '$filename' not found!"
+    echo "Error: File '$filename' not found!" >&2
     exit 1
 fi
 
@@ -20,9 +20,9 @@ for arg in "${@:2}"; do
     extra_flags="$extra_flags $arg"
 done
 
-echo "Syntax checking $filename with C++20."
+echo "Syntax checking $filename with C++20." >&2
 
 # Compile and run
 clang++ -std=c++20 -fsyntax-only -Wall -Wextra -Werror -Wshadow -Wconversion "$filename" $extra_flags
 
-echo "-- Done."
+echo "-- Done." >&2
