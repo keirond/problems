@@ -2,7 +2,7 @@
 
 # Ensure an argument is provided
 if [[ -z "$1" ]]; then
-    echo "Usage: ctidy <filename (without .cpp)> [optional flags]"
+    echo "Usage: run <filename (without .cpp)> [optional flags]"
     exit 1
 fi
 
@@ -20,9 +20,13 @@ for arg in "${@:2}"; do
     extra_flags="$extra_flags $arg"
 done
 
-echo "Syntax checking $filename with C++20."
-
 # Compile and run
-clang++ -std=c++20 -fsyntax-only -Wall -Wextra -Werror -Wshadow -Wconversion "$filename" $extra_flags
+g++ -std=c++20 -O2 -Wall -Wextra -o "$output" "$filename" $extra_flags
 
-echo "-- Done."
+# Run only if compilation was successful
+if [[ $? -eq 0 ]]; then
+    ./"$output"
+else
+    echo "Compilation failed!"
+    exit 1
+fi

@@ -2,7 +2,7 @@
 
 # Ensure an argument is provided
 if [[ -z "$1" ]]; then
-    echo "Usage: dbrun <filename (without .cpp)>"
+    echo "Usage: run_t <filename (without .cpp)> [optional flags]"
     exit 1
 fi
 
@@ -15,10 +15,13 @@ if [[ ! -f "$filename" ]]; then
     exit 1
 fi
 
-echo "[DEBUG MODE] Compiling $filename with C++20."
+extra_flags=""
+for arg in "${@:2}"; do
+    extra_flags="$extra_flags $arg"
+done
 
 # Compile and run
-g++ -DDEBUG -std=c++20 -O2 -Wall -Wextra -o "$output" "$filename"
+g++ -std=c++20 -O2 -Wall -Wextra -o "$output" "$filename" $extra_flags
 
 # Run only if compilation was successful
 if [[ $? -eq 0 ]]; then
