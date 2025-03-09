@@ -1,4 +1,0 @@
-#!/bin/bash
-
-[ -f code.cpp ] && rm code.cpp
-cp lc.cpp code.cpp
