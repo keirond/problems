@@ -1,0 +1,7 @@
+#!/bin/bash
+
+for exe in *; do
+    if [[ -f "$exe" && -x "$exe" ]]; then
+        rm -f "$exe" 
+    fi
+done

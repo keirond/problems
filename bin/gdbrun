@@ -2,7 +2,7 @@
 
 # Ensure an argument is provided
 if [[ -z "$1" ]]; then
-    echo "Usage: run_t <filename (without .cpp)> [optional flags]" >&2
+    echo "Usage: gdbrun <filename (without .cpp)> [optional flags]" >&2
     exit 1
 fi
 
@@ -27,12 +27,14 @@ for arg in "${@:2}"; do
     extra_flags="$extra_flags $arg"
 done
 
+echo "[GDB] Compiling $filename with C++20." >&2
+
 # Compile and run
-g++ -std=c++20 -O2 -Wall -Wextra -o "$output" "$filename" $extra_flags
+g++ -DDEBUG -std=c++20 -O2 -Wall -Wextra -o "$output" "$filename" $extra_flags
 
 # Run only if compilation was successful
 if [[ $? -eq 0 ]]; then
-    time ./"$output"
+    gdb ./"$output"
 else
     echo "Compilation failed!" >&2
     exit 1

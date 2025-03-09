@@ -15,12 +15,19 @@ if [[ ! -f "$filename" ]]; then
     exit 1
 fi
 
+todo_lines=$(grep -n "TODO" "$filename" | sed 's/^[0-9]*: *//')
+if [[ -n "$todo_lines" ]]; then
+    echo "$todo_lines" >&2
+    echo -e "\e[31mWarning:\e[0m still found in ${filename}." >&2
+    echo "" >&2
+fi
+
 extra_flags=""
 for arg in "${@:2}"; do
     extra_flags="$extra_flags $arg"
 done
 
-echo "[DEBUG MODE] Compiling $filename with C++20." >&2
+echo "[DEBUG] Compiling $filename with C++20." >&2
 
 # Compile and run
 g++ -DDEBUG -std=c++20 -O2 -Wall -Wextra -o "$output" "$filename" $extra_flags
