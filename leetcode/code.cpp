@@ -159,38 +159,6 @@ void _print(T t, V... v) {
 
 // clang-format on
 
-struct STree {
-  int n;
-  vector<int> stree;
-
-  STree(vector<int> &nums) {
-    n = nums.size();
-    stree.assign(2 * n, 0);
-
-    for (int i = 0; i < n; ++i) {
-      stree[n + i] = nums[i];
-    }
-    for (int i = n - 1; i > 0; --i) {
-      stree[i] = stree[i * 2] + stree[i * 2 + 1];
-    }
-  }
-
-  void update(int i, int val) {
-    for (stree[i += n] = val; i > 1; i /= 2) {
-      stree[i >> 1] = stree[i] + stree[i ^ 1];
-    }
-  }
-
-  int query(int l, int r) {
-    int ans = 0;
-    for (l += n, r += n; l <= r; l /= 2, r /= 2) {
-      if (l & 1) ans += stree[l++];
-      if (!(r & 1)) ans += stree[r--];
-    }
-    return ans;
-  }
-};
-
 void solve(int test_case [[maybe_unused]]) {}
 
 int main() {
