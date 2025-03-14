@@ -51,7 +51,6 @@ constexpr char nl [[maybe_unused]] = '\n';
 template <class T> using max_heap = priority_queue<T>;
 template <class T> using min_heap = priority_queue<T, vector<T>, greater<T>>;
 
-
 string to_upper(string a) {
   return transform(a.begin(), a.end(), a.begin(), ::toupper), a;
 }
