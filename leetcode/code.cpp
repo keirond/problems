@@ -163,7 +163,7 @@ struct STree {
   int n;
   vector<int> stree;
 
-  STree(vector<int> nums) {
+  STree(vector<int> &nums) {
     n = nums.size();
     stree.assign(2 * n, 0);
 
