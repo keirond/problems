@@ -32,14 +32,14 @@ using dpii = deque<pii>;
 #define all(v) v.begin(), v.end()
 #define range(v, n) v.begin(), v.begin() + n
 
-#define FOR(a, b, c) for (int(a) = (b); (a) <= (c); ++(a))
-#define FORd(a, b, c) for (int(a) = (b); (a) >= (c); --(a))
-#define FORsq(a, b, c) for (int(a) = (b); (a) * (a) <= (c); ++(a))
-#define FORsqd(a, b, c) for (int(a) = (b); (a) * (a) >= (c); --(a))
-#define FORc(a, b, c) for (char(a) = (b); (a) <= (c); ++(a))
-#define EACH(a, b) for (auto &(a) : (b))
+#define FOR(a, b, c) for (int a = (b); (a) <= (c); ++(a))
+#define FORd(a, b, c) for (int a = (b); (a) >= (c); --(a))
+#define FORsq(a, b, c) for (int a = (b); (a) * (a) <= (c); ++(a))
+#define FORsqd(a, b, c) for (int a = (b); (a) * (a) >= (c); --(a))
+#define FORc(a, b, c) for (char a = (b); (a) <= (c); ++(a))
+#define EACH(a, b) for (auto &a : (b))
 #define REP(i, n) FOR(i, 0, n - 1)
-#define REPd(i, n) FORD(i, n - 1, 0)
+#define REPd(i, n) FORd(i, n - 1, 0)
 
 constexpr double EPS [[maybe_unused]] = 1e-9;
 constexpr double PI [[maybe_unused]] = 3.14159265358979323846;
@@ -114,6 +114,7 @@ void _print(T t, V... v) {
 #else
 #define dbg(x...) 
 #endif
+
 
 // clang-format on
 
