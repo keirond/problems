@@ -161,9 +161,14 @@ void solve(int test_case [[maybe_unused]]) {
 
   STree stree = STree(nums);
   for (int i = 0; i < M; ++i) {
+    char t;
+    cin >> t;
     int l, r;
     cin >> l >> r;
-    cout << stree.query(l, r) << '\n';
+    if (t == 'q')
+      cout << stree.query(l - 1, r - 1) << '\n';
+    else if (t == 'u')
+      stree.update(l - 1, r);
   }
 }
 
