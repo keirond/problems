@@ -51,9 +51,6 @@ constexpr char nl [[maybe_unused]] = '\n';
 template <class T> using max_heap = priority_queue<T>;
 template <class T> using min_heap = priority_queue<T, vector<T>, greater<T>>;
 
-// Linked List (only Leetcode)
-template <typename T> struct LinkedListNode;
-template <typename T> struct BinaryTreeNode;
 
 string to_upper(string a) {
   return transform(a.begin(), a.end(), a.begin(), ::toupper), a;
@@ -61,6 +58,34 @@ string to_upper(string a) {
 string to_lower(string a) {
   return transform(a.begin(), a.end(), a.begin(), ::tolower), a;
 }
+
+// Linked List (only Leetcode)
+template <typename T> struct LinkedListNode;
+template <typename T> struct BinaryTreeNode;
+
+template <typename T>
+struct LinkedListNode {
+  T val;
+  LinkedListNode *next;
+
+  LinkedListNode() : val(T()), next(nullptr) {}
+  LinkedListNode(T x) : val(x), next(nullptr) {}
+  LinkedListNode(T x, LinkedListNode *next) : val(x), next(next) {}
+};
+
+template <typename T>
+struct BinaryTreeNode {
+  T val;
+  BinaryTreeNode *left;
+  BinaryTreeNode *right;
+
+  BinaryTreeNode() : val(T()), left(nullptr), right(nullptr) {}
+  BinaryTreeNode(T x) : val(x), left(nullptr), right(nullptr) {}
+  BinaryTreeNode(T x, BinaryTreeNode *left, BinaryTreeNode *right) : val(x), left(left), right(right) {}
+};
+
+#define ListNode LinkedListNode<int>
+#define TreeNode BinaryTreeNode<int>
 
 template <typename T>
 void __print(const T &x);
@@ -83,7 +108,6 @@ void __print(const char *x) { cerr << '\"' << x << '\"'; }
 void __print(const string &x) { cerr << '\"' << x << '\"'; }
 void __print(bool x) { cerr << (x ? "true" : "false"); }
 
-// Linked List (only Leetcode)
 template <typename T>
 void __print(LinkedListNode<T> *x) {
   int f = 0;
@@ -132,32 +156,8 @@ void _print(T t, V... v) {
 #define dbg(x...) 
 #endif
 
-// Linked List (only Leetcode)
-template <typename T>
-struct LinkedListNode {
-  T val;
-  LinkedListNode *next;
-
-  LinkedListNode() : val(T()), next(nullptr) {}
-  LinkedListNode(T x) : val(x), next(nullptr) {}
-  LinkedListNode(T x, LinkedListNode *next) : val(x), next(next) {}
-};
-
-template <typename T>
-struct BinaryTreeNode {
-  T val;
-  BinaryTreeNode *left;
-  BinaryTreeNode *right;
-
-  BinaryTreeNode() : val(T()), left(nullptr), right(nullptr) {}
-  BinaryTreeNode(T x) : val(x), left(nullptr), right(nullptr) {}
-  BinaryTreeNode(T x, BinaryTreeNode *left, BinaryTreeNode *right) : val(x), left(left), right(right) {}
-};
 
 // clang-format on
-
-#define ListNode LinkedListNode<int>
-#define TreeNode BinaryTreeNode<int>
 
 void solve(int test_case [[maybe_unused]]) {}
 
