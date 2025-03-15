@@ -51,7 +51,7 @@ compile() {
 
 	# "$_debugging_options" $_preprocessor_defines "$_include_paths" "$_libraries"
 	if g++ "$_compile_options" "$_warning_flags" "$_optimization_flags" \
-		"$_extra_flags" "$_source_file" -o "$_output_file" -ne 0; then
+	   "$_extra_flags" "$_source_file" -o "$_output_file"; then
 		echo "$_output_file"
 	else
 		err_echo "Error: Compilation failed!"
@@ -65,27 +65,28 @@ check_todo() {
 
 	_todo_lines=$(grep "TODO" "$_source_file" 2>/dev/null)
 	if [[ -n "$_todo_lines" ]]; then
-		echo -e "\e[31mWarning:\e[0m TODOs found in '$_source_file':" >&2
-		echo "$_todo_lines" >&2
-		echo "" >&2
+		err_echo -e "\e[31mWarning:\e[0m TODOs found in '$_source_file':"
+		err_echo "$_todo_lines"
+		err_echo ""
 	fi
 }
 
 run() {
 	local _output_file="$1"
-	local _commands="$2"
+	shift
+	local _commands=("$@")
 
 	if [[ -z "$_output_file" ]]; then
-		echo "Error: No output file provided!" >&2
+		err_echo "Error: No output file provided!"
 		exit 1
 	fi
 
-	if [[ -z "$_commands" ]]; then
-		echo "Error: Commands '$_commands' invalid!" >&2
+	if [[ ${#_commands[@]} -eq 0 ]]; then
+		err_echo "Error: No valid commands provided!"
 		exit 1
 	fi
 
-	"$_commands" ./"$compiled_file"
+	"${_commands[@]}" "./$_output_file"
 }
 
 commands=()
@@ -106,7 +107,7 @@ while [[ $# -gt 0 && $1 == -* ]]; do
 		shift
 		;;
 	*)
-		echo "Error: Unknown option '$1'!" >&2
+		err_echo "Error: Unknown option '$1'!"
 		usage
 		;;
 	esac
