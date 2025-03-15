@@ -158,12 +158,49 @@ void _print(T t, V... v) {
 
 // clang-format on
 
+vector<int> productQueries(int N, vector<vector<int>> &queries) {
+  int mod = 1e9 + 7;
+
+  vector<int> nums;
+  int t = 10;
+  while (N > 0 && t >= 0) {
+    if (N >= (1 << t)) {
+      nums.push_back(1 << t);
+      N -= 1 << t;
+    }
+    t--;
+  }
+  reverse(nums.begin(), nums.end());
+
+  int n = nums.size();
+  vector<int> stree(2 * n, 1);
+
+  for (int i = 0; i < n; ++i) {
+    stree[i + n] = nums[i];
+  }
+  for (int i = n - 1; i > 0; --i) {
+    stree[i] = ((long long)stree[i * 2] * stree[i * 2 + 1]) % mod;
+  }
+
+  vector<int> ans;
+  for (auto &d : queries) {
+    int l = d[0], r = d[1];
+    int val = 1;
+    for (l += n, r += n; l <= r; l /= 2, r /= 2) {
+      if (l & 1) val = ((long long)val * stree[l++]) % mod;
+      if (!(r & 1)) val = ((long long)val * stree[r--]) % mod;
+    }
+    ans.push_back(val);
+  }
+  return ans;
+}
+
 void solve(int test_case [[maybe_unused]]) {}
 
 int main() {
   ios::sync_with_stdio(0), cin.tie(0), cout.tie(0);
   int test_cases = 1;
-  cin >> test_cases;
+  // cin >> test_cases;
   while (test_cases--) {
     solve(test_cases);
     cout << flush;
