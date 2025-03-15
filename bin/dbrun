@@ -1,7 +1,8 @@
 #!/bin/bash
 
 usage() {
-  echo "Usage: $0 commands <source_file (without .cpp)> [options]" >&2
+  echo "Usage: $0 [options] <source_file (without .cpp)> [flags]" >&2
+  echo "" >&2
   echo "Example: $0 compile main -lpthread -lm" >&2
   exit 1
 }
@@ -10,13 +11,13 @@ compile() {
   local _compile_options="-std=c++20"
   local _warning_flags="-Wall -Wextra"
   local _optimization_flags="-O2"
-  local _debugging_options="-g"
-  local _preprocessor_defines="-DDEBUG"
-  local _include_paths=""
-  local _libraries="$3"
+  # local _debugging_options="-g"
+  # local _preprocessor_defines="-DDEBUG"
+  # local _include_paths=""
+  # local _libraries=""
+  local _extra_flags="$3"
   local _source_file="$1"
   local _output_file="$2"
-  local _extra_flags=""
 
   if [[ -z "$_source_file" ]]; then
     echo "Error: No source file provided!" >&2
@@ -60,25 +61,29 @@ check_todo() {
   fi
 }
 
+preprocessor_defines=()
+
+while [[ $# -gt 0 && $1 == -* ]]; do
+  case "$1" in
+    -f)
+      preprocessor_defines+=("-DDEBUG")
+      shift
+      ;;
+    *)
+      echo "Error: Unknown option '$1'" >&2
+      usage
+      exit 1
+done
+
 if [[ $# -lt 1 ]]; then
   usage
 fi
-
-command="$1"
-shift
-
-#if [[ "$command" != "compile" ]]; then
-#  echo "Error: Unknown command '$command'" >&2
-#  usage
-#fi
 
 source_file="$1.cpp"
 output_file="$1"
 shift
 
-libraries="$@"
-
-compiled_file=$(compile "$source_file" "$output_file" "$libraries")
+compiled_file=$(compile "$source_file" "$output_file" "${preprocessor_defines[@]}" "$@")
 
 if [[ $? -eq 0 ]]; then
   ./"$compiled_file"
