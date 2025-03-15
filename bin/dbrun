@@ -31,32 +31,30 @@ compile() {
 	local _output_file="$2"
 
 	if [[ -z "$_source_file" ]]; then
-		echo "Error: No source file provided!" >&2
+		err_echo "Error: No source file provided!"
 		exit 1
 	fi
 
 	if [[ "$_source_file" == ".cpp" || "$_source_file" != *.cpp || ! -f "$_source_file" ]]; then
-		echo "Error: File '$_source_file' is invalid!" >&2
+		err_echo "Error: File '$_source_file' is invalid!"
 		exit 1
 	fi
 
 	if [[ -z "$_output_file" ]]; then
-		echo "Error: No output file provided!" >&2
+		err_echo "Error: No output file provided!"
 		exit 1
 	fi
 
 	check_todo "$_source_file"
 
-	echo "Compiling $_source_file with C++20." >&2
+	err_echo "Compiling $_source_file with C++20."
 
 	# "$_debugging_options" $_preprocessor_defines "$_include_paths" "$_libraries"
-	g++ "$_compile_options" "$_warning_flags" "$_optimization_flags" \
-		"$_extra_flags" "$_source_file" -o "$_output_file"
-
-	if [[ $? -eq 0 ]]; then
+	if g++ "$_compile_options" "$_warning_flags" "$_optimization_flags" \
+		"$_extra_flags" "$_source_file" -o "$_output_file" -ne 0; then
 		echo "$_output_file"
-	else
-		echo "Error: Compilation failed!" >&2
+	else	
+		err_echo "Error: Compilation failed!"
 		exit 1
 	fi
 }
@@ -73,27 +71,43 @@ check_todo() {
 	fi
 }
 
+run() {
+	local _output_file="$1"
+	local _commands="$2"
+
+	if [[ -z "$_output_file" ]]; then
+		echo "Error: No output file provided!" >&2
+		exit 1
+	fi
+
+	if [[ -z "$_commands" ]]; then
+		echo "Error: Commands '$_commands' invalid!" >&2
+		exit 1
+	fi
+
+	"$_commands" ./"$compiled_file"
+}
+
 commands=()
 flags=()
 
 while [[ $# -gt 0 && $1 == -* ]]; do
 	case "$1" in
-	-f)
+	-d | --debug)
 		flags+=("-DDEBUG")
 		shift
 		;;
-	-g)
+	-g | --gdb)
 		flags+=("-g")
 		shift
 		;;
-	-t)
+	-t | --time)
 		commands+=("time")
 		shift
 		;;
 	*)
 		echo "Error: Unknown option '$1'!" >&2
 		usage
-		exit 1
 		;;
 	esac
 done
@@ -107,10 +121,4 @@ output_file="$1"
 shift
 
 compiled_file=$(compile "$source_file" "$output_file" "${flags[@]}" "$@")
-
-if [[ $? -eq 0 ]]; then
-	"${commands[@]}" ./"$compiled_file"
-else
-	echo "Error: Compilation failed!" >&2
-	exit 1
-fi
+run "$compiled_file" "${commands[@]}"
