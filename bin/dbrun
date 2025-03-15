@@ -3,7 +3,6 @@
 usage() {
   echo "Usage: $0 [options] <source_file (without .cpp)> [flags]" >&2
   echo "" >&2
-  echo "Example: $0 compile main -lpthread -lm" >&2
   exit 1
 }
 
@@ -36,7 +35,7 @@ compile() {
 
   check_todo "$_source_file"
 
-  # echo "[DEBUG] Compiling $filename with C++20." >&2
+  echo "Compiling $_source_file with C++20." >&2
   g++ $_compile_options $_warning_flags $_optimization_flags $_debugging_options \
   $_preprocessor_defines $_include_paths $_libraries \
   "$_source_file" -o "$_output_file"
@@ -55,22 +54,28 @@ check_todo() {
 
   _todo_lines=$(grep "TODO" "$_source_file" 2>/dev/null)
   if [[ -n "$_todo_lines" ]]; then
-    echo -e "\e[31mWarning:\e[0m TODOs found in $_source_file:" >&2
+    echo -e "\e[31mWarning:\e[0m TODOs found in '$_source_file':" >&2
     echo "$_todo_lines" >&2
     echo "" >&2
   fi
 }
 
-preprocessor_defines=()
+commands=()
+flags=()
 
 while [[ $# -gt 0 && $1 == -* ]]; do
   case "$1" in
     -f)
-      preprocessor_defines+=("-DDEBUG")
-      shift
-      ;;
+      flags+=("-DDEBUG")
+      shift;;
+    -g)
+      flags+=("-g")
+      shift;;
+    -t)
+      commands+=("time")
+      shift;;
     *)
-      echo "Error: Unknown option '$1'" >&2
+      echo "Error: Unknown option '$1'!" >&2
       usage
       exit 1
 done
@@ -83,10 +88,10 @@ source_file="$1.cpp"
 output_file="$1"
 shift
 
-compiled_file=$(compile "$source_file" "$output_file" "${preprocessor_defines[@]}" "$@")
+compiled_file=$(compile "$source_file" "$output_file" "${flags[@]}" "$@")
 
 if [[ $? -eq 0 ]]; then
-  ./"$compiled_file"
+  "${commands[@]}" ./"$compiled_file"
 else
     echo "Error: Compilation failed!" >&2
     exit 1
