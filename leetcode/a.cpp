@@ -58,7 +58,7 @@ string to_lower(string a) {
   return transform(a.begin(), a.end(), a.begin(), ::tolower), a;
 }
 
-// Linked List (only Leetcode)
+// Data structures (only Leetcode)
 template <typename T> struct LinkedListNode;
 template <typename T> struct BinaryTreeNode;
 
@@ -85,6 +85,57 @@ struct BinaryTreeNode {
 
 #define ListNode LinkedListNode<int>
 #define TreeNode BinaryTreeNode<int>
+
+// Read methods (only Leetcode)
+template<typename T>
+T __read(stringstream &ss) {
+  T value;
+  ss >> value;
+  return value;
+}
+
+template<>
+char __read<char>(stringstream &ss) {
+  char c, value;
+  ss >> c >> value >> c;
+  return value;
+}
+
+template<>
+string __read<string>(stringstream &ss) {
+  char c;
+  string value;
+  ss >> c;
+  getline(ss, value, '"');
+  return value;
+}
+
+template<typename T, typename V>
+pair<T, V> __read(stringstream &ss) {
+  char c;
+
+  ss >> c;
+  T first = __read<T>(ss);
+  ss >> c;
+  V second = __read<V>(ss);
+  ss >> c;
+
+  return {first, second}; 
+}
+
+template<typename T>
+vector<T> __read(stringstream &ss) {
+  char c;
+  vector<T> values;
+
+  ss >> c;
+  while(ss.peek() != ']') {
+    values.push_back(__read<T>(ss));
+    ss >> c;
+    if(c == ']') break;
+  }
+  return values;
+}
 
 template <typename T>
 void __print(const T &x);
@@ -157,43 +208,6 @@ void _print(T t, V... v) {
 
 
 // clang-format on
-
-vector<int> productQueries(int N, vector<vector<int>> &queries) {
-  int mod = 1e9 + 7;
-
-  vector<int> nums;
-  int t = 10;
-  while (N > 0 && t >= 0) {
-    if (N >= (1 << t)) {
-      nums.push_back(1 << t);
-      N -= 1 << t;
-    }
-    t--;
-  }
-  reverse(nums.begin(), nums.end());
-
-  int n = nums.size();
-  vector<int> stree(2 * n, 1);
-
-  for (int i = 0; i < n; ++i) {
-    stree[i + n] = nums[i];
-  }
-  for (int i = n - 1; i > 0; --i) {
-    stree[i] = ((long long)stree[i * 2] * stree[i * 2 + 1]) % mod;
-  }
-
-  vector<int> ans;
-  for (auto &d : queries) {
-    int l = d[0], r = d[1];
-    int val = 1;
-    for (l += n, r += n; l <= r; l /= 2, r /= 2) {
-      if (l & 1) val = ((long long)val * stree[l++]) % mod;
-      if (!(r & 1)) val = ((long long)val * stree[r--]) % mod;
-    }
-    ans.push_back(val);
-  }
-  return ans;
-}
 
 void solve(int test_case [[maybe_unused]]) {}
 
