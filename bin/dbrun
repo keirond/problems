@@ -53,7 +53,7 @@ compile() {
 	if g++ "$_compile_options" "$_warning_flags" "$_optimization_flags" \
 		"$_extra_flags" "$_source_file" -o "$_output_file" -ne 0; then
 		echo "$_output_file"
-	else	
+	else
 		err_echo "Error: Compilation failed!"
 		exit 1
 	fi
