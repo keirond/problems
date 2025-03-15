@@ -1,92 +1,92 @@
 #!/bin/bash
 
 usage() {
-  echo "Usage: $0 [options] <source_file (without .cpp)> [flags]" >&2
-  echo "" >&2
-  exit 1
+	echo "Usage: $0 [options] <source_file (without .cpp)> [flags]" >&2
+	echo "" >&2
+	exit 1
 }
 
 compile() {
-  local _compile_options="-std=c++20"
-  local _warning_flags="-Wall -Wextra"
-  local _optimization_flags="-O2"
-  # local _debugging_options="-g"
-  # local _preprocessor_defines="-DDEBUG"
-  # local _include_paths=""
-  # local _libraries=""
-  local _extra_flags="$3"
-  local _source_file="$1"
-  local _output_file="$2"
+	local _compile_options="-std=c++20"
+	local _warning_flags="-Wall -Wextra"
+	local _optimization_flags="-O2"
+	# local _debugging_options="-g"
+	# local _preprocessor_defines="-DDEBUG"
+	# local _include_paths=""
+	# local _libraries=""
+	local _extra_flags="$3"
+	local _source_file="$1"
+	local _output_file="$2"
 
-  if [[ -z "$_source_file" ]]; then
-    echo "Error: No source file provided!" >&2
-    exit 1
-  fi
+	if [[ -z "$_source_file" ]]; then
+		echo "Error: No source file provided!" >&2
+		exit 1
+	fi
 
-  if [[ "$_source_file" == ".cpp" || "$_source_file" != *.cpp || ! -f "$_source_file" ]]; then
-    echo "Error: File '$_source_file' is invalid!" >&2
-    exit 1
-  fi
+	if [[ "$_source_file" == ".cpp" || "$_source_file" != *.cpp || ! -f "$_source_file" ]]; then
+		echo "Error: File '$_source_file' is invalid!" >&2
+		exit 1
+	fi
 
-  if [[ -z "$_output_file" ]]; then
-    echo "Error: No output file provided!" >&2
-    exit 1
-  fi
+	if [[ -z "$_output_file" ]]; then
+		echo "Error: No output file provided!" >&2
+		exit 1
+	fi
 
-  check_todo "$_source_file"
+	check_todo "$_source_file"
 
-  echo "Compiling $_source_file with C++20." >&2
-  g++ $_compile_options $_warning_flags $_optimization_flags $_debugging_options \
-  $_preprocessor_defines $_include_paths $_libraries \
-  "$_source_file" -o "$_output_file"
+	echo "Compiling $_source_file with C++20." >&2
+	g++ $_compile_options "$_warning_flags" $_optimization_flags "$_debugging_options" \
+		$_preprocessor_defines $_include_paths $_libraries \
+		"$_source_file" -o "$_output_file"
 
-  if [[ $? -eq 0 ]]; then
-    echo "$_output_file"
-  else
-    echo "Error: Compilation failed!" >&2
-    exit 1
-  fi
+	if [[ $? -eq 0 ]]; then
+		echo "$_output_file"
+	else
+		echo "Error: Compilation failed!" >&2
+		exit 1
+	fi
 }
 
 check_todo() {
-  local _source_file="$1"
-  local _todo_lines
+	local _source_file="$1"
+	local _todo_lines
 
-  _todo_lines=$(grep "TODO" "$_source_file" 2>/dev/null)
-  if [[ -n "$_todo_lines" ]]; then
-    echo -e "\e[31mWarning:\e[0m TODOs found in '$_source_file':" >&2
-    echo "$_todo_lines" >&2
-    echo "" >&2
-  fi
+	_todo_lines=$(grep "TODO" "$_source_file" 2>/dev/null)
+	if [[ -n "$_todo_lines" ]]; then
+		echo -e "\e[31mWarning:\e[0m TODOs found in '$_source_file':" >&2
+		echo "$_todo_lines" >&2
+		echo "" >&2
+	fi
 }
 
 commands=()
 flags=()
 
 while [[ $# -gt 0 && $1 == -* ]]; do
-  case "$1" in
-    -f)
-      flags+=("-DDEBUG")
-      shift
-      ;;
-    -g)
-      flags+=("-g")
-      shift
-      ;;
-    -t)
-      commands+=("time")
-      shift
-      ;;
-    *)
-      echo "Error: Unknown option '$1'!" >&2
-      usage
-      exit 1
-      ;;
-  esac
+	case "$1" in
+	-f)
+		flags+=("-DDEBUG")
+		shift
+		;;
+	-g)
+		flags+=("-g")
+		shift
+		;;
+	-t)
+		commands+=("time")
+		shift
+		;;
+	*)
+		echo "Error: Unknown option '$1'!" >&2
+		usage
+		exit 1
+		;;
+	esac
 done
 
 if [[ $# -lt 1 ]]; then
-  usage
+	usage
 fi
 
 source_file="$1.cpp"
@@ -96,8 +96,8 @@ shift
 compiled_file=$(compile "$source_file" "$output_file" "${flags[@]}" "$@")
 
 if [[ $? -eq 0 ]]; then
-  "${commands[@]}" ./"$compiled_file"
+	"${commands[@]}" ./"$compiled_file"
 else
-    echo "Error: Compilation failed!" >&2
-    exit 1
+	echo "Error: Compilation failed!" >&2
+	exit 1
 fi
