@@ -1,8 +1,8 @@
 #!/bin/bash
 
 usage() {
-  echo "Usage: $0 command <source_file (without .cpp)> [options]" >&2
-  echo "Example: $0 -f main -lpthread -lm" >&2
+  echo "Usage: $0 commands <source_file (without .cpp)> [options]" >&2
+  echo "Example: $0 compile main -lpthread -lm" >&2
   exit 1
 }
 
@@ -12,19 +12,19 @@ compile() {
   local _optimization_flags="-O2"
   local _debugging_options="-g"
   local _preprocessor_defines="-DDEBUG"
-  local _include_paths
+  local _include_paths=""
   local _libraries="$3"
   local _source_file="$1"
   local _output_file="$2"
   local _extra_flags=""
 
   if [[ -z "$_source_file" ]]; then
-    echo "Error: No source files provided!" >&2
+    echo "Error: No source file provided!" >&2
     exit 1
   fi
 
   if [[ "$_source_file" == ".cpp" || "$_source_file" != *.cpp || ! -f "$_source_file" ]]; then
-    echo "Error: File '$_source_file' invalid!" >&2
+    echo "Error: File '$_source_file' is invalid!" >&2
     exit 1
   fi
 
@@ -35,6 +35,7 @@ compile() {
 
   check_todo "$_source_file"
 
+  # echo "[DEBUG] Compiling $filename with C++20." >&2
   g++ $_compile_options $_warning_flags $_optimization_flags $_debugging_options \
   $_preprocessor_defines $_include_paths $_libraries \
   "$_source_file" -o "$_output_file"
@@ -43,7 +44,7 @@ compile() {
     echo "$_output_file"
   else
     echo "Error: Compilation failed!" >&2
-    return 1
+    exit 1
   fi
 }
 
@@ -53,9 +54,9 @@ check_todo() {
 
   _todo_lines=$(grep "TODO" "$_source_file" 2>/dev/null)
   if [[ -n "$_todo_lines" ]]; then
-      echo -e "\e[31mWarning:\e[0m existing TODOs in ${_source_file}." >&2
-      echo "$_todo_lines" >&2
-      echo "" >&2
+    echo -e "\e[31mWarning:\e[0m TODOs found in $_source_file:" >&2
+    echo "$_todo_lines" >&2
+    echo "" >&2
   fi
 }
 
@@ -64,59 +65,24 @@ if [[ $# -lt 1 ]]; then
 fi
 
 command="$1"
-source_files="$2.cpp"
-output_file="$2"
+shift
+
+#if [[ "$command" != "compile" ]]; then
+#  echo "Error: Unknown command '$command'" >&2
+#  usage
+#fi
+
+source_file="$1.cpp"
+output_file="$1"
+shift
 
 libraries="$@"
 
-compiled_file=$(compile "$source_files" "$output_file" "$libraries")
+compiled_file=$(compile "$source_file" "$output_file" "$libraries")
 
 if [[ $? -eq 0 ]]; then
-    ./"$compiled_file"
+  ./"$compiled_file"
 else
     echo "Error: Compilation failed!" >&2
-    exit 1
-fi
-
-
-
-
-
-if [[ -z "$1" ]]; then
-    echo "Usage: dbrun <filename (without .cpp)> [optional flags]" >&2
-    exit 1
-fi
-
-filename="$1.cpp"
-output="$1"
-
-# Check if the file exists
-if [[ ! -f "$filename" ]]; then
-    echo "Error: File '$filename' not found!" >&2
-    exit 1
-fi
-
-todo_lines=$(grep -n "TODO" "$filename" | sed 's/^[0-9]*: *//')
-if [[ -n "$todo_lines" ]]; then
-    echo "$todo_lines" >&2
-    echo -e "\e[31mWarning:\e[0m still found in ${filename}." >&2
-    echo "" >&2
-fi
-
-extra_flags=""
-for arg in "${@:2}"; do
-    extra_flags="$extra_flags $arg"
-done
-
-echo "[DEBUG] Compiling $filename with C++20." >&2
-
-# Compile and run
-g++ -DDEBUG -std=c++20 -O2 -Wall -Wextra -o "$output" "$filename" $extra_flags
-
-# Run only if compilation was successful
-if [[ $? -eq 0 ]]; then
-    ./"$output"
-else
-    echo "Compilation failed!" >&2
     exit 1
 fi
