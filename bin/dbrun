@@ -26,9 +26,11 @@ compile() {
 	# local _preprocessor_defines="-DDEBUG"
 	# local _include_paths=""
 	# local _libraries=""
-	local _extra_flags=("${@:3}")
+	local _prefix_flag_count="$3";
+	local _prefix_flags=("${@:4:$_prefix_flag_count}")
 	local _source_file="$1"
 	local _output_file="$2"
+	local _postfix_flags=("${@:4+$_prefix_flag_count}")
 
 	if [[ -z "$_source_file" ]]; then
 		err_echo "Error: No source file provided!"
@@ -89,16 +91,18 @@ run() {
 }
 
 commands=()
-flags=()
+prefix_flags=()
+prefix_count=0
 
 while [[ $# -gt 0 && $1 == -* ]]; do
 	case "$1" in
 	-d | --debug)
-		flags+=("-DDEBUG")
+		prefix_flags+=("-DDEBUG")
 		shift
 		;;
 	-g | --gdb)
-		flags+=("-g")
+		prefix_flags+=("-g")
+		((prefix_count++))
 		commands+=("gdb --args")
 		shift
 		;;
@@ -121,5 +125,5 @@ source_file="$1.cpp"
 output_file="$1"
 shift
 
-compiled_file=$(compile "$source_file" "$output_file" "${flags[@]}" "$@")
+compiled_file=$(compile "$source_file" "$output_file" "$prefix_count" "${prefix_flags[@]}" "$@")
 run "$compiled_file" "${commands[@]}"
