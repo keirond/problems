@@ -67,17 +67,22 @@ while [[ $# -gt 0 && $1 == -* ]]; do
   case "$1" in
     -f)
       flags+=("-DDEBUG")
-      shift;;
+      shift
+      ;;
     -g)
       flags+=("-g")
-      shift;;
+      shift
+      ;;
     -t)
       commands+=("time")
-      shift;;
+      shift
+      ;;
     *)
       echo "Error: Unknown option '$1'!" >&2
       usage
       exit 1
+      ;;
+  esac
 done
 
 if [[ $# -lt 1 ]]; then

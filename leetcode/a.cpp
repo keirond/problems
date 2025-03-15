@@ -87,54 +87,43 @@ struct BinaryTreeNode {
 #define TreeNode BinaryTreeNode<int>
 
 // Read methods (only Leetcode)
-template<typename T>
-T __read(stringstream &ss) {
-  T value;
+template <typename T>
+void __read(stringstream &ss, T &value) {
   ss >> value;
-  return value;
 }
 
-template<>
-char __read<char>(stringstream &ss) {
-  char c, value;
+void __read(stringstream &ss, char &value) {
+  char c;
   ss >> c >> value >> c;
-  return value;
 }
 
-template<>
-string __read<string>(stringstream &ss) {
+void __read(stringstream &ss, string &value) {
   char c;
-  string value;
-  ss >> c;
-  getline(ss, value, '"');
-  return value;
+  ss >> c, getline(ss, value, '"');
 }
 
-template<typename T, typename V>
-pair<T, V> __read(stringstream &ss) {
+template <typename T, typename V>
+void __read(stringstream &ss, pair<T, V> &values) {
   char c;
-
   ss >> c;
-  T first = __read<T>(ss);
+  __read(ss, values.first);
   ss >> c;
-  V second = __read<V>(ss);
+  __read<V>(ss, values.second);
   ss >> c;
-
-  return {first, second}; 
 }
 
-template<typename T>
-vector<T> __read(stringstream &ss) {
+template <typename T>
+void __read(stringstream &ss, vector<T> &values) {
   char c;
-  vector<T> values;
-
   ss >> c;
-  while(ss.peek() != ']') {
-    values.push_back(__read<T>(ss));
+
+  while (ss.peek() != ']') {
+    T value;
+    __read(ss, value);
+    values.push_back(value);
     ss >> c;
-    if(c == ']') break;
+    if (c == ']') break;
   }
-  return values;
 }
 
 template <typename T>
@@ -209,7 +198,69 @@ void _print(T t, V... v) {
 
 // clang-format on
 
-void solve(int test_case [[maybe_unused]]) {}
+vector<int> productQueries(int N, vector<vector<int>> &queries) {
+  int mod = 1e9 + 7;
+
+  vector<int> nums;
+  int t = 10;
+  while (N > 0 && t >= 0) {
+    if (N >= (1 << t)) {
+      nums.push_back(1 << t);
+      N -= 1 << t;
+    }
+    t--;
+  }
+  reverse(nums.begin(), nums.end());
+  dbg(nums)
+
+  int n = nums.size();
+  vector<int> stree(2 * n, 1);
+
+  for (int i = 0; i < n; ++i) {
+    stree[i + n] = nums[i];
+  }
+  for (int i = n - 1; i > 0; --i) {
+    stree[i] = ((long long)stree[i * 2] * stree[i * 2 + 1]) % mod;
+  }
+
+  vector<int> ans;
+  for (auto &d : queries) {
+    int l = d[0], r = d[1];
+    // if (l >= n || l < 0 || r >= n || r < 0) dbg(n, l, r, stree[l+n], stree[r+n]);  
+    int val = 1;
+    for (l += n, r += n; l <= r; l /= 2, r /= 2) {
+      if (l & 1) val = ((long long)val * stree.at(l++)) % mod;
+      if (!(r & 1)) val = ((long long)val * stree.at(r--)) % mod;
+    }
+    ans.push_back(val);
+  }
+  return ans;
+}
+
+void solve(int test_case [[maybe_unused]]) {
+  string str;
+  stringstream ss;
+
+  int n;
+  getline(cin, str);
+  ss.clear();
+  ss.str(str);
+  __read(ss, n);
+
+  vector<vector<int>> nums;
+  getline(cin, str);
+  ss.clear();
+  ss.str(str);
+  __read(ss, nums);
+
+  vector<int> ans = productQueries(n, nums);
+  cout << '[';
+  for(int i=0; i<ans.size(); ++i) {
+    if(i!=0) cout << ',';
+    cout<<ans[i];
+  }
+  cout << ']';
+}
 
 int main() {
   ios::sync_with_stdio(0), cin.tie(0), cout.tie(0);
