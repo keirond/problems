@@ -1,6 +1,87 @@
 #!/bin/bash
 
-# Ensure an argument is provided
+usage() {
+  echo "Usage: $0 command <source_file (without .cpp)> [options]" >&2
+  echo "Example: $0 -f main -lpthread -lm" >&2
+  exit 1
+}
+
+compile() {
+  local _compile_options="-std=c++20"
+  local _warning_flags="-Wall -Wextra"
+  local _optimization_flags="-O2"
+  local _debugging_options="-g"
+  local _preprocessor_defines="-DDEBUG"
+  local _include_paths
+  local _libraries="$3"
+  local _source_file="$1"
+  local _output_file="$2"
+  local _extra_flags=""
+
+  if [[ -z "$_source_file" ]]; then
+    echo "Error: No source files provided!" >&2
+    exit 1
+  fi
+
+  if [[ "$_source_file" == ".cpp" || "$_source_file" != *.cpp || ! -f "$_source_file" ]]; then
+    echo "Error: File '$_source_file' invalid!" >&2
+    exit 1
+  fi
+
+  if [[ -z "$_output_file" ]]; then
+    echo "Error: No output file provided!" >&2
+    exit 1
+  fi
+
+  check_todo "$_source_file"
+
+  g++ $_compile_options $_warning_flags $_optimization_flags $_debugging_options \
+  $_preprocessor_defines $_include_paths $_libraries \
+  "$_source_file" -o "$_output_file"
+
+  if [[ $? -eq 0 ]]; then
+    echo "$_output_file"
+  else
+    echo "Error: Compilation failed!" >&2
+    return 1
+  fi
+}
+
+check_todo() {
+  local _source_file="$1"
+  local _todo_lines
+
+  _todo_lines=$(grep "TODO" "$_source_file" 2>/dev/null)
+  if [[ -n "$_todo_lines" ]]; then
+      echo -e "\e[31mWarning:\e[0m existing TODOs in ${_source_file}." >&2
+      echo "$_todo_lines" >&2
+      echo "" >&2
+  fi
+}
+
+if [[ $# -lt 1 ]]; then
+  usage
+fi
+
+command="$1"
+source_files="$2.cpp"
+output_file="$2"
+
+libraries="$@"
+
+compiled_file=$(compile "$source_files" "$output_file" "$libraries")
+
+if [[ $? -eq 0 ]]; then
+    ./"$compiled_file"
+else
+    echo "Error: Compilation failed!" >&2
+    exit 1
+fi
+
+
+
+
+
 if [[ -z "$1" ]]; then
     echo "Usage: dbrun <filename (without .cpp)> [optional flags]" >&2
     exit 1
