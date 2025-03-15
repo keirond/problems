@@ -1,8 +1,20 @@
 #!/bin/bash
 
+err_echo() {
+	echo "$@" >&2
+}
+
 usage() {
-	echo "Usage: $0 [options] <source_file (without .cpp)> [flags]" >&2
-	echo "" >&2
+	err_echo "Usage: $0 [OPTIONS] <source_file (without .cpp)> [FLAGS]"
+	err_echo ""
+	err_echo "Options:"
+	err_echo "  -t, --time      Measure and display the runtime"
+	err_echo "  -g, --gdb       Run with GNU Debugger"
+	err_echo "  -d, --debug     Enable -DDEBUG macro"
+	err_echo ""
+	err_echo "Flags:"
+	err_echo "  Any additional flags will be passed directly to g++ compilation."
+	err_echo "  Example: $0 program -lcurl -pthread"
 	exit 1
 }
 
@@ -36,9 +48,10 @@ compile() {
 	check_todo "$_source_file"
 
 	echo "Compiling $_source_file with C++20." >&2
-	g++ $_compile_options "$_warning_flags" $_optimization_flags "$_debugging_options" \
-		$_preprocessor_defines $_include_paths $_libraries \
-		"$_source_file" -o "$_output_file"
+
+	# "$_debugging_options" $_preprocessor_defines "$_include_paths" "$_libraries"
+	g++ "$_compile_options" "$_warning_flags" "$_optimization_flags" \
+		"$_extra_flags" "$_source_file" -o "$_output_file"
 
 	if [[ $? -eq 0 ]]; then
 		echo "$_output_file"
