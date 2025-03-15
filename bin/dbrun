@@ -20,13 +20,13 @@ usage() {
 
 compile() {
 	local _compile_options="-std=c++20"
-	local _warning_flags="-Wall -Wextra"
+	local _warning_flags=("-Wall" "-Wextra")
 	local _optimization_flags="-O2"
 	# local _debugging_options="-g"
 	# local _preprocessor_defines="-DDEBUG"
 	# local _include_paths=""
 	# local _libraries=""
-	local _extra_flags="$3"
+	local _extra_flags=("${@:3}")
 	local _source_file="$1"
 	local _output_file="$2"
 
@@ -50,8 +50,8 @@ compile() {
 	err_echo "Compiling $_source_file with C++20."
 
 	# "$_debugging_options" $_preprocessor_defines "$_include_paths" "$_libraries"
-	if g++ "$_compile_options" "$_warning_flags" "$_optimization_flags" \
-	   "$_extra_flags" "$_source_file" -o "$_output_file"; then
+	if g++ "$_compile_options" "${_warning_flags[@]}" "$_optimization_flags" \
+	   "${_extra_flags[@]}" "$_source_file" -o "$_output_file"; then
 		echo "$_output_file"
 	else
 		err_echo "Error: Compilation failed!"
@@ -82,11 +82,10 @@ run() {
 	fi
 
 	if [[ ${#_commands[@]} -eq 0 ]]; then
-		err_echo "Error: No valid commands provided!"
-		exit 1
+		"./$_output_file"
+	else
+		"${_commands[@]}" "./$_output_file"
 	fi
-
-	"${_commands[@]}" "./$_output_file"
 }
 
 commands=()
@@ -100,6 +99,7 @@ while [[ $# -gt 0 && $1 == -* ]]; do
 		;;
 	-g | --gdb)
 		flags+=("-g")
+		commands+=("gdb --args")
 		shift
 		;;
 	-t | --time)
