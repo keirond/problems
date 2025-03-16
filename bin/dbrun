@@ -5,12 +5,12 @@ err_echo() {
 }
 
 usage() {
-	err_echo "Usage: $0 [OPTIONS] <source_file (without .cpp)> [FLAGS]"
+	err_echo "Usage: $0 [options] <source_file (without .cpp)> [flags]"
 	err_echo ""
 	err_echo "Options:"
 	err_echo "  -t, --time      Measure and display the runtime"
 	err_echo "  -g, --gdb       Run with GNU Debugger"
-	err_echo "  -d, --debug     Enable -DDEBUG macro"
+	err_echo "  -d, --debug     Enable DEBUG macro"
 	err_echo ""
 	err_echo "Flags:"
 	err_echo "  Any additional flags will be passed directly to g++ compilation."
@@ -67,7 +67,7 @@ check_todo() {
 
 	_todo_lines=$(grep "TODO" "$_source_file" 2>/dev/null)
 	if [[ -n "$_todo_lines" ]]; then
-		err_echo -e "\e[31mWarning:\e[0m TODOs found in '$_source_file':"
+		err_echo -e "\e[38;5;214mWarning:\e[0m TODOs found in '$_source_file':"
 		err_echo "$_todo_lines"
 		err_echo ""
 	fi
@@ -83,6 +83,8 @@ run() {
 		exit 1
 	fi
 
+	err_echo "Running $_output_file with C++20."
+
 	_commands+=("./$_output_file")
 	eval "${_commands[*]}"
 }
@@ -93,19 +95,21 @@ prefix_count=0
 
 while [[ $# -gt 0 && $1 == -* ]]; do
 	case "$1" in
-	-d | --debug)
-		prefix_flags+=("-DDEBUG")
-		((prefix_count++))
+	-t | --time)
+		commands+=("time")
 		shift
 		;;
 	-g | --gdb)
+		err_echo "[GDB MODE]"
 		prefix_flags+=("-g")
 		((prefix_count++))
-		commands+=("gdb --args")
+		commands+=("gdb -q")
 		shift
 		;;
-	-t | --time)
-		commands+=("time")
+	-d | --debug)
+		err_echo "[DEBUG MODE]"
+		prefix_flags+=("-DDEBUG")
+		((prefix_count++))
 		shift
 		;;
 	*)
