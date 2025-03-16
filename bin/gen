@@ -20,8 +20,8 @@ if [[ -z "$sample_name" ]]; then
 	exit 1
 fi
 
-input_file="$sample_name.in"
-output_file="$sample_name.out"
+input_file="$sample_name.in.txt"
+output_file="$sample_name.out.txt"
 
 if [[ -f "$input_file" || -f "$output_file" ]]; then
 	read -r -p "$input_file or $output_file already exists. Do you want to overwrite them? (y/n): " choice

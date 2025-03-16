@@ -11,8 +11,8 @@ usage() {
 	err_echo "	-t,	--time		Measure and display the runtime."
 	err_echo "	-g,	--gdb		Debug with GNU Debugger."
 	err_echo "	-d,	--debug		Enable DEBUG macro."
-	err_echo "	-s,	--samples	Run with generated samples (*.in) then comparing with expected outputs (*.out)."
-	err_echo "				The prefix file name of (*.in), (*.out) is same as the executable."
+	err_echo "	-s,	--samples	Run with generated samples (*.in.txt) then comparing with expected outputs (*.out.txt))."
+	err_echo "				The prefix file name of (*.in.txt)), (*.out.txt)) is same as the executable."
 	err_echo ""
 	err_echo "Flags:"
 	err_echo "	Any additional flags will be passed directly to g++ compilation."
@@ -99,17 +99,17 @@ run_with_sample() {
 		err_echo "Error: No input sample ($_index) provided!"
 		return 1
 	fi
-	if [[ ! "$_input_file" =~ ^.+\.in$ || ! -f "$_input_file" ]]; then
+	if [[ ! "$_input_file" =~ ^.+\.in.txt$ || ! -f "$_input_file" ]]; then
 		err_echo "Error: File '$_input_file' is invalid!"
 		return 1
 	fi
 
-	local _output_file="${_input_file%.in}.out"
+	local _output_file="${_input_file%.in.txt}.out.txt"
 	if [[ -z "$_output_file" ]]; then
 		err_echo "Error: No output sample ($_index) provided!"
 		return 1
 	fi
-	if [[ ! "$_output_file" =~ ^.+\.out$ || ! -f "$_output_file" ]]; then
+	if [[ ! "$_output_file" =~ ^.+\.out.txt$ || ! -f "$_output_file" ]]; then
 		err_echo "Error: File '$_output_file' is invalid!"
 		return 1
 	fi
@@ -123,7 +123,7 @@ run_with_sample() {
 	_diff_output=$(diff -y <(echo "$_expected_output") <(echo "$_actual_output"))
 
 	if [[ "$_expected_output" != "$_actual_output" ]]; then
-		local _failed_output_file="${_output_file%.out}.failed.out"
+		local _failed_output_file="${_output_file%.out.txt}.failed.out.txt"
 		echo "$_actual_output" >"$_failed_output_file"
 		local _diff_hint="\e[1m\e[3mvimdiff $_output_file $_failed_output_file\e[0m"
 		sample_failed_diffs+=("\t$_index: $_diff_hint\n")
@@ -185,7 +185,7 @@ if [[ $# -lt 1 ]]; then
 fi
 
 source_file="$1.cpp"
-binary_file="$1"
+binary_file="$1.out"
 shift
 
 if [[ ${#modes[@]} -ne 0 ]]; then
@@ -203,7 +203,7 @@ if [[ $test_samples -ne 0 ]]; then
 	sample_failed=0
 	sample_failed_diffs=()
 
-	for input_file in "$(dirname "$compiled_file")"/*.in; do
+	for input_file in "$(dirname "$compiled_file")"/*.in.txt; do
 		if [[ -f "$input_file" ]]; then
 			((sample_total++))
 			run_with_sample "$compiled_file" $sample_index "$input_file" || ((sample_failed++))
