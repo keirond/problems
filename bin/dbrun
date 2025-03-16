@@ -53,7 +53,7 @@ compile() {
 
 	# "$_debugging_options" $_preprocessor_defines "$_include_paths" "$_libraries"
 	if g++ "$_compile_options" "${_warning_flags[@]}" "$_optimization_flags" \
-	   "${_extra_flags[@]}" "$_source_file" -o "$_output_file"; then
+	   "${_prefix_flags[@]}" "$_source_file" -o "$_output_file" "${_postfix_flags[@]}"; then
 		echo "$_output_file"
 	else
 		err_echo "Error: Compilation failed!"
@@ -83,11 +83,8 @@ run() {
 		exit 1
 	fi
 
-	if [[ ${#_commands[@]} -eq 0 ]]; then
-		"./$_output_file"
-	else
-		"${_commands[@]}" "./$_output_file"
-	fi
+	_commands+=("./$_output_file")
+	eval "${_commands[*]}"
 }
 
 commands=()
@@ -98,6 +95,7 @@ while [[ $# -gt 0 && $1 == -* ]]; do
 	case "$1" in
 	-d | --debug)
 		prefix_flags+=("-DDEBUG")
+		((prefix_count++))
 		shift
 		;;
 	-g | --gdb)
