@@ -2,7 +2,6 @@
 
 using namespace std;
 
-// clang-format off
 
 using ll = long long;
 using ld = long double;
@@ -115,7 +114,6 @@ void _print(T t, V... v) {
 #define dbg(x...) 
 #endif
 
-// clang-format on
 
 void solve(int test_case [[maybe_unused]]) {}
 
