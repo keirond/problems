@@ -88,49 +88,39 @@ template <typename T> struct BinaryTreeNode {
 #define TreeNode BinaryTreeNode<int>
 
 // Read methods (only Leetcode)
-template <typename T> T __read(stringstream &ss) {
-	T value;
-	ss >> value;
-	return value;
-}
+template <typename T> void __read(stringstream &ss, T &value) { ss >> value; }
 
-template <> char __read<char>(stringstream &ss) {
-	char c, value;
+void __read(stringstream &ss, char &value) {
+	char c;
 	ss >> c >> value >> c;
-	return value;
 }
 
-template <> string __read<string>(stringstream &ss) {
+void __read(stringstream &ss, string &value) {
 	char c;
-	string value;
-	ss >> c;
-	getline(ss, value, '"');
-	return value;
+	ss >> c, getline(ss, value, '"');
 }
 
-template <typename T, typename V> pair<T, V> __read(stringstream &ss) {
+template <typename T, typename V>
+void __read(stringstream &ss, pair<T, V> &values) {
 	char c;
-
 	ss >> c;
-	T first = __read<T>(ss);
+	__read(ss, values.first);
 	ss >> c;
-	V second = __read<V>(ss);
+	__read<V>(ss, values.second);
 	ss >> c;
-
-	return {first, second};
 }
 
-template <typename T> vector<T> __read(stringstream &ss) {
+template <typename T> void __read(stringstream &ss, vector<T> &values) {
 	char c;
-	vector<T> values;
-
 	ss >> c;
+
 	while (ss.peek() != ']') {
-		values.push_back(__read<T>(ss));
+		T value;
+		__read(ss, value);
+		values.push_back(value);
 		ss >> c;
 		if (c == ']') break;
 	}
-	return values;
 }
 
 // --------------------------------------------------------------------------
