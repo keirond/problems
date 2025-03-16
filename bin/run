@@ -198,7 +198,7 @@ if [[ $test_samples -ne 0 ]]; then
 	sample_index=1
 	sample_total=0
 	sample_failed=0
-	for input_file in $compiled_file*.in; do
+	for input_file in "$compiled_file"*.in; do
 		if [[ -f "$input_file" ]]; then
 			((sample_total++))
 			run_with_sample "$compiled_file" $sample_index "$input_file" && ((sample_failed++))
@@ -207,7 +207,7 @@ if [[ $test_samples -ne 0 ]]; then
 
 	err_echo ""
 	if [[ sample_failed -ne 0 ]]; then
-		err_echo -e "\e[1m\e[31m$(($sample_total - $sample_failed)) / $sample_total tests passed.\e[0m"
+		err_echo -e "\e[1m\e[31m$((sample_total - sample_failed)) / $sample_total tests passed.\e[0m"
 	else
 		err_echo -e "\e[1m\e[32mAll tests passed.\e[0m"
 	fi
