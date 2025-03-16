@@ -52,10 +52,10 @@ template <class T> using max_heap = priority_queue<T>;
 template <class T> using min_heap = priority_queue<T, vector<T>, greater<T>>;
 
 string to_upper(string a) {
-  return transform(a.begin(), a.end(), a.begin(), ::toupper), a;
+	return transform(a.begin(), a.end(), a.begin(), ::toupper), a;
 }
 string to_lower(string a) {
-  return transform(a.begin(), a.end(), a.begin(), ::tolower), a;
+	return transform(a.begin(), a.end(), a.begin(), ::tolower), a;
 }
 
 // --------------------------------------------------------------------------
@@ -64,79 +64,73 @@ string to_lower(string a) {
 template <typename T> struct LinkedListNode;
 template <typename T> struct BinaryTreeNode;
 
-template <typename T>
-struct LinkedListNode {
-  T val;
-  LinkedListNode *next;
+template <typename T> struct LinkedListNode {
+	T val;
+	LinkedListNode *next;
 
-    LinkedListNode() : val(T()), next(nullptr) {}
-  LinkedListNode(T x) : val(x), next(nullptr) {}
-  LinkedListNode(T x, LinkedListNode *next) : val(x), next(next) {}
+	LinkedListNode() : val(T()), next(nullptr) {}
+	LinkedListNode(T x) : val(x), next(nullptr) {}
+	LinkedListNode(T x, LinkedListNode *next) : val(x), next(next) {}
 };
 
-template <typename T>
-struct BinaryTreeNode {
-  T val;
-  BinaryTreeNode *left;
-  BinaryTreeNode *right;
+template <typename T> struct BinaryTreeNode {
+	T val;
+	BinaryTreeNode *left;
+	BinaryTreeNode *right;
 
-  BinaryTreeNode() : val(T()), left(nullptr), right(nullptr) {}
-  BinaryTreeNode(T x) : val(x), left(nullptr), right(nullptr) {}
-  BinaryTreeNode(T x, BinaryTreeNode *left, BinaryTreeNode *right) : val(x), left(left), right(right) {}
+	BinaryTreeNode() : val(T()), left(nullptr), right(nullptr) {}
+	BinaryTreeNode(T x) : val(x), left(nullptr), right(nullptr) {}
+	BinaryTreeNode(T x, BinaryTreeNode *left, BinaryTreeNode *right)
+		: val(x), left(left), right(right) {}
 };
 
 #define ListNode LinkedListNode<int>
 #define TreeNode BinaryTreeNode<int>
 
 // Read methods (only Leetcode)
-template<typename T>
-T __read(stringstream &ss) {
-  T value;
-  ss >> value;
-  return value;
+template <typename T> T __read(stringstream &ss) {
+	T value;
+	ss >> value;
+	return value;
 }
 
-template<>
-char __read<char>(stringstream &ss) {
-  char c, value;
-  ss >> c >> value >> c;
-  return value;
+template <> char __read<char>(stringstream &ss) {
+	char c, value;
+	ss >> c >> value >> c;
+	return value;
 }
 
-template<>
-string __read<string>(stringstream &ss) {
-  char c;
-  string value;
-  ss >> c;
-  getline(ss, value, '"');
-  return value;
+template <> string __read<string>(stringstream &ss) {
+	char c;
+	string value;
+	ss >> c;
+	getline(ss, value, '"');
+	return value;
 }
 
-template<typename T, typename V>
-pair<T, V> __read(stringstream &ss) {
-  char c;
+template <typename T, typename V> pair<T, V> __read(stringstream &ss) {
+	char c;
 
-  ss >> c;
-  T first = __read<T>(ss);
-  ss >> c;
-  V second = __read<V>(ss);
-  ss >> c;
+	ss >> c;
+	T first = __read<T>(ss);
+	ss >> c;
+	V second = __read<V>(ss);
+	ss >> c;
 
-  return {first, second}; 
+	return {first, second};
 }
 
-template<typename T>
-vector<T> __read(stringstream &ss) {
-  char c;
-  vector<T> values;
+template <typename T> vector<T> __read(stringstream &ss) {
+	char c;
+	vector<T> values;
 
-  ss >> c;
-  while(ss.peek() != ']') {
-    values.push_back(__read<T>(ss));
-    ss >> c;
-    if(c == ']') break;
-  }
-  return values;
+	ss >> c;
+	while (ss.peek() != ']') {
+		values.push_back(__read<T>(ss));
+		ss >> c;
+		if (c == ']') break;
+	}
+	return values;
 }
 
 // --------------------------------------------------------------------------
@@ -161,33 +155,34 @@ void __print(const string &x) { cerr << '\"' << x << '\"'; }
 void __print(bool x) { cerr << (x ? "true" : "false"); }
 
 // Print methods (only Leetcode)
-template <typename T>
-void __print(LinkedListNode<T> *x) {
-  int f = 0;
-  auto *y = x;
-  while (y) cerr << (f++ ? " -> " : ""), __print(y->val), y = y->next;
+template <typename T> void __print(LinkedListNode<T> *x) {
+	int f = 0;
+	auto *y = x;
+	while (y) cerr << (f++ ? " -> " : ""), __print(y->val), y = y->next;
 }
 
-template <typename T>
-void __print(BinaryTreeNode<T> *x) {
-  if(x) while(x) __print(x->val), cerr << " [ ", __print(x->left), __print(x->right), cerr << " ] ";
+template <typename T> void __print(BinaryTreeNode<T> *x) {
+	if (x)
+		while (x)
+			__print(x->val), cerr << " [ ", __print(x->left), __print(x->right),
+				cerr << " ] ";
 }
 
 template <typename T> void __print(const T &x) {
-  int f = 0;
-  cerr << '{';
-  for (auto &i : x) cerr << (f++ ? ", " : ""), __print(i);
-  cerr << "}";
+	int f = 0;
+	cerr << '{';
+	for (auto &i : x) cerr << (f++ ? ", " : ""), __print(i);
+	cerr << "}";
 }
 
 template <typename T, typename V> void __print(const pair<T, V> &x) {
-  cerr << '{', __print(x.first), cerr << ", ", __print(x.second), cerr << '}';
+	cerr << '{', __print(x.first), cerr << ", ", __print(x.second), cerr << '}';
 }
 
 template <typename T, typename V, typename K>
 void __print(const tuple<T, K, V> &x) {
-  cerr << '{', __print(get<0>(x)), cerr << ", ", __print(get<1>(x)),
-    cerr << ", ", __print(get<2>(x)), cerr << '}';
+	cerr << '{', __print(get<0>(x)), cerr << ", ", __print(get<1>(x)),
+		cerr << ", ", __print(get<2>(x)), cerr << '}';
 }
 
 // --------------------------------------------------------------------------
@@ -195,16 +190,16 @@ void __print(const tuple<T, K, V> &x) {
 void _print() { cerr << ']' << nl; }
 
 template <typename T, typename... V> void _print(T t, V... v) {
-  __print(t);
-  if (sizeof...(v)) cerr << ", ";
-  _print(v...);
+	__print(t);
+	if (sizeof...(v)) cerr << ", ";
+	_print(v...);
 }
 
 #ifdef DEBUG
 #define dbg(x...)                                                             \
-  cerr << "\e[91m" << __func__ << ":" << __LINE__ << " [" << #x << "] = ["; \
-  _print(x);                                                                \
-  cerr << "\e[39m";
+	cerr << "\e[91m" << __func__ << ":" << __LINE__ << " [" << #x << "] = ["; \
+	_print(x);                                                                \
+	cerr << "\e[39m";
 #else
 #define dbg(x...)
 #endif
@@ -214,12 +209,12 @@ template <typename T, typename... V> void _print(T t, V... v) {
 void solve(int test_case [[maybe_unused]]) {}
 
 int main() {
-  ios::sync_with_stdio(0), cin.tie(0), cout.tie(0);
-  int test_cases = 1;
-  // cin >> test_cases;
-  while (test_cases--) {
-    solve(test_cases);
-    cout << flush;
-  }
-  return 0;
+	ios::sync_with_stdio(0), cin.tie(0), cout.tie(0);
+	int test_cases = 1;
+	// cin >> test_cases;
+	while (test_cases--) {
+		solve(test_cases);
+		cout << flush;
+	}
+	return 0;
 }
