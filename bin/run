@@ -5,7 +5,7 @@ err_echo() {
 }
 
 usage() {
-	err_echo "Usage: $0 [options] <source_file (without .cpp)> [flags]"
+	err_echo "Usage: run [options] <source_file (without .cpp)> [flags]"
 	err_echo ""
 	err_echo "Options:"
 	err_echo "  -t, --time      Measure and display the runtime"
@@ -14,7 +14,7 @@ usage() {
 	err_echo ""
 	err_echo "Flags:"
 	err_echo "  Any additional flags will be passed directly to g++ compilation."
-	err_echo "  Example: $0 program -lcurl -pthread"
+	err_echo "  Example: run program -lcurl -pthread"
 	exit 1
 }
 
