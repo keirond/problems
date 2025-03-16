@@ -114,12 +114,14 @@ run_with_sample() {
 		return 1
 	fi
 
+	err_echo "Running $_binary_file on the $_index-th sample with C++20."
+
 	local _expected_output
 	local _actual_output
 	local _diff_output
 
 	_expected_output=$(cat "$_output_file")
-	_actual_output=$(./"$_binary_file" <"$_input_file" 2>/dev/null)
+	_actual_output=$(./"$_binary_file" <"$_input_file" 2> >(cat >&2))
 	_diff_output=$(diff -y <(echo "$_expected_output") <(echo "$_actual_output"))
 
 	if [[ "$_expected_output" != "$_actual_output" ]]; then
@@ -212,11 +214,10 @@ if [[ $test_samples -ne 0 ]]; then
 
 	err_echo ""
 	if [[ sample_failed -ne 0 ]]; then
-		err_echo -e "\e[1m\e[31m"
+		err_echo -e "\e[1m\e[31m$((sample_total - sample_failed)) / $sample_total tests passed.\e[0m"
 	else
-		err_echo -e "\e[1m\e[32m"
+		err_echo -e "\e[1m\e[32m$((sample_total - sample_failed)) / $sample_total tests passed.\e[0m"
 	fi
-	err_echo -e "$((sample_total - sample_failed)) / $sample_total tests passed.\e[0m"
 
 	if [[ ${#sample_failed_diffs[@]} -ne 0 ]]; then
 		err_echo -e "${sample_failed_diffs[@]}"

@@ -200,7 +200,7 @@ vector<int> productQueries(int N, vector<vector<int>> &queries) {
 	int mod = 1e9 + 7;
 
 	vector<int> nums;
-	int t = 10;
+	int t = 30;
 	while (N > 0 && t >= 0) {
 		if (N >= (1 << t)) {
 			nums.push_back(1 << t);
@@ -252,7 +252,7 @@ void solve(int test_case [[maybe_unused]]) {
 
 	vector<int> ans = productQueries(n, nums);
 	cout << '[';
-	for (int i = 0; i < ans.size(); ++i) {
+	for (int i = 0; i < sz(ans); ++i) {
 		if (i != 0) cout << ',';
 		cout << ans[i];
 	}
