@@ -2,8 +2,6 @@
 
 using namespace std;
 
-// clang-format off
-
 using ll = long long;
 using ld = long double;
 using pii = pair<int, int>;
@@ -48,20 +46,22 @@ constexpr int INF [[maybe_unused]] = INT_MAX;
 constexpr ll LINF [[maybe_unused]] = LLONG_MAX;
 constexpr char nl [[maybe_unused]] = '\n';
 
+// --------------------------------------------------------------------------
+
 template <class T> using max_heap = priority_queue<T>;
 template <class T> using min_heap = priority_queue<T, vector<T>, greater<T>>;
 
 string to_upper(string a) {
-  return transform(a.begin(), a.end(), a.begin(), ::toupper), a;
+	return transform(a.begin(), a.end(), a.begin(), ::toupper), a;
 }
 string to_lower(string a) {
-  return transform(a.begin(), a.end(), a.begin(), ::tolower), a;
+	return transform(a.begin(), a.end(), a.begin(), ::tolower), a;
 }
 
-template <typename T>
-void __print(const T &x);
-template <typename T, typename V>
-void __print(const pair<T, V> &x);
+// --------------------------------------------------------------------------
+
+template <typename T> void __print(const T &x);
+template <typename T, typename V> void __print(const pair<T, V> &x);
 template <typename T, typename V, typename K>
 void __print(const tuple<T, V, K> &x);
 
@@ -79,106 +79,106 @@ void __print(const char *x) { cerr << '\"' << x << '\"'; }
 void __print(const string &x) { cerr << '\"' << x << '\"'; }
 void __print(bool x) { cerr << (x ? "true" : "false"); }
 
-template <typename T>
-void __print(const T &x) {
-  int f = 0;
-  cerr << '{';
-  for (auto &i : x) cerr << (f++ ? ", " : ""), __print(i);
-  cerr << "}";
+template <typename T> void __print(const T &x) {
+	int f = 0;
+	cerr << '{';
+	for (auto &i : x) cerr << (f++ ? ", " : ""), __print(i);
+	cerr << "}";
 }
 
-template <typename T, typename V>
-void __print(const pair<T, V> &x) {
-  cerr << '{', __print(x.first), cerr << ", ", __print(x.second), cerr << '}';
+template <typename T, typename V> void __print(const pair<T, V> &x) {
+	cerr << '{', __print(x.first), cerr << ", ", __print(x.second), cerr << '}';
 }
 
 template <typename T, typename V, typename K>
 void __print(const tuple<T, K, V> &x) {
-  cerr << '{', __print(get<0>(x)), cerr << ", ", __print(get<1>(x)),
-      cerr << ", ", __print(get<2>(x)), cerr << '}';
+	cerr << '{', __print(get<0>(x)), cerr << ", ", __print(get<1>(x)),
+		cerr << ", ", __print(get<2>(x)), cerr << '}';
 }
 
+// --------------------------------------------------------------------------
+
 void _print() { cerr << ']' << nl; }
-template <typename T, typename... V>
-void _print(T t, V... v) {
-  __print(t);
-  if (sizeof...(v)) cerr << ", ";
-  _print(v...);
+
+template <typename T, typename... V> void _print(T t, V... v) {
+	__print(t);
+	if (sizeof...(v)) cerr << ", ";
+	_print(v...);
 }
 
 #ifdef DEBUG
-#define dbg(x...)                                                           \
-  cerr << "\e[91m" << __func__ << ":" << __LINE__ << " [" << #x << "] = ["; \
-  _print(x);                                                                \
-  cerr << "\e[39m";
+#define dbg(x...)                                                             \
+	cerr << "\e[91m" << __func__ << ":" << __LINE__ << " [" << #x << "] = ["; \
+	_print(x);                                                                \
+	cerr << "\e[39m";
 #else
-#define dbg(x...) 
+#define dbg(x...)
 #endif
 
-// clang-format on
+// --------------------------------------------------------------------------
 
 struct STree {
-  int n;
-  vector<int> stree;
+	int n;
+	vector<int> stree;
 
-  STree(vector<int> &nums) {
-    n = nums.size();
-    stree.assign(2 * n, 0);
+	STree(vector<int> &nums) {
+		n = nums.size();
+		stree.assign(2 * n, 0);
 
-    for (int i = 0; i < n; ++i) {
-      stree[i + n] = nums[i];
-    }
-    for (int i = n - 1; i > 0; --i) {
-      stree[i] = min(stree[i * 2], stree[i * 2 + 1]);
-    }
-  }
+		for (int i = 0; i < n; ++i) {
+			stree[i + n] = nums[i];
+		}
+		for (int i = n - 1; i > 0; --i) {
+			stree[i] = min(stree[i * 2], stree[i * 2 + 1]);
+		}
+	}
 
-  void update(int i, int val) {
-    for (stree[i += n] = val; i > 1; i /= 2) {
-      stree[i >> 1] = min(stree[i], stree[i ^ 1]);
-    }
-  }
+	void update(int i, int val) {
+		for (stree[i += n] = val; i > 1; i /= 2) {
+			stree[i >> 1] = min(stree[i], stree[i ^ 1]);
+		}
+	}
 
-  int query(int l, int r) {
-    int ans = INT_MAX;
-    for (l += n, r += n; l <= r; l /= 2, r /= 2) {
-      if (l & 1) ans = min(ans, stree[l++]);
-      if (!(r & 1)) ans = min(ans, stree[r--]);
-    }
-    return ans;
-  }
+	int query(int l, int r) {
+		int ans = INT_MAX;
+		for (l += n, r += n; l <= r; l /= 2, r /= 2) {
+			if (l & 1) ans = min(ans, stree[l++]);
+			if (!(r & 1)) ans = min(ans, stree[r--]);
+		}
+		return ans;
+	}
 };
 
 void solve(int test_case [[maybe_unused]]) {
-  int N, M;
-  cin >> N >> M;
-  vector<int> nums(N);
-  for (int i = 0; i < N; ++i) {
-    int val;
-    cin >> val;
-    nums[i] = val;
-  }
+	int N, M;
+	cin >> N >> M;
+	vector<int> nums(N);
+	for (int i = 0; i < N; ++i) {
+		int val;
+		cin >> val;
+		nums[i] = val;
+	}
 
-  STree stree = STree(nums);
-  for (int i = 0; i < M; ++i) {
-    char t;
-    cin >> t;
-    int l, r;
-    cin >> l >> r;
-    if (t == 'q')
-      cout << stree.query(l - 1, r - 1) << '\n';
-    else if (t == 'u')
-      stree.update(l - 1, r);
-  }
+	STree stree = STree(nums);
+	for (int i = 0; i < M; ++i) {
+		char t;
+		cin >> t;
+		int l, r;
+		cin >> l >> r;
+		if (t == 'q')
+			cout << stree.query(l - 1, r - 1) << '\n';
+		else if (t == 'u')
+			stree.update(l - 1, r);
+	}
 }
 
 int main() {
-  ios::sync_with_stdio(0), cin.tie(0), cout.tie(0);
-  int test_cases = 1;
-  // cin >> test_cases;
-  while (test_cases--) {
-    solve(test_cases);
-    cout << flush;
-  }
-  return 0;
+	ios::sync_with_stdio(0), cin.tie(0), cout.tie(0);
+	int test_cases = 1;
+	// cin >> test_cases;
+	while (test_cases--) {
+		solve(test_cases);
+		cout << flush;
+	}
+	return 0;
 }
