@@ -1,27 +1,33 @@
 #!/bin/bash
 
-# Ensure an argument is provided
 if [[ -z "$1" ]]; then
-    echo "Usage: gen_s <testcase name> [optional flags]" >&2
-    exit 1
+	echo "Usage: gen <testcase name>" >&2
+	exit 1
 fi
 
 filename="$1"
 
 if [[ -f "$filename.in" || -f "$filename.out" ]]; then
-    read -p "$filename.(in/out) already exists. Do you want to overwrite it? (y/n): " choice
-    case "$choice" in
-        y|Y ) 
-            echo "Overwriting $filename.(in/out)"
-            rm -f "$filename.in" "$filename.out"
-            touch "$filename.in"; touch "$filename.out"
-            subl "$filename.in" "$filename.out";;
-        n|N )
-            echo "Keeping existing $filename.(in/out)"
-            subl "$filename.in" "$filename.out";;
-        * ) echo "Invalid option. Exiting."; exit 1;;
-    esac
+	read -p "$filename.(in/out) already exists. Do you want to overwrite it? (y/n): " choice
+	case "$choice" in
+	y | Y)
+		echo "Overwriting $filename.(in/out)"
+		rm -f "$filename.in" "$filename.out"
+		touch "$filename.in"
+		touch "$filename.out"
+		subl "$filename.in" "$filename.out"
+		;;
+	n | N)
+		echo "Keeping existing $filename.(in/out)"
+		subl "$filename.in" "$filename.out"
+		;;
+	*)
+		echo "Invalid option. Exiting."
+		exit 1
+		;;
+	esac
 else
-    touch "$filename.in"; touch "$filename.out"
-    subl "$filename.in" "$filename.out"
+	touch "$filename.in"
+	touch "$filename.out"
+	subl "$filename.in" "$filename.out"
 fi
