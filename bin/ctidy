@@ -4,13 +4,17 @@ err_echo() {
 	echo "$@" >&2
 }
 
-if [[ -z "$1" ]]; then
+usage() {
 	err_echo "Usage: ctidy <source_file (without .cpp)> [flags]"
 	err_echo ""
 	err_echo "Flags:"
 	err_echo "  Any additional flags will be passed directly to g++ compilation."
 	err_echo "  Example: run program -lcurl -pthread"
 	exit 1
+}
+
+if [[ $# -lt 1 ]]; then
+	usage
 fi
 
 source_file="$1.cpp"
@@ -18,12 +22,12 @@ shift
 
 if [[ -z "$source_file" ]]; then
 	err_echo "Error: No source file provided!"
-	exit 1
+	return 1
 fi
 
-if [[ ! -f "$source_file" ]]; then
-	err_echo "Error: File '$source_file' not found!"
-	exit 1
+if [[ ! "$source_file" =~ ^.+\.cpp$ || ! -f "$source_file" ]]; then
+	err_echo "Error: File '$source_file' is invalid!"
+	return 1
 fi
 
 todo_lines=$(grep "TODO" "$source_file" 2>/dev/null)

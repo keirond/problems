@@ -8,9 +8,10 @@ usage() {
 	err_echo "Usage: run [options] <source_file (without .cpp)> [flags]"
 	err_echo ""
 	err_echo "Options:"
-	err_echo "  -t, --time      Measure and display the runtime"
-	err_echo "  -g, --gdb       Debug with GNU Debugger"
-	err_echo "  -d, --debug     Enable DEBUG macro"
+	err_echo "  -t, --time      Measure and display the runtime."
+	err_echo "  -g, --gdb       Debug with GNU Debugger."
+	err_echo "  -d, --debug     Enable DEBUG macro."
+	err_echo " 	-s, --samples	Run with generated samples (.in) then comparing with expected outputs (.out)."
 	err_echo ""
 	err_echo "Flags:"
 	err_echo "  Any additional flags will be passed directly to g++ compilation."
@@ -87,6 +88,31 @@ run() {
 
 	_commands+=("./$_output_file")
 	eval "${_commands[*]}"
+}
+
+run_with_tc() {
+	local _input_file="$1"
+	local _output_file="${_input_file%.in}.out"
+
+	if [[ -z "$_input_file" ]]; then
+		err_echo "Error: No input file provided!"
+		exit 1
+	fi
+	if [[ -z "$_output_file" ]]; then
+		err_echo "Error: No output file provided!"
+		exit 1
+	fi
+
+	if [[  ! "$_input_file" =~ ^.+\.in$ || ! -f "$_input_file" ]]; then
+		err_echo "Error: File '$_input_file' is invalid!"
+		exit 1
+	fi
+	if [[  ! "$_output_file" =~ ^.+\.out$ || ! -f "$_output_file" ]]; then
+		err_echo "Error: File '$_output_file' is invalid!"
+		exit 1
+	fi
+
+	
 }
 
 commands=()

@@ -1,8 +1,16 @@
 #!/bin/bash
 
-if [[ -z "$1" ]]; then
-	echo "Usage: gen <testcase name>" >&2
+err_echo() {
+	echo "$@" >&2
+}
+
+usage() {
+	err_echo "Usage: gen <testcase name>"
 	exit 1
+}
+
+if [[ $# -lt 1 ]]; then
+	usage
 fi
 
 filename="$1"
@@ -11,22 +19,21 @@ if [[ -f "$filename.in" || -f "$filename.out" ]]; then
 	read -r -p "$filename.in or $filename.out already exists. Do you want to overwrite them? (y/n): " choice
 	case "$choice" in
 	y | Y)
-		echo "Overwriting $filename.in and $filename.out"
+		err_echo "Overwriting $filename.in and $filename.out"
 		rm -f "$filename.in" "$filename.out"
 		touch "$filename.in" "$filename.out"
 		subl "$filename.in" "$filename.out"
 		;;
 	n | N)
-		echo "Keeping existing $filename.in and $filename.out"
+		err_echo "Keeping existing $filename.in and $filename.out"
 		subl "$filename.in" "$filename.out"
 		;;
 	*)
-		echo "Invalid option. Exiting."
+		err_echo "Invalid option. Exiting."
 		exit 1
 		;;
 	esac
 else
-	touch "$filename.in"
-	touch "$filename.out"
+	touch "$filename.in" "$filename.out"
 	subl "$filename.in" "$filename.out"
 fi
