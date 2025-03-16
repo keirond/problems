@@ -2,8 +2,6 @@
 
 using namespace std;
 
-// clang-format off
-
 using ll = long long;
 using ld = long double;
 using pii = pair<int, int>;
@@ -48,6 +46,8 @@ constexpr int INF [[maybe_unused]] = INT_MAX;
 constexpr ll LINF [[maybe_unused]] = LLONG_MAX;
 constexpr char nl [[maybe_unused]] = '\n';
 
+// --------------------------------------------------------------------------
+
 template <class T> using max_heap = priority_queue<T>;
 template <class T> using min_heap = priority_queue<T, vector<T>, greater<T>>;
 
@@ -58,6 +58,8 @@ string to_lower(string a) {
   return transform(a.begin(), a.end(), a.begin(), ::tolower), a;
 }
 
+// --------------------------------------------------------------------------
+
 // Data structures (only Leetcode)
 template <typename T> struct LinkedListNode;
 template <typename T> struct BinaryTreeNode;
@@ -67,7 +69,7 @@ struct LinkedListNode {
   T val;
   LinkedListNode *next;
 
-  LinkedListNode() : val(T()), next(nullptr) {}
+    LinkedListNode() : val(T()), next(nullptr) {}
   LinkedListNode(T x) : val(x), next(nullptr) {}
   LinkedListNode(T x, LinkedListNode *next) : val(x), next(next) {}
 };
@@ -137,10 +139,10 @@ vector<T> __read(stringstream &ss) {
   return values;
 }
 
-template <typename T>
-void __print(const T &x);
-template <typename T, typename V>
-void __print(const pair<T, V> &x);
+// --------------------------------------------------------------------------
+
+template <typename T> void __print(const T &x);
+template <typename T, typename V> void __print(const pair<T, V> &x);
 template <typename T, typename V, typename K>
 void __print(const tuple<T, V, K> &x);
 
@@ -158,6 +160,7 @@ void __print(const char *x) { cerr << '\"' << x << '\"'; }
 void __print(const string &x) { cerr << '\"' << x << '\"'; }
 void __print(bool x) { cerr << (x ? "true" : "false"); }
 
+// Print methods (only Leetcode)
 template <typename T>
 void __print(LinkedListNode<T> *x) {
   int f = 0;
@@ -170,44 +173,43 @@ void __print(BinaryTreeNode<T> *x) {
   if(x) while(x) __print(x->val), cerr << " [ ", __print(x->left), __print(x->right), cerr << " ] ";
 }
 
-template <typename T>
-void __print(const T &x) {
+template <typename T> void __print(const T &x) {
   int f = 0;
   cerr << '{';
   for (auto &i : x) cerr << (f++ ? ", " : ""), __print(i);
   cerr << "}";
 }
 
-template <typename T, typename V>
-void __print(const pair<T, V> &x) {
+template <typename T, typename V> void __print(const pair<T, V> &x) {
   cerr << '{', __print(x.first), cerr << ", ", __print(x.second), cerr << '}';
 }
 
 template <typename T, typename V, typename K>
 void __print(const tuple<T, K, V> &x) {
   cerr << '{', __print(get<0>(x)), cerr << ", ", __print(get<1>(x)),
-      cerr << ", ", __print(get<2>(x)), cerr << '}';
+    cerr << ", ", __print(get<2>(x)), cerr << '}';
 }
 
+// --------------------------------------------------------------------------
+
 void _print() { cerr << ']' << nl; }
-template <typename T, typename... V>
-void _print(T t, V... v) {
+
+template <typename T, typename... V> void _print(T t, V... v) {
   __print(t);
   if (sizeof...(v)) cerr << ", ";
   _print(v...);
 }
 
 #ifdef DEBUG
-#define dbg(x...)                                                           \
+#define dbg(x...)                                                             \
   cerr << "\e[91m" << __func__ << ":" << __LINE__ << " [" << #x << "] = ["; \
   _print(x);                                                                \
   cerr << "\e[39m";
 #else
-#define dbg(x...) 
+#define dbg(x...)
 #endif
 
-
-// clang-format on
+// --------------------------------------------------------------------------
 
 void solve(int test_case [[maybe_unused]]) {}
 
