@@ -8,15 +8,15 @@ usage() {
 	err_echo "Usage: run [options] <source_file (without .cpp)> [flags]"
 	err_echo ""
 	err_echo "Options:"
-	err_echo "  -t, --time      Measure and display the runtime."
-	err_echo "  -g, --gdb       Debug with GNU Debugger."
-	err_echo "  -d, --debug     Enable DEBUG macro."
-	err_echo " 	-s, --samples	Run with generated samples (.in) then comparing with expected outputs (.out)."
-	err_echo "					The prefix file name of '.in', '.out' is same as the executable."
+	err_echo "	-t,	--time		Measure and display the runtime."
+	err_echo "	-g,	--gdb		Debug with GNU Debugger."
+	err_echo "	-d,	--debug		Enable DEBUG macro."
+	err_echo "	-s,	--samples	Run with generated samples (*.in) then comparing with expected outputs (*.out)."
+	err_echo "				The prefix file name of (*.in), (*.out) is same as the executable."
 	err_echo ""
 	err_echo "Flags:"
-	err_echo "  Any additional flags will be passed directly to g++ compilation."
-	err_echo "  Example: run program -lcurl -pthread"
+	err_echo "	Any additional flags will be passed directly to g++ compilation."
+	err_echo "	Example: run program -lcurl -pthread"
 	exit 1
 }
 
@@ -58,7 +58,6 @@ compile() {
 		"${_prefix_flags[@]}" "$_source_file" -o "$_binary_file" "${_postfix_flags[@]}"; then
 		echo "$_binary_file"
 	else
-		err_echo "Error: Compilation failed!"
 		return 1
 	fi
 }
@@ -67,7 +66,7 @@ check_todo() {
 	local _source_file="$1"
 	local _todo_lines
 
-	_todo_lines=$(grep "TODO" "$_source_file" 2>/dev/null)
+	_todo_lines=$(grep -n "TODO" "$_source_file" 2>/dev/null)
 	if [[ -n "$_todo_lines" ]]; then
 		err_echo -e "\e[38;5;214mWarning:\e[0m TODOs found in '$_source_file':"
 		err_echo "$_todo_lines"
@@ -121,19 +120,19 @@ run_with_sample() {
 
 	_expected_output=$(cat "$_output_file")
 	_actual_output=$(./"$_binary_file" <"$_input_file" 2>/dev/null)
-	_diff_output=$(diff <(echo "$_expected_output") <(echo "$_actual_output"))
+	_diff_output=$(diff -y <(echo "$_expected_output") <(echo "$_actual_output"))
 
 	if [[ "$_expected_output" != "$_actual_output" ]]; then
-		local _failed_output="${_expected_output%.out}.failed.out"
-		echo "$_actual_output" >"$_failed_output"
+		local _failed_output_file="${_output_file%.out}.failed.out"
+		echo "$_actual_output" >"$_failed_output_file"
 
-		err_echo "------------------------------------"
+		err_echo "--------------------------------------"
 		err_echo "Test failed for $_input_file!"
-		err_echo "Check with 'vimdiff $_expected_output $_failed_output'"
-		err_echo "----------"
+		err_echo -e "Check with '\e[1m\e[3mvimdiff $_output_file $_failed_output_file\e[0m'"
+		err_echo "----------------"
 		err_echo "Expected vs Got:"
 		err_echo "$_diff_output"
-		err_echo "------------------------------------"
+		err_echo "--------------------------------------"
 
 		return 1
 	fi
@@ -187,7 +186,9 @@ source_file="$1.cpp"
 binary_file="$1"
 shift
 
-err_echo "${modes[@]}"
+if [[ ${#modes[@]} -ne 0 ]]; then
+	err_echo -e "${modes[@]}"
+fi
 
 if ! compiled_file=$(compile "$source_file" "$binary_file" "$prefix_count" "${prefix_flags[@]}" "$@"); then
 	err_echo "Error: Compilation failed!"
@@ -198,19 +199,23 @@ if [[ $test_samples -ne 0 ]]; then
 	sample_index=1
 	sample_total=0
 	sample_failed=0
-	for input_file in "$compiled_file"*.in; do
+
+	for input_file in "$(dirname "$compiled_file")"/*.in; do
 		if [[ -f "$input_file" ]]; then
 			((sample_total++))
-			run_with_sample "$compiled_file" $sample_index "$input_file" && ((sample_failed++))
+			run_with_sample "$compiled_file" $sample_index "$input_file" || ((sample_failed++))
 		fi
 	done
 
 	err_echo ""
 	if [[ sample_failed -ne 0 ]]; then
-		err_echo -e "\e[1m\e[31m$((sample_total - sample_failed)) / $sample_total tests passed.\e[0m"
+		err_echo -e "\e[1m\e[31m"
 	else
-		err_echo -e "\e[1m\e[32mAll tests passed.\e[0m"
+		err_echo -e "\e[1m\e[32m"
 	fi
+	err_echo -e "$((sample_total - sample_failed)) / $sample_total tests passed.\e[0m"
 else
 	run "$compiled_file" "${commands[@]}"
 fi
+
+err_echo "-- Done."
