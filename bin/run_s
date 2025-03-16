@@ -64,15 +64,15 @@ if [[ $? -eq 0 ]]; then
 			program_output=$(./"$output" <"$input_file" 2>/dev/null)
 			expected_output=$(cat "$output_file")
 
-			if [[ "$program_output" != "$expected_output" ]]; then
+			# Compare the expected output and the program output using diff
+			diff_output=$(diff <(echo "$expected_output") <(echo "$program_output"))
+			if [[ -n "$diff_output" ]]; then
 				echo "------------------------------------" >&2
 				echo "Test failed for $input_file!" >&2
 				echo "----------" >&2
-				echo "Expected:" >&2
-				echo "$expected_output" >&2
-				echo "----------" >&2
-				echo "Got:" >&2
-				echo "$program_output" >&2
+				echo "Expected vs Got:" >&2
+				# Display the diff output to show the difference
+				echo "$diff_output" >&2
 				echo "------------------------------------" >&2
 				((failed++))
 			fi

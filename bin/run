@@ -103,16 +103,15 @@ run_with_tc() {
 		exit 1
 	fi
 
-	if [[  ! "$_input_file" =~ ^.+\.in$ || ! -f "$_input_file" ]]; then
+	if [[ ! "$_input_file" =~ ^.+\.in$ || ! -f "$_input_file" ]]; then
 		err_echo "Error: File '$_input_file' is invalid!"
 		exit 1
 	fi
-	if [[  ! "$_output_file" =~ ^.+\.out$ || ! -f "$_output_file" ]]; then
+	if [[ ! "$_output_file" =~ ^.+\.out$ || ! -f "$_output_file" ]]; then
 		err_echo "Error: File '$_output_file' is invalid!"
 		exit 1
 	fi
 
-	
 }
 
 commands=()

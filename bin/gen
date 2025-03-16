@@ -5,7 +5,7 @@ err_echo() {
 }
 
 usage() {
-	err_echo "Usage: gen <testcase name>"
+	err_echo "Usage: gen <sample_name>"
 	exit 1
 }
 
@@ -13,20 +13,28 @@ if [[ $# -lt 1 ]]; then
 	usage
 fi
 
-filename="$1"
+sample_name="$1"
 
-if [[ -f "$filename.in" || -f "$filename.out" ]]; then
-	read -r -p "$filename.in or $filename.out already exists. Do you want to overwrite them? (y/n): " choice
+if [[ -z "$input_file" ]]; then
+	err_echo "Error: No sample name provided!"
+	exit 1
+fi
+
+input_file="$sample_name.in"
+output_file="$sample_name.out"
+
+if [[ -f "$input_file" || -f "$output_file" ]]; then
+	read -r -p "$input_file or $output_file already exists. Do you want to overwrite them? (y/n): " choice
 	case "$choice" in
 	y | Y)
-		err_echo "Overwriting $filename.in and $filename.out"
-		rm -f "$filename.in" "$filename.out"
-		touch "$filename.in" "$filename.out"
-		subl "$filename.in" "$filename.out"
+		err_echo "Overwriting $input_file and $output_file"
+		rm -f "$input_file" "$output_file"
+		touch "$input_file" "$output_file"
+		subl "$input_file" "$output_file"
 		;;
 	n | N)
-		err_echo "Keeping existing $filename.in and $filename.out"
-		subl "$filename.in" "$filename.out"
+		err_echo "Keeping existing $input_file and $output_file"
+		subl "$input_file" "$output_file"
 		;;
 	*)
 		err_echo "Invalid option. Exiting."
@@ -34,6 +42,6 @@ if [[ -f "$filename.in" || -f "$filename.out" ]]; then
 		;;
 	esac
 else
-	touch "$filename.in" "$filename.out"
-	subl "$filename.in" "$filename.out"
+	touch "$input_file" "$output_file"
+	subl "$input_file" "$output_file"
 fi
