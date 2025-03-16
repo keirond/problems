@@ -34,17 +34,17 @@ compile() {
 
 	if [[ -z "$_source_file" ]]; then
 		err_echo "Error: No source file provided!"
-		exit 1
+		return 1
 	fi
 
 	if [[ ! "$_source_file" =~ ^.+\.cpp$ || ! -f "$_source_file" ]]; then
 		err_echo "Error: File '$_source_file' is invalid!"
-		exit 1
+		return 1
 	fi
 
 	if [[ -z "$_output_file" ]]; then
 		err_echo "Error: No output file provided!"
-		exit 1
+		return 1
 	fi
 
 	check_todo "$_source_file"
@@ -57,7 +57,7 @@ compile() {
 		echo "$_output_file"
 	else
 		err_echo "Error: Compilation failed!"
-		exit 1
+		return 1
 	fi
 }
 
@@ -127,5 +127,9 @@ source_file="$1.cpp"
 output_file="$1"
 shift
 
-compiled_file=$(compile "$source_file" "$output_file" "$prefix_count" "${prefix_flags[@]}" "$@")
+if ! compiled_file=$(compile "$source_file" "$output_file" "$prefix_count" "${prefix_flags[@]}" "$@"); then
+	err_echo "Error: Compilation failed!"
+	exit 1
+fi
+
 run "$compiled_file" "${commands[@]}"
