@@ -8,17 +8,16 @@ fi
 filename="$1"
 
 if [[ -f "$filename.in" || -f "$filename.out" ]]; then
-	read -p "$filename.(in/out) already exists. Do you want to overwrite it? (y/n): " choice
+	read -r -p "$filename.in or $filename.out already exists. Do you want to overwrite them? (y/n): " choice
 	case "$choice" in
 	y | Y)
-		echo "Overwriting $filename.(in/out)"
+		echo "Overwriting $filename.in and $filename.out"
 		rm -f "$filename.in" "$filename.out"
-		touch "$filename.in"
-		touch "$filename.out"
+		touch "$filename.in" "$filename.out"
 		subl "$filename.in" "$filename.out"
 		;;
 	n | N)
-		echo "Keeping existing $filename.(in/out)"
+		echo "Keeping existing $filename.in and $filename.out"
 		subl "$filename.in" "$filename.out"
 		;;
 	*)
