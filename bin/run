@@ -125,10 +125,12 @@ run_with_sample() {
 	if [[ "$_expected_output" != "$_actual_output" ]]; then
 		local _failed_output_file="${_output_file%.out}.failed.out"
 		echo "$_actual_output" >"$_failed_output_file"
+		local _diff_hint="\e[1m\e[3mvimdiff $_output_file $_failed_output_file\e[0m"
+		sample_failed_diffs+=("\t$_index: $_diff_hint\n")
 
 		err_echo "--------------------------------------"
 		err_echo "Test failed for $_input_file!"
-		err_echo -e "Check with '\e[1m\e[3mvimdiff $_output_file $_failed_output_file\e[0m'"
+		err_echo -e "Check with '$_diff_hint'"
 		err_echo "----------------"
 		err_echo "Expected vs Got:"
 		err_echo "$_diff_output"
@@ -199,6 +201,7 @@ if [[ $test_samples -ne 0 ]]; then
 	sample_index=1
 	sample_total=0
 	sample_failed=0
+	sample_failed_diffs=()
 
 	for input_file in "$(dirname "$compiled_file")"/*.in; do
 		if [[ -f "$input_file" ]]; then
@@ -214,6 +217,10 @@ if [[ $test_samples -ne 0 ]]; then
 		err_echo -e "\e[1m\e[32m"
 	fi
 	err_echo -e "$((sample_total - sample_failed)) / $sample_total tests passed.\e[0m"
+
+	if [[ ${#sample_failed_diffs[@]} -ne 0 ]]; then
+		err_echo -e "${sample_failed_diffs[@]}"
+	fi
 else
 	run "$compiled_file" "${commands[@]}"
 fi
