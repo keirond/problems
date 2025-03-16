@@ -12,6 +12,7 @@ usage() {
 	err_echo "  -g, --gdb       Debug with GNU Debugger."
 	err_echo "  -d, --debug     Enable DEBUG macro."
 	err_echo " 	-s, --samples	Run with generated samples (.in) then comparing with expected outputs (.out)."
+	err_echo "					The prefix file name of '.in', '.out' is same as the executable."
 	err_echo ""
 	err_echo "Flags:"
 	err_echo "  Any additional flags will be passed directly to g++ compilation."
@@ -90,9 +91,62 @@ run() {
 	eval "${_commands[*]}"
 }
 
+run_with_sample() {
+	local _binary_file="$1"
+	local _index="$2"
+	local _input_file="$3"
+
+	if [[ -z "$_input_file" ]]; then
+		err_echo "Error: No input sample ($_index) provided!"
+		return 1
+	fi
+	if [[ ! "$_input_file" =~ ^.+\.in$ || ! -f "$_input_file" ]]; then
+		err_echo "Error: File '$_input_file' is invalid!"
+		return 1
+	fi
+
+	local _output_file="${_input_file%.in}.out"
+	if [[ -z "$_output_file" ]]; then
+		err_echo "Error: No output sample ($_index) provided!"
+		return 1
+	fi
+	if [[ ! "$_output_file" =~ ^.+\.out$ || ! -f "$_output_file" ]]; then
+		err_echo "Error: File '$_output_file' is invalid!"
+		return 1
+	fi
+
+	local _expected_output
+	local _actual_output
+	local _diff_output
+
+	_expected_output=$(cat "$_output_file")
+	_actual_output=$(./"$_binary_file" <"$_input_file" 2>/dev/null)
+	_diff_output=$(diff <(echo "$_expected_output") <(echo "$_actual_output"))
+
+	if [[ "$_expected_output" != "$_actual_output" ]]; then
+		local _failed_output="${_expected_output%.out}.failed.out"
+		echo "$_actual_output" >"$_failed_output"
+
+		err_echo "------------------------------------"
+		err_echo "Test failed for $_input_file!"
+		err_echo "Check with 'vimdiff $_expected_output $_failed_output'"
+		err_echo "----------"
+		err_echo "Expected vs Got:"
+		err_echo "$_diff_output"
+		err_echo "------------------------------------"
+
+		return 1
+	fi
+
+	return 0
+}
+
+modes=()
 commands=()
 prefix_flags=()
 prefix_count=0
+
+test_samples=0
 
 while [[ $# -gt 0 && $1 == -* ]]; do
 	case "$1" in
@@ -101,16 +155,21 @@ while [[ $# -gt 0 && $1 == -* ]]; do
 		shift
 		;;
 	-g | --gdb)
-		err_echo -e "\e[1m[GDB MODE]\e[0m"
+		modes+=("\e[1m[GDB]\e[0m")
 		prefix_flags+=("-g")
 		((prefix_count++))
 		commands+=("gdb -q")
 		shift
 		;;
 	-d | --debug)
-		err_echo -e "\e[1m[DEBUG MODE]\e[0m"
+		modes+=("\e[1m[DEBUG]\e[0m")
 		prefix_flags+=("-DDEBUG")
 		((prefix_count++))
+		shift
+		;;
+	-s | --samples)
+		modes+=("\e[1m[SAMPLES TESTING]\e[0m")
+		test_samples=1
 		shift
 		;;
 	*)
@@ -125,12 +184,33 @@ if [[ $# -lt 1 ]]; then
 fi
 
 source_file="$1.cpp"
-output_file="$1"
+binary_file="$1"
 shift
 
-if ! compiled_file=$(compile "$source_file" "$output_file" "$prefix_count" "${prefix_flags[@]}" "$@"); then
+err_echo "${modes[@]}"
+
+if ! compiled_file=$(compile "$source_file" "$binary_file" "$prefix_count" "${prefix_flags[@]}" "$@"); then
 	err_echo "Error: Compilation failed!"
 	exit 1
 fi
 
-run "$compiled_file" "${commands[@]}"
+if [[ $test_samples -ne 0 ]]; then
+	sample_index=1
+	sample_total=0
+	sample_failed=0
+	for input_file in $compiled_file*.in; do
+		if [[ -f "$input_file" ]]; then
+			((sample_total++))
+			run_with_sample "$compiled_file" $sample_index "$input_file" && ((sample_failed++))
+		fi
+	done
+
+	err_echo ""
+	if [[ sample_failed -ne 0 ]]; then
+		err_echo -e "\e[1m\e[31m$(($sample_total - $sample_failed)) / $sample_total tests passed.\e[0m"
+	else
+		err_echo -e "\e[1m\e[32mAll tests passed.\e[0m"
+	fi
+else
+	run "$compiled_file" "${commands[@]}"
+fi

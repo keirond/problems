@@ -8,7 +8,7 @@ usage() {
 	err_echo "Usage: clean [options]"
 	err_echo ""
 	err_echo "Options:"
-	err_echo "  -b, --binaries  Clean all executable files in the current directory."
+	err_echo "  -b, --binaries  Clean all executables in the current directory."
 	err_echo "  -s, --samples   Clean all samples (.in/.out) in the current directory."
 	exit 1
 }
