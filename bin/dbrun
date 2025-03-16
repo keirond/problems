@@ -9,7 +9,7 @@ usage() {
 	err_echo ""
 	err_echo "Options:"
 	err_echo "  -t, --time      Measure and display the runtime"
-	err_echo "  -g, --gdb       Run with GNU Debugger"
+	err_echo "  -g, --gdb       Debug with GNU Debugger"
 	err_echo "  -d, --debug     Enable DEBUG macro"
 	err_echo ""
 	err_echo "Flags:"
@@ -37,7 +37,7 @@ compile() {
 		exit 1
 	fi
 
-	if [[ "$_source_file" == ".cpp" || "$_source_file" != *.cpp || ! -f "$_source_file" ]]; then
+	if [[ ! "$_source_file" =~ ^.+\.cpp$ || ! -f "$_source_file" ]]; then
 		err_echo "Error: File '$_source_file' is invalid!"
 		exit 1
 	fi
@@ -100,14 +100,14 @@ while [[ $# -gt 0 && $1 == -* ]]; do
 		shift
 		;;
 	-g | --gdb)
-		err_echo "[GDB MODE]"
+		err_echo -e "\e[1m[GDB MODE]\e[0m"
 		prefix_flags+=("-g")
 		((prefix_count++))
 		commands+=("gdb -q")
 		shift
 		;;
 	-d | --debug)
-		err_echo "[DEBUG MODE]"
+		err_echo -e "\e[1m[DEBUG MODE]\e[0m"
 		prefix_flags+=("-DDEBUG")
 		((prefix_count++))
 		shift
