@@ -1,0 +1,50 @@
+#!/bin/bash
+
+highlight_diff() {
+    local _expected="$1"
+    local _actual="$2"
+    
+    local _expected_output=""
+    local _actual_output=""
+
+    local i=0
+    local len1=${#expected}
+    local len2=${#actual}
+    local min_len=$(( len1 < len2 ? len1 : len2 ))
+
+    while [[ $i -lt $min_len ]]; do
+        if [[ "${expected:i:1}" == "${actual:i:1}" ]]; then
+            _expected_output+="${expected:i:1}"
+            _actual_output+="${expected:i:1}"
+        else
+            _expected_output+='\e[38;5;214m'"${expected:i:1}"'\e[0m'
+            _actual_output+='\e[38;5;214m'"${expected:i:1}"'\e[0m'
+        fi
+        ((i++))
+    done
+
+    # If the expected string is longer, highlight the remaining characters in red
+    if [[ $i -lt $len1 ]]; then
+        output+='\e[38;5;196m'"${expected:i}"'\e[0m'
+    # If the actual string is longer, highlight the remaining characters in green
+    elif [[ $i -lt $len2 ]]; then
+        output+='\e[38;5;46m'"${actual:i}"'\e[0m'
+    fi
+
+    echo -e "$output"
+}
+
+# Test the function with example input
+expected="abc"
+actual="abdce f"
+
+# Call the function and get the highlighted output
+highlighted_output=$(highlight_diff "$expected" "$actual")
+
+# Display the result
+echo "Expected: $expected"
+echo "Actual:   $actual"
+echo "Highlighted Output: $highlighted_output"
+
+# Optionally, write to a file
+echo -e "$highlighted_output" > compared_sample.out

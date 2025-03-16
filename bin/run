@@ -30,7 +30,7 @@ compile() {
 	local _prefix_flag_count="$3"
 	local _prefix_flags=("${@:4:$_prefix_flag_count}")
 	local _source_file="$1"
-	local _output_file="$2"
+	local _binary_file="$2"
 	local _postfix_flags=("${@:4+$_prefix_flag_count}")
 
 	if [[ -z "$_source_file" ]]; then
@@ -43,8 +43,8 @@ compile() {
 		return 1
 	fi
 
-	if [[ -z "$_output_file" ]]; then
-		err_echo "Error: No output file provided!"
+	if [[ -z "$_binary_file" ]]; then
+		err_echo "Error: No executable file provided!"
 		return 1
 	fi
 
@@ -54,8 +54,8 @@ compile() {
 
 	# "$_debugging_options" $_preprocessor_defines "$_include_paths" "$_libraries"
 	if g++ "$_compile_options" "${_warning_flags[@]}" "$_optimization_flags" \
-		"${_prefix_flags[@]}" "$_source_file" -o "$_output_file" "${_postfix_flags[@]}"; then
-		echo "$_output_file"
+		"${_prefix_flags[@]}" "$_source_file" -o "$_binary_file" "${_postfix_flags[@]}"; then
+		echo "$_binary_file"
 	else
 		err_echo "Error: Compilation failed!"
 		return 1
@@ -75,43 +75,19 @@ check_todo() {
 }
 
 run() {
-	local _output_file="$1"
+	local _binary_file="$1"
 	shift
 	local _commands=("$@")
 
-	if [[ -z "$_output_file" ]]; then
-		err_echo "Error: No output file provided!"
+	if [[ -z "$_binary_file" ]]; then
+		err_echo "Error: No executable file provided!"
 		exit 1
 	fi
 
-	err_echo "Running $_output_file with C++20."
+	err_echo "Running $_binary_file with C++20."
 
-	_commands+=("./$_output_file")
+	_commands+=("./$_binary_file")
 	eval "${_commands[*]}"
-}
-
-run_with_tc() {
-	local _input_file="$1"
-	local _output_file="${_input_file%.in}.out"
-
-	if [[ -z "$_input_file" ]]; then
-		err_echo "Error: No input file provided!"
-		exit 1
-	fi
-	if [[ -z "$_output_file" ]]; then
-		err_echo "Error: No output file provided!"
-		exit 1
-	fi
-
-	if [[ ! "$_input_file" =~ ^.+\.in$ || ! -f "$_input_file" ]]; then
-		err_echo "Error: File '$_input_file' is invalid!"
-		exit 1
-	fi
-	if [[ ! "$_output_file" =~ ^.+\.out$ || ! -f "$_output_file" ]]; then
-		err_echo "Error: File '$_output_file' is invalid!"
-		exit 1
-	fi
-
 }
 
 commands=()
