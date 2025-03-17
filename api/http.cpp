@@ -14,8 +14,6 @@ size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* userp) {
 	return totalSize;
 }
 
-// TODO: hello
-
 void solve() {
 	CURL* curl = curl_easy_init();
 	if (!curl) return;

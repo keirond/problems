@@ -117,60 +117,7 @@ template <typename T, typename... V> void _print(T t, V... v) {
 
 // --------------------------------------------------------------------------
 
-struct STree {
-	int n;
-	vector<int> stree;
-
-	STree(vector<int> &nums) {
-		n = nums.size();
-		stree.assign(2 * n, 0);
-
-		for (int i = 0; i < n; ++i) {
-			stree[i + n] = nums[i];
-		}
-		for (int i = n - 1; i > 0; --i) {
-			stree[i] = min(stree[i * 2], stree[i * 2 + 1]);
-		}
-	}
-
-	void update(int i, int val) {
-		for (stree[i += n] = val; i > 1; i /= 2) {
-			stree[i >> 1] = min(stree[i], stree[i ^ 1]);
-		}
-	}
-
-	int query(int l, int r) {
-		int ans = INT_MAX;
-		for (l += n, r += n; l <= r; l /= 2, r /= 2) {
-			if (l & 1) ans = min(ans, stree[l++]);
-			if (!(r & 1)) ans = min(ans, stree[r--]);
-		}
-		return ans;
-	}
-};
-
-void solve(int test_case [[maybe_unused]]) {
-	int N, M;
-	cin >> N >> M;
-	vector<int> nums(N);
-	for (int i = 0; i < N; ++i) {
-		int val;
-		cin >> val;
-		nums[i] = val;
-	}
-
-	STree stree = STree(nums);
-	for (int i = 0; i < M; ++i) {
-		char t;
-		cin >> t;
-		int l, r;
-		cin >> l >> r;
-		if (t == 'q')
-			cout << stree.query(l - 1, r - 1) << '\n';
-		else if (t == 'u')
-			stree.update(l - 1, r);
-	}
-}
+void solve(int test_case [[maybe_unused]]) {}
 
 int main() {
 	ios::sync_with_stdio(0), cin.tie(0), cout.tie(0);
