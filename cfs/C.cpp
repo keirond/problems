@@ -117,12 +117,103 @@ template <typename T, typename... V> void _print(T t, V... v) {
 
 // --------------------------------------------------------------------------
 
-void solve(int test_case [[maybe_unused]]) {}
+struct STree {
+	int n;
+	vector<int> tree, lazy;
+
+	STree(vector<int> &nums) {
+		n = nums.size();
+		tree.assign(4 * n, 0);
+		lazy.assign(4 * n, 0);
+		build(nums, 1, 0, n - 1);
+	}
+
+	void build(vector<int> &nums, int node, int l, int r) {
+		if (l == r) {
+			tree[node] = nums[l];
+			return;
+		}
+		int m = l + (r - l >> 1);
+		build(nums, node << 1, l, m);
+		build(nums, node << 1 | 1, m + 1, r);
+		tree[node] = min(tree[node << 1], tree[node << 1 | 1]);
+	}
+
+	void push(int node, int l, int r) {
+		if (lazy[node]) {
+			tree[node] += lazy[node];
+			if (l != r) {
+				lazy[node << 1] += lazy[node];
+				lazy[node << 1 | 1] += lazy[node];
+			}
+			lazy[node] = 0;
+		}
+	}
+
+	void update(int node, int l, int r, int ql, int qr, int val) {
+		push(node, l, r);
+		if (qr < l || ql > r) return;
+		if (ql <= l && r <= qr) {
+			lazy[node] += val;
+			push(node, l, r);
+			return;
+		}
+		int m = l + (r - l >> 1);
+		update(node << 1, l, m, ql, qr, val);
+		update(node << 1 | 1, m + 1, r, ql, qr, val);
+		tree[node] = min(tree[node << 1], tree[node << 1 | 1]);
+	}
+
+	int query(int node, int l, int r, int ql, int qr) {
+		push(node, l, r);
+		if (qr < l || ql > r) return 0;
+		if (ql <= l && r <= qr) return tree[node];
+		int m = l + (r - l >> 1);
+		return min(query(node << 1, l, m, ql, qr),
+				   query(node << 1 | 1, m + 1, r, ql, qr));
+	}
+
+	void update(int l, int r, int val) { update(1, 0, n - 1, l, r, val); }
+
+	int query(int l, int r) { return query(1, 0, n - 1, l, r); }
+};
+
+void solve(int test_case [[maybe_unused]]) {
+	int N;
+	cin >> N;
+	vector<int> nums;
+	for (int i = 0; i < N; ++i) {
+		int val;
+		cin >> val;
+		nums.push_back(val);
+	}
+
+	STree stree = STree(nums);
+
+	int Q;
+	cin >> Q;
+	cin.ignore();
+	while (Q--) {
+		string str;
+		getline(cin, str);
+		stringstream ss(str);
+		int val;
+		vector<int> t;
+		while (ss >> val) {
+			t.push_back(val);
+		}
+		if (t.size() == 2) {
+			cout << stree.query(t[0], t[1]) << nl;
+		} else if (t.size() == 3) {
+			stree.update(t[0], t[1], t[2]);
+		}
+	}
+}
 
 int main() {
 	ios::sync_with_stdio(0), cin.tie(0), cout.tie(0);
 	int test_cases = 1;
-	cin >> test_cases;
+	// cin >> test_cases;
 	while (test_cases--) {
 		solve(test_cases);
 		cout << flush;
