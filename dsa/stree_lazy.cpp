@@ -8,8 +8,8 @@ struct STree {
 
 	STree(vector<int> &nums) {
 		n = nums.size();
-		tree.assign(4 * n, 0);
-		lazy.assign(4 * n, 0);
+		tree.assign(n << 2, 0);
+		lazy.assign(n << 2, 0);
 		build(nums, 1, 0, n - 1);
 	}
 
