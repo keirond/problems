@@ -4,7 +4,7 @@ using namespace std;
 
 struct STree {
 	int n;
-	vector<int> tree, lazy;
+	vector<long long> tree, lazy;
 
 	STree(vector<int> &nums) {
 		n = nums.size();
@@ -49,7 +49,7 @@ struct STree {
 		tree[node] = tree[node << 1] + tree[node << 1 | 1];
 	}
 
-	int query(int node, int l, int r, int ql, int qr) {
+	long long query(int node, int l, int r, int ql, int qr) {
 		push(node, l, r);
 		if (qr < l || ql > r) return 0;
 		if (ql <= l && r <= qr) return tree[node];
@@ -60,7 +60,7 @@ struct STree {
 
 	void update(int l, int r, int val) { update(1, 0, n - 1, l, r, val); }
 
-	int query(int l, int r) { return query(1, 0, n - 1, l, r); }
+	long long query(int l, int r) { return query(1, 0, n - 1, l, r); }
 };
 
 int main() { return 1; }
