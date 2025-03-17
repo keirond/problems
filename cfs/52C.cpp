@@ -166,7 +166,7 @@ struct STree {
 
 	int query(int node, int l, int r, int ql, int qr) {
 		push(node, l, r);
-		if (qr < l || ql > r) return 0;
+		if (qr < l || ql > r) return INT_MAX;
 		if (ql <= l && r <= qr) return tree[node];
 		int m = l + (r - l >> 1);
 		return min(query(node << 1, l, m, ql, qr),
@@ -180,7 +180,7 @@ struct STree {
 
 void solve(int test_case [[maybe_unused]]) {
 	int N;
-	cin >> N;
+	cin >> N, cin.ignore();
 	vector<int> nums;
 	for (int i = 0; i < N; ++i) {
 		int val;
@@ -191,8 +191,7 @@ void solve(int test_case [[maybe_unused]]) {
 	STree stree = STree(nums);
 
 	int Q;
-	cin >> Q;
-	cin.ignore();
+	cin >> Q, cin.ignore();
 	while (Q--) {
 		string str;
 		getline(cin, str);
@@ -203,9 +202,18 @@ void solve(int test_case [[maybe_unused]]) {
 			t.push_back(val);
 		}
 		if (t.size() == 2) {
-			cout << stree.query(t[0], t[1]) << nl;
+			if (t[0] <= t[1])
+				cout << stree.query(t[0], t[1]) << nl;
+			else
+				cout << (int)min(stree.query(t[0], N - 1), stree.query(0, t[1]))
+					 << nl;
 		} else if (t.size() == 3) {
-			stree.update(t[0], t[1], t[2]);
+			if (t[0] <= t[1])
+				stree.update(t[0], t[1], t[2]);
+			else {
+				stree.update(t[0], N - 1, t[2]);
+				stree.update(0, t[1], t[2]);
+			}
 		}
 	}
 }
