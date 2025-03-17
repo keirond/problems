@@ -123,6 +123,14 @@ template <typename T> void __read(stringstream &ss, vector<T> &values) {
 	}
 }
 
+template <typename T, typename... V> void _read(T &t, V &...v) {
+	string str;
+	getline(cin, str);
+	stringstream ss(str);
+	__read(ss, t);
+	_read(v...);
+}
+
 // --------------------------------------------------------------------------
 
 template <typename T> void __print(const T &x);
@@ -196,68 +204,69 @@ template <typename T, typename... V> void _print(T t, V... v) {
 
 // --------------------------------------------------------------------------
 
-vector<int> productQueries(int N, vector<vector<int>> &queries) {
-	int mod = 1e9 + 7;
-
-	vector<int> nums;
-	int t = 30;
-	while (N > 0 && t >= 0) {
-		if (N >= (1 << t)) {
-			nums.push_back(1 << t);
-			N -= 1 << t;
-		}
-		t--;
-	}
-	reverse(nums.begin(), nums.end());
-	dbg(nums)
-
-		int n = nums.size();
-	vector<int> stree(2 * n, 1);
-
-	for (int i = 0; i < n; ++i) {
-		stree[i + n] = nums[i];
-	}
-	for (int i = n - 1; i > 0; --i) {
-		stree[i] = ((long long)stree[i * 2] * stree[i * 2 + 1]) % mod;
-	}
-
-	vector<int> ans;
-	for (auto &d : queries) {
-		int l = d[0], r = d[1];
-		int val = 1;
-		for (l += n, r += n; l <= r; l /= 2, r /= 2) {
-			if (l & 1) val = ((long long)val * stree.at(l++)) % mod;
-			if (!(r & 1)) val = ((long long)val * stree.at(r--)) % mod;
-		}
-		ans.push_back(val);
-	}
-	return ans;
-}
-
-void solve(int test_case [[maybe_unused]]) {
-	string str;
-	stringstream ss;
-
+struct STree {
 	int n;
-	getline(cin, str);
-	ss.clear();
-	ss.str(str);
-	__read(ss, n);
+	vector<int> tree, lazy;
 
-	vector<vector<int>> nums;
-	getline(cin, str);
-	ss.clear();
-	ss.str(str);
-	__read(ss, nums);
+	STree(vector<int> &nums) {
+		n = nums.size();
+		tree.assign(n << 2, 0);
+		lazy.assign(n << 2, 0);
 
-	vector<int> ans = productQueries(n, nums);
-	cout << '[';
-	for (int i = 0; i < sz(ans); ++i) {
-		if (i != 0) cout << ',';
-		cout << ans[i];
+		build(nums, 1, 0, n - 1);
 	}
-	cout << ']';
-}
+
+	void build(vector<int> &nums, int node, int l, int r) {
+		if (l == r) {
+			tree[node] = nums[l];
+			return;
+		}
+		int m = l + (r - l >> 1);
+		build(nums, node << 1, l, m);
+		build(nums, node << 1 | 1, m + 1, r);
+		tree[node] = tree[node << 1] + tree[node << 1 | 1];
+	}
+
+	void push(int node, int l, int r) {
+		if (lazy[node]) {
+			tree[node] += lazy[node] * (r - l + 1);
+			if (l != r) {
+				lazy[node << 1] += lazy[node];
+				lazy[node << 1 | 1] += lazy[node];
+			}
+			lazy[node] = 0;
+		}
+	}
+
+	void update(int node, int l, int r, int ql, int qr, int val) {
+		push(node, l, r);
+		if (qr < l || r < ql) return;
+		if (ql <= l && r <= qr) {
+			lazy[node] += val;
+			push(node, l, r);
+			return;
+		}
+		int m = l + (r - l >> 1);
+		update(node << 1, l, m, ql, qr, val);
+		update(node << 1 | 1, m + 1, r, ql, qr, val);
+		tree[node] = tree[node << 1] + tree[node << 1 | 1];
+	}
+
+	int query(int node, int l, int r, int ql, int qr) {
+		push(node, l, r);
+		if (qr < l || ql > r) return 0;
+		if (ql <= l && r <= qr) return tree[node];
+		int m = l + (r - l >> 1);
+		return query(node << 1, l, m, ql, qr) +
+			   query(node << 1 | 1, m + 1, r, ql, qr);
+	}
+
+	void update(int l, int r, int val) { update(1, 0, n - 1, l, r, val); }
+
+	int query(int l, int r) { return query(1, 0, n - 1, l, r); }
+};
+
+void solve(int test_case [[maybe_unused]]) {}
 
 int main() {
 	ios::sync_with_stdio(0), cin.tie(0), cout.tie(0);

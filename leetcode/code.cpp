@@ -123,6 +123,14 @@ template <typename T> void __read(stringstream &ss, vector<T> &values) {
 	}
 }
 
+template <typename T, typename... V> void _read(T &t, V &...v) {
+	string str;
+	getline(cin, str);
+	stringstream ss(str);
+	__read(ss, t);
+	_read(v...);
+}
+
 // --------------------------------------------------------------------------
 
 template <typename T> void __print(const T &x);
