@@ -119,7 +119,7 @@ template <typename T, typename... V> void _print(T t, V... v) {
 
 struct STree {
 	int n;
-	vector<int> tree, lazy;
+	vl tree, lazy;
 
 	STree(vector<int> &nums) {
 		n = nums.size();
@@ -128,7 +128,7 @@ struct STree {
 		build(nums, 1, 0, n - 1);
 	}
 
-	void build(vector<int> &nums, int node, int l, int r) {
+	void build(vi &nums, int node, int l, int r) {
 		if (l == r) {
 			tree[node] = nums[l];
 			return;
@@ -164,7 +164,7 @@ struct STree {
 		tree[node] = min(tree[node << 1], tree[node << 1 | 1]);
 	}
 
-	int query(int node, int l, int r, int ql, int qr) {
+	ll query(int node, int l, int r, int ql, int qr) {
 		push(node, l, r);
 		if (qr < l || ql > r) return INT_MAX;
 		if (ql <= l && r <= qr) return tree[node];
@@ -175,7 +175,7 @@ struct STree {
 
 	void update(int l, int r, int val) { update(1, 0, n - 1, l, r, val); }
 
-	int query(int l, int r) { return query(1, 0, n - 1, l, r); }
+	ll query(int l, int r) { return query(1, 0, n - 1, l, r); }
 };
 
 void solve(int test_case [[maybe_unused]]) {
@@ -188,7 +188,7 @@ void solve(int test_case [[maybe_unused]]) {
 		nums.push_back(val);
 	}
 
-	STree stree = STree(nums);
+	auto stree = STree(nums);
 
 	int Q;
 	cin >> Q, cin.ignore();
