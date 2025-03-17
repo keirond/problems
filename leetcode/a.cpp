@@ -212,7 +212,6 @@ struct STree {
 		n = nums.size();
 		tree.assign(n << 2, 0);
 		lazy.assign(n << 2, 0);
-
 		build(nums, 1, 0, n - 1);
 	}
 
