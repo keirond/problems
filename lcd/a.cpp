@@ -43,6 +43,18 @@ constexpr ll LINF [[maybe_unused]] = LLONG_MAX;
 constexpr char nl [[maybe_unused]] = '\n';
 
 // --------------------------------------------------------------------------
+
+template <class T> using max_heap = priority_queue<T>;
+template <class T> using min_heap = priority_queue<T, vector<T>, greater<T>>;
+
+string to_upper(string a) {
+	return transform(a.begin(), a.end(), a.begin(), ::toupper), a;
+}
+string to_lower(string a) {
+	return transform(a.begin(), a.end(), a.begin(), ::tolower), a;
+}
+
+// --------------------------------------------------------------------------
 // Data structures (only Leetcode)
 
 template <typename T> struct LinkedListNode;
@@ -115,18 +127,6 @@ template <typename T, typename... V> void __read(T &t, V &...v) {
 	stringstream ss(str);
 	__cin(ss, t);
 	__read(v...);
-}
-
-// --------------------------------------------------------------------------
-
-template <class T> using max_heap = priority_queue<T>;
-template <class T> using min_heap = priority_queue<T, vector<T>, greater<T>>;
-
-string to_upper(string a) {
-	return transform(a.begin(), a.end(), a.begin(), ::toupper), a;
-}
-string to_lower(string a) {
-	return transform(a.begin(), a.end(), a.begin(), ::tolower), a;
 }
 
 // --------------------------------------------------------------------------
