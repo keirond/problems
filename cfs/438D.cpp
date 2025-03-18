@@ -117,7 +117,104 @@ template <typename T, typename... V> void _print(T t, V... v) {
 
 // **************************************************************************
 
-void solve(int test_case [[maybe_unused]]) {}
+struct STree {
+	int n;
+	vector<pair<long long, long long>> tree;
+
+	STree(vector<int> &nums) {
+		n = nums.size();
+		tree.assign(n << 2, {0, 0});
+		build(nums, 1, 0, n - 1);
+	}
+
+	void apply(int i) {
+		tree[i].first = tree[i << 1].first + tree[i << 1 | 1].first;
+		tree[i].second = max(tree[i << 1].second, tree[i << 1 | 1].second);
+	}
+
+	void build(vector<int> &nums, int node, int l, int r) {
+		if (l == r) {
+			tree[node] = {nums[l], nums[l]};
+			return;
+		}
+		int m = l + (r - l >> 1);
+		build(nums, node << 1, l, m);
+		build(nums, node << 1 | 1, m + 1, r);
+		apply(node);
+	}
+
+	void update(int node, int l, int r, int i, int val) {
+		if (l == r) {
+			tree[node] = {val, val};
+			return;
+		}
+		int m = l + (r - l >> 1);
+		if (i <= m)
+			update(node << 1, l, m, i, val);
+		else
+			update(node << 1 | 1, m + 1, r, i, val);
+		apply(node);
+	}
+
+	void update(int i, int val) { update(1, 0, n - 1, i, val); }
+
+	void update_mod(int node, int l, int r, int ql, int qr, int mod) {
+		if (tree[node].second < mod) return;
+		if (qr < l || ql > r) return;
+		if (l == r) {
+			tree[node].first %= mod;
+			tree[node].second %= mod;
+			return;
+		}
+		int m = l + (r - l >> 1);
+		update_mod(node << 1, l, m, ql, qr, mod);
+		update_mod(node << 1 | 1, m + 1, r, ql, qr, mod);
+		apply(node);
+	}
+
+	void update_mod(int l, int r, int mod) {
+		update_mod(1, 0, n - 1, l, r, mod);
+	}
+
+	long long query(int node, int l, int r, int ql, int qr) {
+		if (qr < l || ql > r) return 0;
+		if (ql <= l && r <= qr) return tree[node].first;
+		int m = l + (r - l >> 1);
+		return query(node << 1, l, m, ql, qr) +
+			   query(node << 1 | 1, m + 1, r, ql, qr);
+	}
+	long long query(int l, int r) { return query(1, 0, n - 1, l, r); }
+};
+
+void solve(int test_case [[maybe_unused]]) {
+	int N, M;
+	cin >> N >> M;
+	vector<int> nums(N);
+	for (int i = 0; i < N; ++i) {
+		int val;
+		cin >> val;
+		nums[i] = val;
+	}
+	cin.ignore();
+
+	auto stree = STree(nums);
+
+	while (M--) {
+		vector<int> t;
+		string str;
+		getline(cin, str);
+		stringstream ss(str);
+		int val;
+		while (ss >> val) t.push_back(val);
+		if (t[0] == 1) {
+			cout << stree.query(t[1] - 1, t[2] - 1) << nl;
+		} else if (t[0] == 2) {
+			stree.update_mod(t[1] - 1, t[2] - 1, t[3]);
+		} else if (t[0] == 3) {
+			stree.update(t[1] - 1, t[2]);
+		}
+	}
+}
 
 // **************************************************************************
 
