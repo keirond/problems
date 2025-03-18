@@ -126,7 +126,7 @@ struct STree {
 		n = nums.size();
 		tree.assign(n << 2, 0);
 		lazy.assign(n << 2, 0);
-		pending.assign(n << 2, 0);
+		pending.assign(n << 2, false);
 		build(nums, 1, 0, n - 1);
 	}
 
@@ -149,7 +149,6 @@ struct STree {
 				lazy[node << 1 | 1] = lazy[node];
 				pending[node << 1] = pending[node << 1 | 1] = true;
 			}
-			lazy[node] = 0;
 			pending[node] = false;
 		}
 	}
@@ -159,6 +158,7 @@ struct STree {
 		if (qr < l || ql > r) return;
 		if (ql <= l && r <= qr) {
 			lazy[node] = val;
+			pending[node] = true;
 			push(node, l, r);
 			return;
 		}
@@ -206,18 +206,9 @@ void solve(int test_case [[maybe_unused]]) {
 			t.push_back(val);
 		}
 		if (t.size() == 2) {
-			if (t[0] <= t[1])
-				cout << stree.query(t[0], t[1]) << nl;
-			else
-				cout << (int)min(stree.query(t[0], N - 1), stree.query(0, t[1]))
-					 << nl;
+			cout << stree.query(t[0], t[1]) << nl;
 		} else if (t.size() == 3) {
-			if (t[0] <= t[1])
-				stree.update(t[0], t[1], t[2]);
-			else {
-				stree.update(t[0], N - 1, t[2]);
-				stree.update(0, t[1], t[2]);
-			}
+			stree.update(t[0], t[1], t[2]);
 		}
 	}
 }

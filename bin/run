@@ -5,7 +5,7 @@ err_echo() {
 }
 
 usage() {
-	err_echo "Usage: run [options] <source_file (without .cpp)> [flags]"
+	err_echo "Usage: run [options] <source_file> [flags]"
 	err_echo ""
 	err_echo "Options:"
 	err_echo "	-t,	--time		Measure and display the runtime."
@@ -81,7 +81,7 @@ run() {
 
 	if [[ -z "$_binary_file" ]]; then
 		err_echo "Error: No executable file provided!"
-		exit 1
+		return 1
 	fi
 
 	err_echo "Running $_binary_file with C++20."
@@ -186,8 +186,8 @@ if [[ $# -lt 1 ]]; then
 	usage
 fi
 
-source_file="$1.cpp"
-binary_file="$1.out"
+source_file="$1"
+binary_file="${source_file%.cpp}.out"
 shift
 
 if [[ ${#modes[@]} -ne 0 ]]; then
@@ -223,7 +223,10 @@ if [[ $test_samples -ne 0 ]]; then
 		err_echo -e "${sample_failed_diffs[@]}"
 	fi
 else
-	run "$compiled_file" "${commands[@]}"
+	if ! run "$compiled_file" "${commands[@]}"; then
+		err_echo "-- Run failed."
+		exit 1
+	fi
 fi
 
 err_echo "-- Done."
