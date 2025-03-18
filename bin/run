@@ -51,6 +51,11 @@ compile() {
 
 	check_todo "$_source_file"
 
+	if [[ -f "$_binary_file" && "$_source_file" -ot "$_binary_file" ]]; then
+		echo "$_binary_file"
+		return 0
+	fi
+
 	err_echo "Compiling $_source_file with C++20."
 
 	# "$_debugging_options" $_preprocessor_defines "$_include_paths" "$_libraries"
