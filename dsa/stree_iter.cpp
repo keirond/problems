@@ -4,7 +4,7 @@ using namespace std;
 
 struct STree {
 	int n;
-	vector<int> tree;
+	vector<long long> tree;
 
 	STree(vector<int> &nums) {
 		n = nums.size();
@@ -24,7 +24,7 @@ struct STree {
 		}
 	}
 
-	int query(int l, int r) {
+	long long query(int l, int r) {
 		int ans = 0;
 		for (l += n, r += n; l <= r; l >>= 1, r >>= 1) {
 			if (l & 1) ans += tree[l++];
