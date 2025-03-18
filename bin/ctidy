@@ -5,7 +5,7 @@ err_echo() {
 }
 
 usage() {
-	err_echo "Usage: ctidy <source_file (without .cpp)> [flags]"
+	err_echo "Usage: ctidy <source_file> [flags]"
 	err_echo ""
 	err_echo "Flags:"
 	err_echo "  Any additional flags will be passed directly to g++ compilation."
@@ -17,7 +17,7 @@ if [[ $# -lt 1 ]]; then
 	usage
 fi
 
-source_file="$1.cpp"
+source_file="$1"
 shift
 
 if [[ -z "$source_file" ]]; then
