@@ -36,182 +36,105 @@ template <typename T> struct BinaryTreeNode {
 // --------------------------------------------------------------------------
 // Read methods (only Leetcode)
 
-template <typename T> void __read(stringstream &ss, T &value) { ss >> value; }
+template <typename T> void __cin(stringstream &ss, T &value) { ss >> value; }
 
-void __read(stringstream &ss, char &value) {
+void __cin(stringstream &ss, char &value) {
 	char c;
 	ss >> c >> value >> c;
 }
 
-void __read(stringstream &ss, string &value) {
+void __cin(stringstream &ss, string &value) {
 	char c;
 	ss >> c, getline(ss, value, '"');
 }
 
 template <typename T, typename V>
-void __read(stringstream &ss, pair<T, V> &values) {
+void __cin(stringstream &ss, pair<T, V> &values) {
 	char c;
 	ss >> c;
-	__read(ss, values.first);
+	__cin(ss, values.first);
 	ss >> c;
-	__read<V>(ss, values.second);
+	__cin<V>(ss, values.second);
 	ss >> c;
 }
 
-template <typename T> void __read(stringstream &ss, vector<T> &values) {
+template <typename T> void __cin(stringstream &ss, vector<T> &values) {
 	char c;
 	ss >> c;
 
 	while (ss.peek() != ']') {
 		T value;
-		__read(ss, value);
+		__cin(ss, value);
 		values.push_back(value);
 		ss >> c;
 		if (c == ']') break;
 	}
 }
 
-template <typename T, typename... V> void _read(T &t, V &...v) {
+template <typename T, typename... V> void __read(T &t, V &...v) {
 	string str;
 	getline(cin, str);
 	stringstream ss(str);
-	__read(ss, t);
-	_read(v...);
+	__cin(ss, t);
+	__read(v...);
 }
 
 // --------------------------------------------------------------------------
 
-template <typename T> void __print(const T &x);
-template <typename T, typename V> void __print(const pair<T, V> &x);
+template <typename T> void __info(const T &x);
+template <typename T, typename V> void __info(const pair<T, V> &x);
 template <typename T, typename V, typename K>
-void __print(const tuple<T, V, K> &x);
+void __info(const tuple<T, V, K> &x);
 
-void __print(int x) { cerr << x; }
-void __print(long x) { cerr << x; }
-void __print(long long x) { cerr << x; }
-void __print(unsigned x) { cerr << x; }
-void __print(unsigned long x) { cerr << x; }
-void __print(unsigned long long x) { cerr << x; }
-void __print(float x) { cerr << x; }
-void __print(double x) { cerr << x; }
-void __print(long double x) { cerr << x; }
-void __print(char x) { cerr << '\'' << x << '\''; }
-void __print(const char *x) { cerr << '\"' << x << '\"'; }
-void __print(const string &x) { cerr << '\"' << x << '\"'; }
-void __print(bool x) { cerr << (x ? "true" : "false"); }
+void __info(int x) { cerr << x; }
+void __info(long x) { cerr << x; }
+void __info(long long x) { cerr << x; }
+void __info(unsigned x) { cerr << x; }
+void __info(unsigned long x) { cerr << x; }
+void __info(unsigned long long x) { cerr << x; }
+void __info(float x) { cerr << x; }
+void __info(double x) { cerr << x; }
+void __info(long double x) { cerr << x; }
+void __info(char x) { cerr << '\'' << x << '\''; }
+void __info(const char *x) { cerr << '\"' << x << '\"'; }
+void __info(const string &x) { cerr << '\"' << x << '\"'; }
+void __info(bool x) { cerr << (x ? "true" : "false"); }
 
-// Print methods (only Leetcode)
-template <typename T> void __print(LinkedListNode<T> *x) {
-	int f = 0;
-	auto *y = x;
-	while (y) cerr << (f++ ? " -> " : ""), __print(y->val), y = y->next;
-}
-
-template <typename T> void __print(BinaryTreeNode<T> *x) {
-	if (x)
-		while (x)
-			__print(x->val), cerr << " [ ", __print(x->left), __print(x->right),
-				cerr << " ] ";
-}
-
-template <typename T> void __print(const T &x) {
+template <typename T> void __info(const T &x) {
 	int f = 0;
 	cerr << '{';
-	for (auto &i : x) cerr << (f++ ? ", " : ""), __print(i);
+	for (auto &i : x) cerr << (f++ ? ", " : ""), __info(i);
 	cerr << "}";
 }
 
-template <typename T, typename V> void __print(const pair<T, V> &x) {
-	cerr << '{', __print(x.first), cerr << ", ", __print(x.second), cerr << '}';
+template <typename T, typename V> void __info(const pair<T, V> &x) {
+	cerr << '{', __info(x.first), cerr << ", ", __info(x.second), cerr << '}';
 }
 
 template <typename T, typename V, typename K>
-void __print(const tuple<T, K, V> &x) {
-	cerr << '{', __print(get<0>(x)), cerr << ", ", __print(get<1>(x)),
-		cerr << ", ", __print(get<2>(x)), cerr << '}';
+void __info(const tuple<T, K, V> &x) {
+	cerr << '{', __info(get<0>(x)), cerr << ", ", __info(get<1>(x)),
+		cerr << ", ", __info(get<2>(x)), cerr << '}';
 }
 
-// --------------------------------------------------------------------------
+void __print() { cerr << ']' << nl; }
 
-void _print() { cerr << ']' << nl; }
-
-template <typename T, typename... V> void _print(T t, V... v) {
-	__print(t);
+template <typename T, typename... V> void __print(T t, V... v) {
+	__info(t);
 	if (sizeof...(v)) cerr << ", ";
-	_print(v...);
+	__print(v...);
 }
 
-#ifdef DEBUG
-#define dbg(x...)                                                             \
+#ifdef INFO
+#define enable_info() cerr << "Enabling debug logging..." << nl;
+#define info(x...)                                                            \
 	cerr << "\e[91m" << __func__ << ":" << __LINE__ << " [" << #x << "] = ["; \
-	_print(x);                                                                \
+	__print(x);                                                               \
 	cerr << "\e[39m";
 #else
-#define dbg(x...)
+#define enable_info()
+#define info(x...)
 #endif
-
-// --------------------------------------------------------------------------
-
-struct STree {
-	int n;
-	vector<int> tree, lazy;
-
-	STree(vector<int> &nums) {
-		n = nums.size();
-		tree.assign(n << 2, 0);
-		lazy.assign(n << 2, 0);
-		build(nums, 1, 0, n - 1);
-	}
-
-	void build(vector<int> &nums, int node, int l, int r) {
-		if (l == r) {
-			tree[node] = nums[l];
-			return;
-		}
-		int m = l + (r - l >> 1);
-		build(nums, node << 1, l, m);
-		build(nums, node << 1 | 1, m + 1, r);
-		tree[node] = tree[node << 1] + tree[node << 1 | 1];
-	}
-
-	void push(int node, int l, int r) {
-		if (lazy[node]) {
-			tree[node] += lazy[node] * (r - l + 1);
-			if (l != r) {
-				lazy[node << 1] += lazy[node];
-				lazy[node << 1 | 1] += lazy[node];
-			}
-			lazy[node] = 0;
-		}
-	}
-
-	void update(int node, int l, int r, int ql, int qr, int val) {
-		push(node, l, r);
-		if (qr < l || r < ql) return;
-		if (ql <= l && r <= qr) {
-			lazy[node] += val;
-			push(node, l, r);
-			return;
-		}
-		int m = l + (r - l >> 1);
-		update(node << 1, l, m, ql, qr, val);
-		update(node << 1 | 1, m + 1, r, ql, qr, val);
-		tree[node] = tree[node << 1] + tree[node << 1 | 1];
-	}
-
-	int query(int node, int l, int r, int ql, int qr) {
-		push(node, l, r);
-		if (qr < l || ql > r) return 0;
-		if (ql <= l && r <= qr) return tree[node];
-		int m = l + (r - l >> 1);
-		return query(node << 1, l, m, ql, qr) +
-			   query(node << 1 | 1, m + 1, r, ql, qr);
-	}
-
-	void update(int l, int r, int val) { update(1, 0, n - 1, l, r, val); }
-
-	int query(int l, int r) { return query(1, 0, n - 1, l, r); }
-};
 
 // **************************************************************************
 
@@ -220,7 +143,10 @@ void solve(int test_case [[maybe_unused]]) {}
 // **************************************************************************
 
 int main() {
-	ios::sync_with_stdio(0), cin.tie(0), cout.tie(0);
+	ios::sync_with_stdio(0);
+	cin.tie(0), cout.tie(0);
+	enable_info();
+
 	int test_cases = 1;
 	// cin >> test_cases;
 	while (test_cases--) {
