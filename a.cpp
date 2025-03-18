@@ -8,15 +8,11 @@ using pii = pair<int, int>;
 using pll = pair<ll, ll>;
 using vi = vector<int>;
 using vl = vector<ll>;
-using vii = vector<vi>;
-using vll = vector<vl>;
+using vvi = vector<vi>;
+using vvl = vector<vl>;
 using vpii = vector<pii>;
 using mii = map<int, int>;
 using mci = map<char, int>;
-using si = set<int>;
-using sc = set<char>;
-using di = deque<int>;
-using dpii = deque<pii>;
 
 #define fi first
 #define se second
@@ -115,9 +111,11 @@ template <typename T, typename... V> void _print(T t, V... v) {
 #define dbg(x...)
 #endif
 
-// --------------------------------------------------------------------------
+// **************************************************************************
 
 void solve(int test_case [[maybe_unused]]) {}
+
+// **************************************************************************
 
 int main() {
 	ios::sync_with_stdio(0), cin.tie(0), cout.tie(0);

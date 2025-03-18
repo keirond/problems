@@ -106,13 +106,13 @@ template <typename T, typename... V> void _print(T t, V... v) {
 	_print(v...);
 }
 
-#ifdef DEBUG
-#define dbg(x...)                                                             \
+#ifdef INFO
+#define info(x...)                                                            \
 	cerr << "\e[91m" << __func__ << ":" << __LINE__ << " [" << #x << "] = ["; \
 	_print(x);                                                                \
 	cerr << "\e[39m";
 #else
-#define dbg(x...)
+#define info(x...)
 #endif
 
 // **************************************************************************
@@ -220,6 +220,7 @@ void solve(int test_case [[maybe_unused]]) {
 
 int main() {
 	ios::sync_with_stdio(0), cin.tie(0), cout.tie(0);
+	info("Enabling debug logging...");
 	int test_cases = 1;
 	// cin >> test_cases;
 	while (test_cases--) {

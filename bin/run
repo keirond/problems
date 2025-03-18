@@ -28,7 +28,7 @@ compile() {
 	# local _preprocessor_defines="-DDEBUG"
 	# local _include_paths=""
 	# local _libraries=""
-	local _prefix_flag_count="$3"
+	local _prefix_flag_count=$3
 	local _prefix_flags=("${@:4:$_prefix_flag_count}")
 	local _source_file="$1"
 	local _binary_file="$2"
@@ -51,7 +51,7 @@ compile() {
 
 	check_todo "$_source_file"
 
-	if [[ -f "$_binary_file" && "$_source_file" -ot "$_binary_file" ]]; then
+	if [[ -f "$_binary_file" && "$_source_file" -ot "$_binary_file" && $_prefix_flag_count -lt 1 ]]; then
 		echo "$_binary_file"
 		return 0
 	fi
@@ -199,7 +199,7 @@ if [[ ${#modes[@]} -ne 0 ]]; then
 	err_echo -e "${modes[@]}"
 fi
 
-if ! compiled_file=$(compile "$source_file" "$binary_file" "$prefix_count" "${prefix_flags[@]}" "$@"); then
+if ! compiled_file=$(compile "$source_file" "$binary_file" $prefix_count "${prefix_flags[@]}" "$@"); then
 	err_echo "Error: Compilation failed!"
 	exit 1
 fi
