@@ -205,7 +205,7 @@ if [[ $test_samples -ne 0 ]]; then
 	sample_failed=0
 	sample_failed_diffs=()
 
-	for input_file in "$(dirname "$compiled_file")"/*.in.txt; do
+	for input_file in "${compiled_file%.out}-"*.in.txt; do
 		if [[ -f "$input_file" ]]; then
 			((sample_total++))
 			run_with_sample "$compiled_file" $sample_index "$input_file" || ((sample_failed++))
