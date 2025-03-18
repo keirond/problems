@@ -114,7 +114,7 @@ run_with_sample() {
 		return 1
 	fi
 
-	err_echo "Running $_binary_file on the $_index-th sample with C++20."
+	err_echo "Running $_binary_file on the '$_index' sample with C++20."
 
 	local _expected_output
 	local _actual_output
@@ -200,7 +200,6 @@ if ! compiled_file=$(compile "$source_file" "$binary_file" "$prefix_count" "${pr
 fi
 
 if [[ $test_samples -ne 0 ]]; then
-	sample_index=1
 	sample_total=0
 	sample_failed=0
 	sample_failed_diffs=()
@@ -208,7 +207,9 @@ if [[ $test_samples -ne 0 ]]; then
 	for input_file in "${compiled_file%.out}-"*.in.txt; do
 		if [[ -f "$input_file" ]]; then
 			((sample_total++))
-			run_with_sample "$compiled_file" $sample_index "$input_file" || ((sample_failed++))
+			sample_index="${input_file#"${compiled_file%.out}-"}"
+			sample_index="${sample_index%%.*}"
+			run_with_sample "$compiled_file" "$sample_index" "$input_file" || ((sample_failed++))
 		fi
 	done
 
