@@ -101,11 +101,13 @@ template <typename T, typename... V> void __print(T t, V... v) {
 }
 
 #ifdef INFO
+#define enable_info() cerr << "Enabling debug logging..." << nl;
 #define info(x...)                                                            \
 	cerr << "\e[91m" << __func__ << ":" << __LINE__ << " [" << #x << "] = ["; \
-	_print(x);                                                                \
+	__print(x);                                                               \
 	cerr << "\e[39m";
 #else
+#define enable_info()
 #define info(x...)
 #endif
 
@@ -118,7 +120,7 @@ void solve(int test_case [[maybe_unused]]) {}
 int main() {
 	ios::sync_with_stdio(0);
 	cin.tie(0), cout.tie(0);
-	info("Enabling debug logging...");;
+	enable_info();
 
 	int test_cases = 1;
 	cin >> test_cases;

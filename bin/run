@@ -10,7 +10,7 @@ usage() {
 	err_echo "Options:"
 	err_echo "	-t,	--time		Measure and display the runtime."
 	err_echo "	-g,	--gdb		Debug with GNU Debugger."
-	err_echo "	-d,	--debug		Enable DEBUG macro."
+	err_echo "	-i,	--info		Enable INFO macro."
 	err_echo "	-s,	--samples	Run with generated samples (*.in.txt) then comparing with expected outputs (*.out.txt))."
 	err_echo "				The prefix file name of (*.in.txt)), (*.out.txt)) is same as the executable."
 	err_echo ""
@@ -51,12 +51,16 @@ compile() {
 
 	check_todo "$_source_file"
 
-	if [[ -f "$_binary_file" && "$_source_file" -ot "$_binary_file" && $_prefix_flag_count -lt 1 ]]; then
-		echo "$_binary_file"
-		return 0
+	if [[ -f "$_binary_file" && "$_source_file" -ot "$_binary_file" ]]; then
+		_info_wanted=$([[ " ${_prefix_flags[*]} " == *" -DINFO "* ]] && echo 1 || echo 0)
+		_info_enabled=$({ strings "${_binary_file}" | grep -q "debug logging"; } && echo 1 || echo 0)
+		if [[ $_info_wanted -eq $_info_enabled ]]; then
+			echo "$_binary_file"
+			return 0
+		fi
 	fi
 
-	err_echo "Compiling $_source_file with C++20."
+	err_echo "Compiling $_source_file with C++20..."
 
 	# "$_debugging_options" $_preprocessor_defines "$_include_paths" "$_libraries"
 	if g++ "$_compile_options" "${_warning_flags[@]}" "$_optimization_flags" \
@@ -73,7 +77,7 @@ check_todo() {
 
 	_todo_lines=$(grep -n "TODO" "$_source_file" 2>/dev/null)
 	if [[ -n "$_todo_lines" ]]; then
-		err_echo -e "\e[38;5;214mWarning:\e[0m TODOs found in '$_source_file':"
+		err_echo -e "\e[38;5;214mWarning:\e[0m TODOs found in '$_source_file'!"
 		err_echo "$_todo_lines"
 		err_echo ""
 	fi
@@ -89,7 +93,7 @@ run() {
 		return 1
 	fi
 
-	err_echo "Running $_binary_file with C++20."
+	err_echo "Running $_binary_file with C++20..."
 
 	_commands+=("./$_binary_file")
 	eval "${_commands[*]}"
@@ -119,7 +123,7 @@ run_with_sample() {
 		return 1
 	fi
 
-	err_echo "Running $_binary_file on the '$_index' sample with C++20."
+	err_echo "Running $_binary_file on the '$_index' sample with C++20..."
 
 	local _expected_output
 	local _actual_output
@@ -169,9 +173,9 @@ while [[ $# -gt 0 && $1 == -* ]]; do
 		commands+=("gdb -q")
 		shift
 		;;
-	-d | --debug)
-		modes+=("\e[1m[DEBUG]\e[0m")
-		prefix_flags+=("-DDEBUG")
+	-i | --info)
+		modes+=("\e[1m[INFO]\e[0m")
+		prefix_flags+=("-DINFO")
 		((prefix_count++))
 		shift
 		;;
