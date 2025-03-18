@@ -2,6 +2,44 @@
 
 using namespace std;
 
+using ll = long long;
+using ld = long double;
+using pii = pair<int, int>;
+using pll = pair<ll, ll>;
+using vi = vector<int>;
+using vl = vector<ll>;
+using vvi = vector<vi>;
+using vvl = vector<vl>;
+using vpii = vector<pii>;
+using mii = map<int, int>;
+using mci = map<char, int>;
+
+#define fi first
+#define se second
+#define mp make_pair
+#define pb push_back
+#define eb emplace_back
+#define ins insert
+#define lb lower_bound
+#define up upper_bound
+#define sz(v) (int)(v).size()
+#define all(v) v.begin(), v.end()
+#define range(v, n) v.begin(), v.begin() + n
+
+#define FOR(a, b, c) for (int a = (b); (a) <= (c); ++(a))
+#define FORd(a, b, c) for (int a = (b); (a) >= (c); --(a))
+#define FORsq(a, b, c) for (int a = (b); (a) * (a) <= (c); ++(a))
+#define FORsqd(a, b, c) for (int a = (b); (a) * (a) >= (c); --(a))
+#define FORc(a, b, c) for (char a = (b); (a) <= (c); ++(a))
+#define EACH(a, b) for (auto &a : (b))
+#define REP(i, n) FOR(i, 0, n - 1)
+#define REPd(i, n) FORd(i, n - 1, 0)
+
+constexpr double EPS [[maybe_unused]] = 1e-9;
+constexpr double PI [[maybe_unused]] = 3.14159265358979323846;
+constexpr int MOD [[maybe_unused]] = static_cast<int>(1e9 + 7);
+constexpr int INF [[maybe_unused]] = INT_MAX;
+constexpr ll LINF [[maybe_unused]] = LLONG_MAX;
 constexpr char nl [[maybe_unused]] = '\n';
 
 // --------------------------------------------------------------------------
@@ -77,6 +115,18 @@ template <typename T, typename... V> void __read(T &t, V &...v) {
 	stringstream ss(str);
 	__cin(ss, t);
 	__read(v...);
+}
+
+// --------------------------------------------------------------------------
+
+template <class T> using max_heap = priority_queue<T>;
+template <class T> using min_heap = priority_queue<T, vector<T>, greater<T>>;
+
+string to_upper(string a) {
+	return transform(a.begin(), a.end(), a.begin(), ::toupper), a;
+}
+string to_lower(string a) {
+	return transform(a.begin(), a.end(), a.begin(), ::tolower), a;
 }
 
 // --------------------------------------------------------------------------
