@@ -2,9 +2,4 @@
 
 *.in.txt
 *.out.txt
-*.exe
 *.out
-*.o
-*.a
-*.so
-*.dll
