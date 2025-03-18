@@ -53,8 +53,8 @@ struct STree {
 		push(node, l, r);
 		if (l == r) return tree[node];
 		int m = l + (r - l >> 1);
-		if (i <= m) return query(node << 1, l, m, ql, qr);
-		return query(node << 1 | 1, m + 1, r, ql, qr);
+		if (i <= m) return query(node << 1, l, m, i);
+		return query(node << 1 | 1, m + 1, r, i);
 	}
 
 	void update(int l, int r, int val) { update(1, 0, n - 1, l, r, val); }
