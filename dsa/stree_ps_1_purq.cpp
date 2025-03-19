@@ -13,7 +13,7 @@ struct Node {
 struct STree {
 	int n;
 	Node *root;
-	deque<Node *> history;
+	vector<Node *> undo_versions;
 
 	STree(vector<int> &nums) {
 		n = nums.size();
@@ -22,8 +22,8 @@ struct STree {
 
 	Node *build(vector<int> &nums, int l, int r) {
 		if (l == r) return new Node(nums[l]);
-		auto node = new Node();
 		int m = l + (r - l >> 1);
+		auto node = new Node();
 		node->left = build(nums, l, m);
 		node->right = build(nums, m + 1, r);
 		node->val = node->left->val + node->right->val;
@@ -32,8 +32,8 @@ struct STree {
 
 	Node *update(Node *node, int l, int r, int i, int val) {
 		if (l == r) return new Node(val);
-		auto new_node = new Node();
 		int m = l + (r - l >> 1);
+		auto new_node = new Node();
 		if (i <= m) {
 			new_node->left = update(node->left, l, m, i, val);
 			new_node->right = node->right;
@@ -46,7 +46,7 @@ struct STree {
 	}
 
 	void update(int i, int val) {
-		history.push_back(root);
+		undo_versions.push_back(root);
 		root = update(root, 0, n - 1, i, val);
 	}
 
@@ -61,9 +61,9 @@ struct STree {
 	long long query(int l, int r) { return query(root, 0, n - 1, l, r); }
 
 	void undo(int times) {
-		while (times--) {
-			root = history.back();
-			history.pop_back();
+		while (!undo_versions.empty() && times--) {
+			root = undo_versions.back();
+			undo_versions.pop_back();
 		}
 	}
 };
