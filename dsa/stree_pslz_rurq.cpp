@@ -4,16 +4,17 @@ using namespace std;
 
 struct Node {
 	long long val;
+	long long lazy;
 	Node *left, *right;
 
-	Node() : val(0), left(nullptr), right(nullptr) {}
-	Node(long long val) : val(val), left(nullptr), right(nullptr) {}
+	Node() : val(0), lazy(0), left(nullptr), right(nullptr) {}
+	Node(long long val) : val(val), lazy(0), left(nullptr), right(nullptr) {}
 };
 
 struct STree {
 	int n;
 	Node *root;
-	vector<Node *> undo_versions, redo_versions;
+	vector<Node *> undo_versions;
 
 	STree(vector<int> &nums) {
 		n = nums.size();
@@ -30,8 +31,12 @@ struct STree {
 		return node;
 	}
 
-	Node *update(Node *node, int l, int r, int i, int val) {
-		if (l == r) return new Node(val);
+	Node *update(Node *node, int l, int r, int ql, int qr, int val) {
+		if (qr < l || ql > r) return node;
+		if (ql <= l && r <= qr) {
+			auto new_node = new Node(node.val
+			return new Node(val);
+		}
 		int m = l + (r - l >> 1);
 		auto new_node = new Node();
 		if (i <= m) {
@@ -45,10 +50,9 @@ struct STree {
 		return new_node;
 	}
 
-	void update(int i, int val) {
+	void update(int l, int r, int val) {
 		undo_versions.push_back(root);
-		redo_versions.clear();
-		root = update(root, 0, n - 1, i, val);
+		root = update(root, 0, n - 1, l, r, val);
 	}
 
 	long long query(Node *node, int l, int r, int ql, int qr) {
@@ -63,56 +67,23 @@ struct STree {
 
 	void undo(int times) {
 		while (!undo_versions.empty() && times--) {
-			redo_versions.push_back(root);
 			root = undo_versions.back();
 			undo_versions.pop_back();
-		}
-	}
-
-	void redo(int times) {
-		while (!redo_versions.empty() && times--) {
-			undo_versions.push_back(root);
-			root = redo_versions.back();
-			redo_versions.pop_back();
 		}
 	}
 };
 
 int main() {
-	int N;
-	cin >> N;
-	vector<int> nums(N);
-	for (int i = 0; i < N; ++i) {
-		int val;
-		cin >> val;
-		nums[i] = val;
-	}
-
+	vector<int> nums = {1, 2, 3, 4, 5};
 	STree st(nums);
 
-	int M;
-	cin >> M;
-	cin.ignore();
-	while (M--) {
-		string str;
-		getline(cin, str);
-		stringstream ss(str);
+	cout << "Sum of range [1, 3]: " << st.query(1, 3) << endl;
 
-		int val;
-		vector<int> t;
-		while (ss >> val) {
-			t.push_back(val);
-		}
+	st.update(2, 10);
+	cout << "After update: Sum of range [1, 3]: " << st.query(1, 3) << endl;
 
-		if (t[0] == 1) {
-			st.update(t[1], t[2]);
-		} else if (t[0] == 2) {
-			cout << st.query(t[1], t[2]) << '\n';
-		} else if (t[0] == 3) {
-			st.undo(1);
-		} else if (t[0] == 4) {
-			st.redo(1);
-		}
-	}
+	st.undo(1);
+	cout << "After undo: Sum of range [1, 3]: " << st.query(1, 3) << endl;
+
 	return 0;
 }
