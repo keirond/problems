@@ -88,20 +88,30 @@ struct STree {
 };
 
 int main() {
-	vector<int> nums = {1, 2, 3, 4, 5};
+	int N;
+	cin >> N;
+	vector<int> nums(N);
+	for (auto &d : nums) cin >> d;
+
 	STree st(nums);
 
-	cout << "Sum of range [1, 3]: " << st.query(1, 3) << endl;
-
-	st.update(2, 10);
-	cout << "After update: Sum of range [1, 3]: " << st.query(1, 3) << endl;
-
-	st.undo(1);
-	cout << "After undo: Sum of range [1, 3]: " << st.query(1, 3) << endl;
-	st.update(2, 11);
-
-	st.redo(1);
-	cout << "After redo: Sum of range [1, 3]: " << st.query(1, 3) << endl;
-
+	int M;
+	cin >> M;
+	cin.ignore();
+	while (M--) {
+		int op, x, y;
+		cin >> op;
+		if (op == 1) {
+			cin >> x >> y;
+			st.update(x, y);
+		} else if (op == 2) {
+			cin >> x >> y;
+			cout << st.query(x, y) << '\n';
+		} else if (op == 3) {
+			st.undo(1);
+		} else if (op == 4) {
+			st.redo(1);
+		}
+	}
 	return 0;
 }

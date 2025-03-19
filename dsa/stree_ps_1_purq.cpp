@@ -82,11 +82,7 @@ int main() {
 	int N;
 	cin >> N;
 	vector<int> nums(N);
-	for (int i = 0; i < N; ++i) {
-		int val;
-		cin >> val;
-		nums[i] = val;
-	}
+	for (auto &d : nums) cin >> d;
 
 	STree st(nums);
 
@@ -94,23 +90,17 @@ int main() {
 	cin >> M;
 	cin.ignore();
 	while (M--) {
-		string str;
-		getline(cin, str);
-		stringstream ss(str);
-
-		int val;
-		vector<int> t;
-		while (ss >> val) {
-			t.push_back(val);
-		}
-
-		if (t[0] == 1) {
-			st.update(t[1], t[2]);
-		} else if (t[0] == 2) {
-			cout << st.query(t[1], t[2]) << '\n';
-		} else if (t[0] == 3) {
+		int op, x, y;
+		cin >> op;
+		if (op == 1) {
+			cin >> x >> y;
+			st.update(x, y);
+		} else if (op == 2) {
+			cin >> x >> y;
+			cout << st.query(x, y) << '\n';
+		} else if (op == 3) {
 			st.undo(1);
-		} else if (t[0] == 4) {
+		} else if (op == 4) {
 			st.redo(1);
 		}
 	}
