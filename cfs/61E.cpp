@@ -113,7 +113,7 @@ void solve(int test_case [[maybe_unused]]) {
 		int rank = _get(nums[i]);
 		lhigh[i] = ft.query(rank, N);
 		ft.update(rank, 1);
-		ans += rlow[i] * lhigh[i];
+		ans += (long long)rlow[i] * lhigh[i];
 	}
 	cout << ans << '\n';
 }
