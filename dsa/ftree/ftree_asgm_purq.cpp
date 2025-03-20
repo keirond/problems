@@ -2,44 +2,52 @@
 
 using namespace std;
 
-int n;
-vector<long long> ft;
+struct FTree {
+	int n;
+	vector<long long> ft;
+	vector<int> nums;
 
-void update(int i, int val) {
-	for (; i <= n; i += i & -i) ft[i] += val;
-}
+	FTree(int n, vector<int> &nums) : n(n), ft(n + 1), nums(nums) {}
 
-long long query(int i) {
-	long long ans = 0;
-	for (; i > 0; i -= i & -i) ans += ft[i];
-	return ans;
-}
-
-long long query(int l, int r) { return query(r) - query(l - 1); }
-
-int main() {
-	ios::sync_with_stdio(false), cin.tie(0);
-
-	cin >> n;
-	ft.resize(n + 1);
-	vector<int> nums(n);
-	for (int i = 0; i < n; ++i) {
-		cin >> nums[i];
-		update(i + 1, nums[i]);
+	void assign(int i, int val) {
+		update(i, val - nums[i - 1]);
+		nums[i - 1] = val;
 	}
 
-	int q;
-	cin >> q;
-	while (q--) {
+	void update(int i, int val) {
+		for (; i <= n; i += i & -i) ft[i] += val;
+	}
+
+	long long query(int i) {
+		int ans = 0;
+		for (; i > 0; i -= i & -i) ans += ft[i];
+		return ans;
+	}
+
+	long long query(int l, int r) { return query(r) - query(l - 1); }
+};
+
+int main() {
+	int N;
+	cin >> N;
+	vector<int> nums(N);
+	for (int i = 0; i < N; ++i) {
+		cin >> nums[i];
+	}
+
+	FTree ft(N, nums);
+
+	int Q;
+	cin >> Q;
+	while (Q--) {
 		int op, l, r, val;
 		cin >> op;
 		if (op == 1) {
 			cin >> l >> val;
-			update(l + 1, val - nums[l]);
-			nums[l] = val;
+			ft.assign(l + 1, val);
 		} else if (op == 2) {
 			cin >> l >> r;
-			cout << query(l + 1, r + 1) << '\n';
+			cout << ft.query(l + 1, r + 1) << '\n';
 		}
 	}
 	cout << flush;
