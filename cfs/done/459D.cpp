@@ -63,7 +63,53 @@ template <typename T, typename... V> void __print(T t, V... v) {
 
 // **************************************************************************
 
-void solve(int test_case [[maybe_unused]]) {}
+struct FTree {
+	int n;
+	vector<int> ft;
+
+	FTree(int n) : n(n), ft(n + 1) {}
+
+	void update(int i, int val) {
+		for (; i <= n; i += i & -i) ft[i] += val;
+	}
+
+	int query(int i) {
+		int ans = 0;
+		for (; i > 0; i -= i & -i) ans += ft[i];
+		return ans;
+	}
+
+	int query(int l, int r) { return query(r) - query(l - 1); }
+};
+
+void solve(int test_case [[maybe_unused]]) {
+	int N;
+	cin >> N;
+	vector<int> nums(N);
+	for (int &d : nums) {
+		cin >> d;
+	}
+
+	unordered_map<int, int> mp;
+	vector<int> prc(N);
+	for (int i = 0; i < N; ++i) {
+		prc[i] = ++mp[nums[i]];
+	}
+
+	mp.clear();
+	vector<int> poc(N);
+	for (int i = N - 1; i >= 0; --i) {
+		poc[i] = ++mp[nums[i]];
+	}
+
+	long long ans = 0;
+	FTree ft(N);
+	for (int i = 1; i < N; ++i) {
+		ft.update(prc[i - 1], 1);
+		ans += ft.query(poc[i] + 1, N);
+	}
+	cout << ans << '\n';
+}
 
 // **************************************************************************
 

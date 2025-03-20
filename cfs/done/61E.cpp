@@ -103,7 +103,7 @@ void solve(int test_case [[maybe_unused]]) {
 	FTree ft(N);
 	for (int i = N - 1; i >= 0; --i) {
 		int rank = _get(nums[i]);
-		rlow[i] = ft.query(1, rank);
+		rlow[i] = ft.query(1, rank - 1);
 		ft.update(rank, 1);
 	}
 
@@ -111,7 +111,7 @@ void solve(int test_case [[maybe_unused]]) {
 	ft = FTree(N);
 	for (int i = 0; i < N; ++i) {
 		int rank = _get(nums[i]);
-		lhigh[i] = ft.query(rank, N);
+		lhigh[i] = ft.query(rank + 1, N);
 		ft.update(rank, 1);
 		ans += (long long)rlow[i] * lhigh[i];
 	}
