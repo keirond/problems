@@ -121,6 +121,8 @@ template <typename T> void __cin(stringstream &ss, vector<T> &values) {
 	}
 }
 
+void __read() {}
+
 template <typename T, typename... V> void __read(T &t, V &...v) {
 	string str;
 	getline(cin, str);
