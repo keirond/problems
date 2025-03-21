@@ -63,28 +63,74 @@ template <typename T, typename... V> void __print(T t, V... v) {
 
 // **************************************************************************
 
+struct STree {
+	int n;
+	vector<int> tree;
+
+	STree(int n) : n(n), tree(n << 1, 0) {}
+
+	void update(int i, int val) {
+		i += n;
+		tree[i] = max(tree[i], val);
+		for (; i > 0; i >>= 1) {
+			tree[i >> 1] = max(tree[i], tree[i ^ 1]);
+		}
+	}
+
+	int query(int l, int r) {
+		int ans = 0;
+		for (l += n, r += n; l <= r; l >>= 1, r >>= 1) {
+			if (l & 1) ans = max(ans, tree[l++]);
+			if (!(r & 1)) ans = max(ans, tree[r--]);
+		}
+		return ans;
+	}
+};
 
 void solve(int test_case [[maybe_unused]]) {
-	int N; cin >> N;
+	int N;
+	cin >> N;
 	vector<vector<int>> nums(N, vector<int>(3, 0));
-	for(int i=0; i<N; ++i) {
-		for(int &d: nums[i]) cin >> d;
+	for(int j=0; j<3; ++j) {
+		for(int i=0; i<N; ++i) {
+			int d; cin >> d;
+			nums[i][j] = d;
+		}
 	}
-	sort(nums.begin(), nums.end(), [](auto x, auto y) {x[0] > y[0];});
+	sort(nums.begin(), nums.end(), [](auto &x, auto &y) { return x[0] > y[0]; });
 
 	vector<int> t;
-	for(int i=0; i<N; ++i) {
+	for (int i = 0; i < N; ++i) {
 		t.push_back(nums[i][1]);
-	}	
+	}
 	sort(t.begin(), t.end());
 	t.erase(unique(t.begin(), t.end()), t.end());
 
 	auto _get = [&](int v) -> int {
-		return lower_bound(t.begin(), t.end(), v) - t.begin() + 1;
+		return lower_bound(t.begin(), t.end(), v) - t.begin();
+	};
+
+	info(nums);
+	STree st(N);
+	vector<vector<int>> temp;
+	int prev = INT_MAX;
+	int ans = 0;
+	for (int i = 0; i < N; ++i) {
+		if(nums[i][0] < prev) {
+			for(auto &d: temp) {
+				st.update(d[1], d[2]);
+			}
+			temp.clear();
+		}
+		prev = nums[i][0]; 
+		int rank = _get(nums[i][1]);
+		if (st.query(rank + 1, N - 1) > nums[i][2]) ans++;
+		else {
+			nums[i][1] = rank;
+			temp.push_back(nums[i]);
+		}
 	}
-
-	
-
+	cout <<  ans << '\n';
 }
 
 // **************************************************************************
