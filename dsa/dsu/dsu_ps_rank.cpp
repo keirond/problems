@@ -4,14 +4,14 @@ using namespace std;
 
 struct DSU {
 	vector<int> par, rnk;
+	stack<pair<int, int>> hst;
 
 	DSU(int n) {
 		par.resize(n);
 		rnk.resize(n);
-		iota(par.begin(), par.end(), 0);
 	}
 
-	int find(int i) { return (par[i] == i) ? i : (par[i] = find(par[i])); }
+	int find(int i) { return par[i] == i ? i : (par[i] = find(par[i])); }
 
 	bool unite(int u, int v) {
 		u = find(u), v = find(v);
@@ -21,6 +21,8 @@ struct DSU {
 		rnk[u] += rnk[v];
 		return true;
 	}
-};
+}
 
-int main() { return 1; }
+int main() {
+	return 1;
+}
