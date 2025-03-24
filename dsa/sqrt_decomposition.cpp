@@ -8,7 +8,7 @@ struct SqrtD {
 
 	SqrtD(vector<int> &nums) {
 		n = nums.size();
-		this->nums = nums;
+		this->nums.assign(nums.begin(), nums.end());
 		blk_size = sqrt(n) + 1;
 		blk.assign(blk_size, 0);
 
