@@ -18,7 +18,7 @@ struct STree {
 			tree[node] = nums[l];
 			return;
 		}
-		int m = l + (r - l >> 1);
+		int m = l + ((r - l) >> 1);
 		build(nums, node << 1, l, m);
 		build(nums, node << 1 | 1, m + 1, r);
 		tree[node] = tree[node << 1] + tree[node << 1 | 1];
@@ -43,7 +43,7 @@ struct STree {
 			push(node, l, r);
 			return;
 		}
-		int m = l + (r - l >> 1);
+		int m = l + ((r - l) >> 1);
 		update(node << 1, l, m, ql, qr, val);
 		update(node << 1 | 1, m + 1, r, ql, qr, val);
 		tree[node] = tree[node << 1] + tree[node << 1 | 1];
@@ -53,7 +53,7 @@ struct STree {
 		push(node, l, r);
 		if (qr < l || ql > r) return 0;
 		if (ql <= l && r <= qr) return tree[node];
-		int m = l + (r - l >> 1);
+		int m = l + ((r - l) >> 1);
 		return query(node << 1, l, m, ql, qr) +
 			   query(node << 1 | 1, m + 1, r, ql, qr);
 	}

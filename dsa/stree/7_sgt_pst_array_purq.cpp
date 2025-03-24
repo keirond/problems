@@ -37,13 +37,13 @@ struct STree {
 
 	int build(vector<int> &nums, int l, int r) {
 		if (l == r) return new_node(nums[l]);
-		int m = l + (r - l >> 1);
+		int m = l + ((r - l) >> 1);
 		return new_node(build(nums, l, m), build(nums, m + 1, r));
 	}
 
 	int update(int node, int l, int r, int i, int val) {
 		if (l == r) return new_node(val);
-		int m = l + (r - l >> 1);
+		int m = l + ((r - l) >> 1);
 		if (i <= m) {
 			return new_node(update(tree[node].left, l, m, i, val),
 							tree[node].right);
@@ -61,7 +61,7 @@ struct STree {
 	long long query(int node, int l, int r, int ql, int qr) {
 		if (qr < l || ql > r) return 0;
 		if (ql <= l && r <= qr) return tree[node].val;
-		int m = l + (r - l >> 1);
+		int m = l + ((r - l) >> 1);
 		return query(tree[node].left, l, m, ql, qr) +
 			   query(tree[node].right, m + 1, r, ql, qr);
 	}

@@ -8,7 +8,7 @@ struct STree {
 
 	STree(vector<int> &nums) {
 		n = nums.size();
-		tree.assign(4 * n, 0);
+		tree.assign(n << 2, 0);
 		build(nums, 1, 0, n - 1);
 	}
 
@@ -17,7 +17,7 @@ struct STree {
 			tree[node] = nums[l];
 			return;
 		}
-		int m = l + (r - l >> 1);
+		int m = l + ((r - l) >> 1);
 		build(nums, node << 1, l, m);
 		build(nums, node << 1 | 1, m + 1, r);
 		tree[node] = tree[node << 1] + tree[node << 1 | 1];
@@ -28,7 +28,7 @@ struct STree {
 			tree[node] = val;
 			return;
 		}
-		int m = l + (r - l >> 1);
+		int m = l + ((r - l) >> 1);
 		if (i <= m)
 			update(node << 1, l, m, i, val);
 		else
@@ -39,7 +39,7 @@ struct STree {
 	long long query(int node, int l, int r, int ql, int qr) {
 		if (qr < l || ql > r) return 0;
 		if (ql <= l && r <= qr) return tree[node];
-		int m = l + (r - l >> 1);
+		int m = l + ((r - l) >> 1);
 		return query(node << 1, l, m, ql, qr) +
 			   query(node << 1 | 1, m + 1, r, ql, qr);
 	}

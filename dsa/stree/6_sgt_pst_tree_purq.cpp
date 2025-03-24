@@ -22,7 +22,7 @@ struct STree {
 
 	Node *build(vector<int> &nums, int l, int r) {
 		if (l == r) return new Node(nums[l]);
-		int m = l + (r - l >> 1);
+		int m = l + ((r - l) >> 1);
 		auto node = new Node();
 		node->left = build(nums, l, m);
 		node->right = build(nums, m + 1, r);
@@ -32,7 +32,7 @@ struct STree {
 
 	Node *update(Node *node, int l, int r, int i, int val) {
 		if (l == r) return new Node(val);
-		int m = l + (r - l >> 1);
+		int m = l + ((r - l) >> 1);
 		auto new_node = new Node();
 		if (i <= m) {
 			new_node->left = update(node->left, l, m, i, val);
@@ -54,7 +54,7 @@ struct STree {
 	long long query(Node *node, int l, int r, int ql, int qr) {
 		if (qr < l || ql > r) return 0;
 		if (ql <= l && r <= qr) return node->val;
-		int m = l + (r - l >> 1);
+		int m = l + ((r - l) >> 1);
 		return query(node->left, l, m, ql, qr) +
 			   query(node->right, m + 1, r, ql, qr);
 	}

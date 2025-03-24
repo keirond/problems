@@ -8,7 +8,7 @@ struct STree {
 
 	STree(vector<int> &nums) {
 		n = nums.size();
-		tree.assign(2 * n, 0);
+		tree.assign(n << 1, 0);
 
 		for (int i = 0; i < n; ++i) {
 			tree[i + n] = nums[i];

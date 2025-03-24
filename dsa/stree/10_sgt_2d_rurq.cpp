@@ -15,7 +15,6 @@ struct STree {
 		n = nums.size();
 		m = n == 0 ? 0 : nums[0].size();
 		tree.assign(n << 2, vl(m << 2, 0));
-
 		build_x(nums, 1, 0, n - 1);
 	}
 
@@ -27,7 +26,7 @@ struct STree {
 				tree[vx][vy] = tree[vx << 1][vy] + tree[vx << 1 | 1][vy];
 			return;
 		}
-		int my = ly + (ry - ly >> 1);
+		int my = ly + ((ry - ly) >> 1);
 		build_y(nums, vx, lx, rx, vy << 1, ly, my);
 		build_y(nums, vx, lx, rx, vy << 1 | 1, my + 1, ry);
 		tree[vx][vy] = tree[vx][vy << 1] + tree[vx][vy << 1 | 1];
@@ -35,7 +34,7 @@ struct STree {
 
 	void build_x(vvi &nums, int vx, int lx, int rx) {
 		if (lx != rx) {
-			int mx = lx + (rx - lx >> 1);
+			int mx = lx + ((rx - lx) >> 1);
 			build_x(nums, vx << 1, lx, mx);
 			build_x(nums, vx << 1 | 1, mx + 1, rx);
 		}
@@ -52,7 +51,7 @@ struct STree {
 			}
 			return;
 		}
-		int my = ly + (ry - ly >> 1);
+		int my = ly + ((ry - ly) >> 1);
 		if (y <= my)
 			update_y(vx, lx, rx, vy << 1, ly, my, x, y, val);
 		else
@@ -62,7 +61,7 @@ struct STree {
 
 	void update_x(int vx, int lx, int rx, int x, int y, int val) {
 		if (lx != rx) {
-			int mx = lx + (rx - lx >> 1);
+			int mx = lx + ((rx - lx) >> 1);
 			if (x <= mx)
 				update_x(vx << 1, lx, mx, x, y, val);
 			else
@@ -76,7 +75,7 @@ struct STree {
 	long long query_y(int vx, int vy, int ly, int ry, int qly, int qry) {
 		if (qry < ly || qly > ry) return 0;
 		if (qly <= ly && ry <= qry) return tree[vx][vy];
-		int my = ly + (ry - ly >> 1);
+		int my = ly + ((ry - ly) >> 1);
 		return query_y(vx, vy << 1, ly, my, qly, qry) +
 			   query_y(vx, vy << 1 | 1, my + 1, ry, qly, qry);
 	}
@@ -85,7 +84,7 @@ struct STree {
 					  int qry) {
 		if (qrx < lx || qlx > rx) return 0;
 		if (qlx <= lx && rx <= qrx) return query_y(vx, 1, 0, m - 1, qly, qry);
-		int mx = lx + (rx - lx >> 1);
+		int mx = lx + ((rx - lx) >> 1);
 		return query_x(vx << 1, lx, mx, qlx, qrx, qly, qry) +
 			   query_x(vx << 1 | 1, mx + 1, rx, qlx, qrx, qly, qry);
 	}
