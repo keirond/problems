@@ -21,8 +21,6 @@ struct DSU {
 		rnk[u] += rnk[v];
 		return true;
 	}
-}
+};
 
-int main() {
-	return 1;
-}
+int main() { return 0; }

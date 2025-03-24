@@ -13,7 +13,7 @@ struct FTree {
 	}
 
 	long long query(int i) {
-		int ans = 0;
+		long long ans = 0;
 		for (; i > 0; i -= i & -i) ans += ft[i];
 		return ans;
 	}

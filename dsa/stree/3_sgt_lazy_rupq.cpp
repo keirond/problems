@@ -62,4 +62,4 @@ struct STree {
 	long long query(int i) { return query(1, 0, n - 1, i); }
 };
 
-int main() { return 1; }
+int main() { return 0; }

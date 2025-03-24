@@ -40,4 +40,4 @@ struct DiffArr {
 	long long query_after_reconstruct(int i) { return nums[i]; }
 };
 
-int main() { return 1; }
+int main() { return 0; }

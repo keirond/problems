@@ -57,4 +57,4 @@ struct DiffArr {
 	long long query_after_reconstruct(int x, int y) { return nums[x][y]; }
 };
 
-int main() { return 1; }
+int main() { return 0; }

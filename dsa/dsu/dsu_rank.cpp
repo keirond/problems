@@ -23,4 +23,4 @@ struct DSU {
 	}
 };
 
-int main() { return 1; }
+int main() { return 0; }

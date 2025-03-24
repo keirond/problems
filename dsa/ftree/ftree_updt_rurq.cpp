@@ -29,4 +29,4 @@ struct FTree {
 	long long query(int l, int r) { return query(r) - query(l - 1); }
 };
 
-int main() { return 1; }
+int main() { return 0; }
