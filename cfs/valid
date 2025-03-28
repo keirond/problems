@@ -1,0 +1,16 @@
+#!/bin/bash
+
+if [ -z "$1" ]; then
+    echo "Usage: valid <filename>"
+    exit 1
+fi
+
+filename="$1.cpp"
+dirs=("done" "temp" "drop")
+
+for dir in "${dirs[@]}"; do
+    filepath="$dir/$filename"
+    if [ -f "$filepath" ]; then
+        echo "Found: $filepath"
+    fi
+done
