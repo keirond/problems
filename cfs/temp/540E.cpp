@@ -63,7 +63,13 @@ template <typename T, typename... V> void __print(T t, V... v) {
 
 // **************************************************************************
 
-void solve(int test_case [[maybe_unused]]) {}
+void solve(int test_case [[maybe_unused]]) {
+	int N; cin >> N;
+	
+	while(N--) {
+		int a, b; cin >> a >> b;	
+	}
+}
 
 // **************************************************************************
 
