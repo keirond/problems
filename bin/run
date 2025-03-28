@@ -60,6 +60,10 @@ compile() {
 		fi
 	fi
 
+	if [[ " ${_prefix_flags[*]} " == *" -g "* ]]; then
+		_optimization_flags="-O0"
+	fi
+
 	err_echo "Compiling $_source_file with C++20..."
 
 	# "$_debugging_options" $_preprocessor_defines "$_include_paths" "$_libraries"

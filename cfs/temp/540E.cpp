@@ -63,12 +63,61 @@ template <typename T, typename... V> void __print(T t, V... v) {
 
 // **************************************************************************
 
-void solve(int test_case [[maybe_unused]]) {
-	int N; cin >> N;
-	
-	while(N--) {
-		int a, b; cin >> a >> b;	
+struct FTree {
+	int n;
+	vector<int> ft;
+
+	FTree(int n) : n(n), ft(n + 1) {}
+
+	void update(int i, int val) {
+		for (; i <= n; i += i & -i) ft[i] += val;
 	}
+
+	int query(int i) {
+		int ans = 0;
+		for (; i > 0; i -= i & -i) ans += ft[i];
+		return ans;
+	}
+};
+
+void solve(int test_case [[maybe_unused]]) {
+	int N;
+	cin >> N;
+
+	unordered_map<int, int> mp;
+	while (N--) {
+		int a, b;
+		cin >> a >> b;
+		if (!mp.contains(a)) mp[a] = a;
+		if (!mp.contains(b)) mp[b] = b;
+		swap(mp[a], mp[b]);
+	}
+
+	vector<int> t, u;
+	for (auto &[k, v] : mp) {
+		if (k != v) {
+			t.push_back(k);
+			u.push_back(v);
+		}
+	}
+	sort(t.begin(), t.end());
+	sort(u.begin(), u.end());
+
+	int ans = 0, n = t.size();
+	FTree ft(n);
+	for (int i = 0; i < n; ++i) {
+		int k = t[i], v = mp[k];
+		int rank = lower_bound(u.begin(), u.end(), v) - u.begin() + 1;
+		ft.update(rank, 1);
+		int cnt;
+		if (k > v) {
+			cnt = i - (upper_bound(t.begin(), t.end(), v) - t.begin());
+		} else {
+			cnt = (lower_bound(t.begin(), t.end(), v) - t.begin()) - i - 1;
+		}
+		ans += cnt + ft.query(rank - 1);
+	}
+	cout << ans << nl;
 }
 
 // **************************************************************************
