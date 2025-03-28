@@ -51,7 +51,7 @@ compile() {
 
 	check_todo "$_source_file"
 
-	if [[ -f "$_binary_file" && "$_source_file" -ot "$_binary_file" ]]; then
+	if [[ -f "$_binary_file" && "$_source_file" -ot "$_binary_file" && " ${_prefix_flags[*]} " != *" -g "* ]]; then
 		_info_wanted=$([[ " ${_prefix_flags[*]} " == *" -DINFO "* ]] && echo 1 || echo 0)
 		_info_enabled=$({ strings "${_binary_file}" | grep -q "debug logging"; } && echo 1 || echo 0)
 		if [[ $_info_wanted -eq $_info_enabled ]]; then

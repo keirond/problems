@@ -78,6 +78,10 @@ struct FTree {
 		for (; i > 0; i -= i & -i) ans += ft[i];
 		return ans;
 	}
+
+	int query(int l, int r) {
+		return query(r) - query(l-1);
+	}
 };
 
 void solve(int test_case [[maybe_unused]]) {
@@ -97,17 +101,15 @@ void solve(int test_case [[maybe_unused]]) {
 	for (auto &[k, v] : mp) {
 		if (k != v) {
 			t.push_back(k);
-			u.push_back(v);
 		}
 	}
 	sort(t.begin(), t.end());
-	sort(u.begin(), u.end());
 
 	int ans = 0, n = t.size();
 	FTree ft(n);
 	for (int i = 0; i < n; ++i) {
 		int k = t[i], v = mp[k];
-		int rank = lower_bound(u.begin(), u.end(), v) - u.begin() + 1;
+		int rank = lower_bound(t.begin(), t.end(), v) - t.begin() + 1;
 		ft.update(rank, 1);
 		int cnt;
 		if (k > v) {
@@ -115,7 +117,7 @@ void solve(int test_case [[maybe_unused]]) {
 		} else {
 			cnt = (lower_bound(t.begin(), t.end(), v) - t.begin()) - i - 1;
 		}
-		ans += cnt + ft.query(rank - 1);
+		ans += cnt + ft.query(rank+1, n);
 	}
 	cout << ans << nl;
 }
