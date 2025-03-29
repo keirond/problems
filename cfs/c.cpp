@@ -2,6 +2,7 @@
 
 using namespace std;
 
+using ll = long long;
 constexpr char nl [[maybe_unused]] = '\n';
 
 // --------------------------------------------------------------------------
@@ -63,9 +64,28 @@ template <typename T, typename... V> void __print(T t, V... v) {
 
 // **************************************************************************
 
-long long pown(long long a, long long d, long long n) {
-	long long ans = 1;
+ll mult(ll a, ll d, ll m) { return (__int128)a * d % m; }
+
+ll f(ll a, ll c, ll m) { return (mult(a, a, m) + c) % m; }
+
+ll rho(ll n) {
+	if (n % 2 == 0) return 2;
+	ll u = rand() % (n - 2) + 2, v = u;
+	ll c = rand() % (n - 1) + 1, g = 1;
+	while (g == 1) {
+		u = f(u, c, n);
+		v = f(v, c, n);
+		v = f(v, c, n);
+		g = gcd(abs(u - v), n);
+	}
+	if (g == n) return rho(n);
+	return g;
+}
+
+ll pown(ll a, ll d, ll n) {
+	ll ans = 1;
 	a %= n;
+
 	while (d) {
 		if (d & 1) ans = (__int128)ans * a % n;
 		a = (__int128)a * a % n;
@@ -74,9 +94,10 @@ long long pown(long long a, long long d, long long n) {
 	return ans;
 }
 
-bool miller_test(int a, long long d, long long n, int s) {
-	long long x = pown(a, d, n);
+bool miller_test(ll a, ll d, ll n, int s) {
+	ll x = pown(a, d, n);
 	if (x == 1 || x == n - 1) return true;
+
 	for (int i = 0; i < s - 1; ++i) {
 		x = (__int128)x * x % n;
 		if (x == n - 1) return true;
@@ -84,42 +105,52 @@ bool miller_test(int a, long long d, long long n, int s) {
 	return false;
 }
 
-bool is_prime(long long n) {
+bool is_prime(ll n) {
 	if (n < 2) return false;
-	if (n & 2 == 0) return n == 2;
+	if (n % 2 == 0) return n == 2;
 
-	long long d = n - 1;
+	ll d = n - 1;
 	int s = 0;
 	while (d % 2 == 0) {
-		++s;
+		s++;
 		d >>= 1;
 	}
 
-	vector<long long> bases = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37};
-	for (long long a : bases) {
+	vector<ll> bases = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37};
+	for (ll a : bases) {
 		if (a >= n) break;
 		if (!miller_test(a, d, n, s)) return false;
 	}
 	return true;
 }
 
+void factorize(ll n, vector<ll> &ans) {
+	if (n == 1) return;
+	if (is_prime(n)) {
+		ans.push_back(n);
+		return;
+	}
+
+	ll d = rho(n);
+	factorize(d, ans);
+	factorize(n / d, ans);
+}
+
 void solve(int test_case [[maybe_unused]]) {
-	int N;
-	cin >> N;
-	vector<int> primes(N + 1);
-	primes[0] = primes[1] = 0;
-	for (int i = 2; i * i <= N; ++i) {
-		if (primes[i]) {
-			for (int j = i * i; j <= N; j += i) primes[j] = 0;
+	int Q;
+	cin >> Q;
+	while (Q--) {
+		ll N;
+		cin >> N;
+		vector<ll> ans;
+		factorize(N, ans);
+		info(ans);
+		cout << ans.size();
+		for (auto d : ans) {
+			cout << ' ' << d;
 		}
+		cout << nl;
 	}
-
-	vector<int> temp;
-	for (int i = 0; i <= N; ++i) {
-		if (primes[i]) temp.push_back(i);
-	}
-
-		
 }
 
 // **************************************************************************

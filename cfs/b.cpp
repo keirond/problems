@@ -2,6 +2,7 @@
 
 using namespace std;
 
+using ll = long long;
 constexpr char nl [[maybe_unused]] = '\n';
 
 // --------------------------------------------------------------------------
