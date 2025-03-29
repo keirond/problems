@@ -144,7 +144,7 @@ void solve(int test_case [[maybe_unused]]) {
 		cin >> N;
 		vector<ll> ans;
 		factorize(N, ans);
-		info(ans);
+		sort(ans.begin(), ans.end());
 		cout << ans.size();
 		for (auto d : ans) {
 			cout << ' ' << d;
@@ -159,6 +159,7 @@ int main() {
 	ios::sync_with_stdio(0);
 	cin.tie(0), cout.tie(0);
 	enable_info();
+	srand(time(nullptr));
 
 	int test_cases = 1;
 	// cin >> test_cases;

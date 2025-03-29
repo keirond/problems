@@ -67,28 +67,21 @@ struct SPF {
 
 using ll = long long;
 
-ll mult(ll a, ll d, ll m) {
-	// return (__int128) a * d % m;
-	ll ans = 1;
-	a %= m;
-	while (d) {
-		if (d & 1) ans = ((__int128)ans + a) % m;
-		a = ((__int128)a + a) % m;
-		d >>= 1;
-	}
-	return ans;
-}
+ll mult(ll a, ll d, ll m) { return (__int128)a * d % m; }
 
 ll f(ll a, ll c, ll m) { return (mult(a, a, m) + c) % m; }
 
-ll rho(ll n, ll x = 2, ll c = 1) {
-	ll u = x, v = x, g = 1;
+ll rho(ll n) {
+	if (n % 2 == 0) return 2;
+	ll u = rand() % (n - 2) + 2, v = u;
+	ll c = rand() % (n - 1) + 1, g = 1;
 	while (g == 1) {
 		u = f(u, c, n);
 		v = f(v, c, n);
 		v = f(v, c, n);
 		g = gcd(abs(u - v), n);
 	}
+	if (g == n) return rho(n);
 	return g;
 }
 
@@ -134,10 +127,10 @@ bool is_prime(ll n) {
 	return true;
 }
 
-void factorize(ll n, unordered_map<ll, ll> &ans) {
+void factorize(ll n, vector<ll> &ans) {
 	if (n == 1) return;
 	if (is_prime(n)) {
-		ans[n]++;
+		ans.push_back(n);
 		return;
 	}
 
@@ -146,4 +139,8 @@ void factorize(ll n, unordered_map<ll, ll> &ans) {
 	factorize(n / d, ans);
 }
 
-int main() { return 0; }
+int main() {
+	srand(time(nullptr));
+
+	return 0;
+}
