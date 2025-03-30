@@ -1,3 +1,4 @@
 #!/bin/bash
 
 cp ../b.cpp $1.cpp
+subl $1.cpp
