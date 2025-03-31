@@ -1,4 +1,7 @@
 #!/bin/bash
 
-cp ../b.cpp $1.cpp
-subl $1.cpp
+if [[ -n $(./valid "$1") ]]; then
+	exit 1
+fi
+cp ../b.cpp "$1.cpp"
+subl "$1.cpp"
