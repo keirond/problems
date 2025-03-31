@@ -64,7 +64,37 @@ template <typename T, typename... V> void __print(T t, V... v) {
 
 // **************************************************************************
 
-void solve(int test_case [[maybe_unused]]) {}
+void solve(int test_case [[maybe_unused]]) {
+	int N = 5 * 1e6;
+	vector<int> spf(N + 1);
+	iota(spf.begin(), spf.end(), 0);
+	for (int i = 2; i * i <= N; ++i) {
+		if (spf[i] == i) {
+			for (int j = i * i; j <= N; j += i) {
+				if (spf[j] == j) spf[j] = i;
+			}
+		}
+	}
+
+	vector<ll> mp(N + 1);
+	for (int i = 2; i <= N; ++i) {
+		mp[i] = mp[i - 1];
+		int t = i;
+		while (t != 1) {
+			mp[i]++;
+			t /= spf[t];
+		}
+	}
+
+	int T;
+	cin >> T;
+
+	while (T--) {
+		int A, B;
+		cin >> A >> B;
+		cout << mp[A] - mp[B] << nl;
+	}
+}
 
 // **************************************************************************
 
