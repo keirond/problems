@@ -65,7 +65,86 @@ template <typename T, typename... V> void __print(T t, V... v) {
 
 // **************************************************************************
 
-void solve(int test_case [[maybe_unused]]) {}
+void solve(int test_case [[maybe_unused]]) {
+	int N, M;
+	cin >> N >> M;
+
+	int CN = 1e7;
+	vector<int> spf(CN + 1);
+	iota(spf.begin(), spf.end(), 0);
+	for (int i = 2; i * i <= CN; i++) {
+		if (spf[i] == i) {
+			for (int j = i * i; j <= CN; j += i) {
+				if (spf[j] == j) spf[j] = i;
+			}
+		}
+	}
+
+	vector<int> A, B;
+	unordered_map<int, int> mp;
+	while (N--) {
+		int d;
+		cin >> d;
+		A.push_back(d);
+		while (d != 1) {
+			mp[spf[d]]++;
+			d /= spf[d];
+		}
+	}
+	while (M--) {
+		int d;
+		cin >> d;
+		B.push_back(d);
+		while (d != 1) {
+			mp[spf[d]]--;
+			d /= spf[d];
+		}
+	}
+
+	vector<int> nA, nB;
+	for (int d : A) {
+		unordered_map<int, int> t;
+		int e = d;
+		while (d != 1) {
+			t[spf[d]]++;
+			d /= spf[d];
+		}
+		info(t);
+		for (auto [k, v] : t) {
+			while (v > max(mp[k], 0)) {
+				e /= k;
+				v--;
+			}
+			mp[k] -= v;
+		}
+		if (e != 1) nA.push_back(e);
+	}
+
+	for (int d : B) {
+		unordered_map<int, int> t;
+		int e = d;
+		while (d != 1) {
+			t[spf[d]]++;
+			d /= spf[d];
+		}
+		for (auto [k, v] : t) {
+			while (v > max(-mp[k], 0)) {
+				e /= k;
+				v--;
+			}
+			mp[k] += v;
+		}
+		if (e != 1) nB.push_back(e);
+	}
+	if (nA.empty()) nA.push_back(1);
+	if (nB.empty()) nB.push_back(1);
+
+	cout << nA.size() << ' ' << nB.size() << nl;
+	for (auto d : nA) cout << d << ' ';
+	cout << nl;
+	for (auto d : nB) cout << d << ' ';
+	cout << nl;
+}
 
 // **************************************************************************
 
