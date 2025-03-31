@@ -6,7 +6,7 @@ if [ -z "$1" ]; then
 fi
 
 filename="$1.cpp"
-dirs=("../done" "." "../drop")
+dirs=("../done" "../drop")
 
 for dir in "${dirs[@]}"; do
     filepath="$dir/$filename"

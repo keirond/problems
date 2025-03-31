@@ -1,7 +1,10 @@
 #!/bin/bash
 
 if [[ -n $(./valid "$1") ]]; then
+	./valid "$1"
 	exit 1
 fi
-cp ../b.cpp "$1.cpp"
+if [[ ! -f "$1.cpp" ]]; then
+	cp ../b.cpp "$1.cpp"
+fi
 subl "$1.cpp"
