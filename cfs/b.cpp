@@ -3,8 +3,14 @@
 using namespace std;
 
 using ll = long long;
-constexpr char nl [[maybe_unused]] = '\n';
+
+#define fi first
+#define se second
 #define pb push_back
+#define lb lower_bound
+#define up upper_bound
+
+constexpr char nl [[maybe_unused]] = '\n';
 
 // --------------------------------------------------------------------------
 
