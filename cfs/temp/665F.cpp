@@ -71,6 +71,15 @@ template <typename T, typename... V> void __print(T t, V... v) {
 
 // **************************************************************************
 
+bool is_prime(ll n) {
+	if(n<2) return false;
+	if(n<4) return true;
+	if(n%2==0 || n%3==0) return false;
+	for(int i=5; i<=n; i+=6) {
+		if(n%i==0||n%(i+2)==0) return false;
+	}
+	return true;
+}
 void solve(int test_case [[maybe_unused]]) {
 	ll N;
 	cin >> N;
@@ -101,7 +110,8 @@ void solve(int test_case [[maybe_unused]]) {
 	for (int i = 0; i < primes.size(); ++i) {
 		ll t = N / primes[i];
 		int cnt = ub(primes.begin(), primes.end(), t) - primes.begin();
-		info(t, cnt);
+		if(cnt == primes.size())
+		info(t, primes[cnt], i);
 		if (cnt > i) ans += cnt - i - 1;
 	}
 	cout << ans << nl;
