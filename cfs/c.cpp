@@ -3,6 +3,13 @@
 using namespace std;
 
 using ll = long long;
+
+#define fi first
+#define se second
+#define pb push_back
+#define lb lower_bound
+#define ub upper_bound
+
 constexpr char nl [[maybe_unused]] = '\n';
 
 // --------------------------------------------------------------------------
@@ -64,93 +71,23 @@ template <typename T, typename... V> void __print(T t, V... v) {
 
 // **************************************************************************
 
-ll mult(ll a, ll d, ll m) { return (__int128)a * d % m; }
-
-ll f(ll a, ll c, ll m) { return (mult(a, a, m) + c) % m; }
-
-ll rho(ll n) {
-	if (n % 2 == 0) return 2;
-	ll u = rand() % (n - 2) + 2, v = u;
-	ll c = rand() % (n - 1) + 1, g = 1;
-	while (g == 1) {
-		u = f(u, c, n);
-		v = f(v, c, n);
-		v = f(v, c, n);
-		g = gcd(abs(u - v), n);
+ll phi(ll n) {
+	ll ans = n;
+	for (ll i = 2; i * i <= n; i++) {
+		if(n%i==0) ans -= ans / i;
+		while (n % i == 0) {
+			n /= i;
+		}
 	}
-	if (g == n) return rho(n);
-	return g;
-}
-
-ll pown(ll a, ll d, ll n) {
-	ll ans = 1;
-	a %= n;
-
-	while (d) {
-		if (d & 1) ans = (__int128)ans * a % n;
-		a = (__int128)a * a % n;
-		d >>= 1;
+	if (n > 1) {
+		ans -= ans / n;
 	}
 	return ans;
 }
 
-bool miller_test(ll a, ll d, ll n, int s) {
-	ll x = pown(a, d, n);
-	if (x == 1 || x == n - 1) return true;
-
-	for (int i = 0; i < s - 1; ++i) {
-		x = (__int128)x * x % n;
-		if (x == n - 1) return true;
-	}
-	return false;
-}
-
-bool is_prime(ll n) {
-	if (n < 2) return false;
-	if (n % 2 == 0) return n == 2;
-
-	ll d = n - 1;
-	int s = 0;
-	while (d % 2 == 0) {
-		s++;
-		d >>= 1;
-	}
-
-	vector<ll> bases = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37};
-	for (ll a : bases) {
-		if (a >= n) break;
-		if (!miller_test(a, d, n, s)) return false;
-	}
-	return true;
-}
-
-void factorize(ll n, vector<ll> &ans) {
-	if (n == 1) return;
-	if (is_prime(n)) {
-		ans.push_back(n);
-		return;
-	}
-
-	ll d = rho(n);
-	factorize(d, ans);
-	factorize(n / d, ans);
-}
-
 void solve(int test_case [[maybe_unused]]) {
-	int Q;
-	cin >> Q;
-	while (Q--) {
-		ll N;
-		cin >> N;
-		vector<ll> ans;
-		factorize(N, ans);
-		sort(ans.begin(), ans.end());
-		cout << ans.size();
-		for (auto d : ans) {
-			cout << ' ' << d;
-		}
-		cout << nl;
-	}
+	int n; cin>>n;
+	cout << phi(n) << nl;
 }
 
 // **************************************************************************
@@ -159,7 +96,6 @@ int main() {
 	ios::sync_with_stdio(0);
 	cin.tie(0), cout.tie(0);
 	enable_info();
-	srand(time(nullptr));
 
 	int test_cases = 1;
 	// cin >> test_cases;
