@@ -72,8 +72,35 @@ template <typename T, typename... V> void __print(T t, V... v) {
 // **************************************************************************
 
 void solve(int test_case [[maybe_unused]]) {
-	ll n;
-	cin >> n;
+	int n = 1e9;
+	int m = sqrt(n);
+
+	int cnt = 0;
+
+	vector<int> ps;
+	vector<bool> isp(m + 1, 1);
+	for (int i = 2; i * i <= m; i++) {
+		if (isp[i]) {
+			if (cnt++ % 500 == 0) cout << i << nl;
+			ps.pb(i);
+			for (int j = i * i; j <= m; j += i) isp[j] = 0;
+		}
+	}
+
+	for (int l = 0; l <= n; l += m) {
+		int r = min(l + m, n + 1);
+		vector<bool> nisp(r - l, 1);
+		for (int p : ps) {
+			ll start = min(p * p, (l + p - 1) / p * p);
+			if (start >= r) break;
+			for (int j = start; j < r; j += p) nisp[j] = 0;
+		}
+		for (int i = 0; i < r - l; i++) {
+			if (nisp[i]) {
+				if (cnt++ % 500 == 0) cout << i + l << nl;
+			}
+		}
+	}
 }
 
 // **************************************************************************
