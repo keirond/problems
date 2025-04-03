@@ -88,7 +88,9 @@ void sieve() {
 
 ll phi(ll n, ll k) {
 	if (k == 0) return n;
-	ll key = n * 1e8 + k;
+	if (n < 2) return 0;
+	ll key = n * 1e5 + k;
+	info(n, k);
 	if (mp.contains(key)) return mp[key];
 	return mp[key] = phi(n, k - 1) - phi(n / ps[k - 1], k - 1);
 }
@@ -105,7 +107,7 @@ void solve(int test_case [[maybe_unused]]) {
 		idx = N - pi;
 		int t = sqrt(r);
 		int s = ub(ps.begin(), ps.end(), t) - ps.begin();
-		cerr << t << ' ';
+		cerr << t << ' ' << s << ' ';
 		pi = phi(r, s) + s - 1;
 		cerr << pi << ' ' << r << nl;
 	}
