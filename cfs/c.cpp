@@ -71,36 +71,45 @@ template <typename T, typename... V> void __print(T t, V... v) {
 
 // **************************************************************************
 
-void solve(int test_case [[maybe_unused]]) {
-	int n = 1e9;
-	int m = sqrt(n);
+vector<int> ps;
+unordered_map<ll, ll> mp;
 
-	int cnt = 0;
-
-	vector<int> ps;
-	vector<bool> isp(m + 1, 1);
-	for (int i = 2; i * i <= m; i++) {
+void sieve() {
+	int n = 1e6;
+	vector<bool> isp(n + 1, 1);
+	for (int i = 2; i * i <= n; i++) {
 		if (isp[i]) {
-			if (cnt++ % 500 == 0) cout << i << nl;
-			ps.pb(i);
-			for (int j = i * i; j <= m; j += i) isp[j] = 0;
+			for (int j = i * i; j <= n; j += i) isp[j] = 0;
 		}
 	}
+	for (int i = 2; i <= n; i++)
+		if (isp[i]) ps.pb(i);
+}
 
-	for (int l = 0; l <= n; l += m) {
-		int r = min(l + m, n + 1);
-		vector<bool> nisp(r - l, 1);
-		for (int p : ps) {
-			ll start = min(p * p, (l + p - 1) / p * p);
-			if (start >= r) break;
-			for (int j = start; j < r; j += p) nisp[j] = 0;
-		}
-		for (int i = 0; i < r - l; i++) {
-			if (nisp[i]) {
-				if (cnt++ % 500 == 0) cout << i + l << nl;
-			}
-		}
+ll phi(ll n, ll k) {
+	if (k == 0) return n;
+	ll key = n * 1e8 + k;
+	if (mp.contains(key)) return mp[key];
+	return mp[key] = phi(n, k - 1) - phi(n / ps[k - 1], k - 1);
+}
+
+void solve(int test_case [[maybe_unused]]) {
+	int N = 1e9;
+	// cin >> N;
+	sieve();
+
+	ll l = 0, r = 10, pi = 4;
+	int idx = N;
+	while (pi < N) {
+		l = r, r *= 10;
+		idx = N - pi;
+		int t = sqrt(r);
+		int s = ub(ps.begin(), ps.end(), t) - ps.begin();
+		cerr << t << ' ';
+		pi = phi(r, s) + s - 1;
+		cerr << pi << ' ' << r << nl;
 	}
+	cout << idx << ' ' << pi << ' ' << l << ' ' << r << nl;
 }
 
 // **************************************************************************
