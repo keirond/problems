@@ -7,8 +7,12 @@ using ll = long long;
 #define fi first
 #define se second
 #define pb push_back
+#define ins insert
 #define lb lower_bound
-#define ub upper_bound
+#define up upper_bound
+#define sz(v) (int)(v).size()
+#define all(v) v.begin(), v.end()
+#define range(v, n) v.begin(), v.begin() + n
 
 constexpr char nl [[maybe_unused]] = '\n';
 
@@ -71,48 +75,7 @@ template <typename T, typename... V> void __print(T t, V... v) {
 
 // **************************************************************************
 
-vector<int> ps;
-unordered_map<ll, ll> mp;
-
-void sieve() {
-	int n = 1e6;
-	vector<bool> isp(n + 1, 1);
-	for (int i = 2; i * i <= n; i++) {
-		if (isp[i]) {
-			for (int j = i * i; j <= n; j += i) isp[j] = 0;
-		}
-	}
-	for (int i = 2; i <= n; i++)
-		if (isp[i]) ps.pb(i);
-}
-
-ll phi(ll n, ll k) {
-	if (k == 0) return n;
-	if (n < 2) return 0;
-	ll key = n * 1e5 + k;
-	info(n, k);
-	if (mp.contains(key)) return mp[key];
-	return mp[key] = phi(n, k - 1) - phi(n / ps[k - 1], k - 1);
-}
-
-void solve(int test_case [[maybe_unused]]) {
-	int N = 1e9;
-	// cin >> N;
-	sieve();
-
-	ll l = 0, r = 10, pi = 4;
-	int idx = N;
-	while (pi < N) {
-		l = r, r *= 10;
-		idx = N - pi;
-		int t = sqrt(r);
-		int s = ub(ps.begin(), ps.end(), t) - ps.begin();
-		cerr << t << ' ' << s << ' ';
-		pi = phi(r, s) + s - 1;
-		cerr << pi << ' ' << r << nl;
-	}
-	cout << idx << ' ' << pi << ' ' << l << ' ' << r << nl;
-}
+void solve(int test_case [[maybe_unused]]) {}
 
 // **************************************************************************
 
@@ -129,3 +92,7 @@ int main() {
 	}
 	return 0;
 }
+
+// **************************************************************************
+// *author* Keiron Dang
+// **************************************************************************
