@@ -18,13 +18,33 @@ constexpr char nl [[maybe_unused]] = '\n';
 
 // **************************************************************************
 
-void solve(int test_case [[maybe_unused]]) {}
+vector<int> ps;
+
+void sieve(int n) {
+	vector<bool> isp(n + 1, 1);
+	for (int i = 2; i <= n; i++) {
+		if (isp[i]) ps.pb(i);
+		for (int p : ps) {
+			ll t = i * p;
+			if (t > n) break;
+			isp[t] = 0;
+			if (i % p == 0) break;
+		}
+	}
+}
+
+void solve(int test_case [[maybe_unused]]) {
+	ll n = 1000000000;
+	sieve(n);
+	cout << ps.size() << nl;
+}
 
 // **************************************************************************
 
 int main() {
 	ios::sync_with_stdio(0);
 	cin.tie(0), cout.tie(0);
+	solve(1);
 	return 0;
 }
 
