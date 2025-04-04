@@ -9,7 +9,7 @@ using ll = long long;
 #define pb push_back
 #define ins insert
 #define lb lower_bound
-#define up upper_bound
+#define ub upper_bound
 #define sz(v) (int)(v).size()
 #define all(v) v.begin(), v.end()
 #define range(v, n) v.begin(), v.begin() + n

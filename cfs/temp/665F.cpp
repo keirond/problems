@@ -7,8 +7,12 @@ using ll = long long;
 #define fi first
 #define se second
 #define pb push_back
+#define ins insert
 #define lb lower_bound
 #define ub upper_bound
+#define sz(v) (int)(v).size()
+#define all(v) v.begin(), v.end()
+#define range(v, n) v.begin(), v.begin() + n
 
 constexpr char nl [[maybe_unused]] = '\n';
 
@@ -71,50 +75,54 @@ template <typename T, typename... V> void __print(T t, V... v) {
 
 // **************************************************************************
 
-bool is_prime(ll n) {
-	if(n<2) return false;
-	if(n<4) return true;
-	if(n%2==0 || n%3==0) return false;
-	for(int i=5; i<=n; i+=6) {
-		if(n%i==0||n%(i+2)==0) return false;
+int A = 1e6;
+vector<int> ps, pi_small;
+unordered_map<ll, ll> pi_cache, phi_cache;
+
+void sieve(int n) {
+	vector<bool> isp(n+1, 1);
+	for(int i=2; i*i<=n; i++) {
+		if(isp[i]) {
+			for(int j=i*i; j<=n; j+=i) isp[j]=0;
+		}
 	}
-	return true;
+	for(int i=2; i<=n; i++) {
+		if(isp[i]) ps.pb(i);
+		pi_small[i] = pi_small[i-1]+isp[i];
+	}
 }
+
+ll phi(ll n, ll k) {
+	if (k == 0) return n;
+	ll key = n << 20 | k;
+	if (phi_cache.contains(key)) return phi_cache[key];
+	return phi_cache[key] = phi(n, k - 1) - phi(n / ps[k - 1], k - 1);
+}
+
+ll pi(ll n) {
+	if (n <= A) return pi_small[n];
+
+	if (pi_cache.contains(n)) return pi_cache[n];
+
+	ll sqrt_n = sqrt(n);
+	ll cbrt_n = cbrt(n);
+
+	int t = pi(cbrt_n);
+	ll result = phi(n, t) + t - 1;
+	for (int i = t; i <= ps.size() && ps[i] <= sqrt_n; i++) {
+		result -= pi(n / ps[i]) - i;
+	}
+	return pi_cache[n] = result;
+}
+
 void solve(int test_case [[maybe_unused]]) {
 	ll N;
 	cin >> N;
 
-	int T = sqrt(N);
-	vector<int> isp(T + 1, 1);
-	isp[0] = isp[1] = 0;
-	for (int i = 2; i * i <= T; i++) {
-		if (isp[i]) {
-			for (int j = i * i; j <= T; j += i) isp[j] = 0;
-		}
-	}
-
-	vector<int> primes;
-	for (int i = 2; i <= T; ++i) {
-		if (isp[i]) primes.pb(i);
-	}
-
-	ll ans = 0;
-	for (int i = 0; i < primes.size(); ++i) {
-		ll t = primes[i];
-		if (t * t * t <= N) {
-			ans++;
-			info(t * t * t);
-		}
-	}
-	info(primes);
-	for (int i = 0; i < primes.size(); ++i) {
-		ll t = N / primes[i];
-		int cnt = ub(primes.begin(), primes.end(), t) - primes.begin();
-		if(cnt == primes.size())
-		info(t, primes[cnt], i);
-		if (cnt > i) ans += cnt - i - 1;
-	}
-	cout << ans << nl;
+	sieve(A);
+	int t = cbrt(N);
+	ll ans = ub(all(ps), t) - ps.begin();
+	
 }
 
 // **************************************************************************
@@ -132,3 +140,7 @@ int main() {
 	}
 	return 0;
 }
+
+// **************************************************************************
+// *author* Keiron Dang
+// **************************************************************************
