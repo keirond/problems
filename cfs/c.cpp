@@ -75,6 +75,8 @@ template <typename T, typename... V> void __print(T t, V... v) {
 
 // **************************************************************************
 
+ll N;
+int a = 1e7;
 vector<int> ps, pi_small;
 unordered_map<ll, ll> pi_cache, phi_cache;
 
@@ -94,45 +96,35 @@ void sieve(int n) {
 
 ll phi(ll n, ll k) {
 	if (k == 0) return n;
-	if (n < 2) return 0;
 
 	ll key = n << 20 | k;
-	if (phi_cache.contains(key)) return phi_cache[key];
+	if (phi_cache.count(key)) return phi_cache[key];
 
 	return phi_cache[key] = phi(n, k - 1) - phi(n / ps[k - 1], k - 1);
 }
 
 ll pi(ll n) {
-	if (n <= 1e6) return pi_small[n];
+	if (n <= a) return pi_small[n];
 
-	if (pi_cache.contains(n)) return pi_cache[n];
+	if (pi_cache.count(n)) return pi_cache[n];
 
 	ll sqrt_n = sqrt(n);
 	ll cbrt_n = cbrt(n);
 
 	int t = pi(cbrt_n);
 	ll result = phi(n, t) + t - 1;
-	for (int i = t; i < ps.size() && ps[i] <= sqrt_n; i++) {
-		result -= pi(n / i) - i;
-	}
+	for (int i = t; i <= ps.size() && ps[i] <= sqrt_n; i++)
+		result -= pi(n / ps[i]) - i;
+
 	return pi_cache[n] = result;
 }
 
 void solve(int test_case [[maybe_unused]]) {
-	ll N;
 	cin >> N;
 
-	sieve(1e6);
-	cout << pi(1e10) << nl;
-	// ll l = 2, r = 1e11;
-	// while (l < r) {
-	// 	ll m = l + (r - l >> 1);
-	// 	if (pi(m) >= N)
-	// 		r = m;
-	// 	else
-	// 		l = m + 1;
-	// }
-	// cout << l << nl;
+	sieve(a);
+
+	cout << pi(N) << nl;
 }
 
 // **************************************************************************

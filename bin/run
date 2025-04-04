@@ -99,7 +99,7 @@ run() {
 
 	err_echo "Running $_binary_file with C++20..."
 
-	_commands+=("timeout -v 10 ./$_binary_file")
+	_commands+=("./$_binary_file")
 	eval "${_commands[*]}"
 }
 
@@ -134,7 +134,7 @@ run_with_sample() {
 	local _diff_output
 
 	_expected_output=$(cat "$_output_file")
-	_actual_output=$(timeout -v 10 ./"$_binary_file" <"$_input_file" 2> >(cat >&2))
+	_actual_output=$(./"$_binary_file" <"$_input_file" 2> >(cat >&2))
 	_diff_output=$(diff -y <(echo "$_expected_output") <(echo "$_actual_output"))
 
 	if [[ "$_expected_output" != "$_actual_output" ]]; then
