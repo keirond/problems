@@ -80,15 +80,15 @@ vector<int> ps, pi_small;
 unordered_map<ll, ll> pi_cache, phi_cache;
 
 void sieve(int n) {
-	vector<bool> isp(n+1, 1);
-	for(int i=2; i*i<=n; i++) {
-		if(isp[i]) {
-			for(int j=i*i; j<=n; j+=i) isp[j]=0;
+	vector<bool> isp(n + 1, 1);
+	for (int i = 2; i * i <= n; i++) {
+		if (isp[i]) {
+			for (int j = i * i; j <= n; j += i) isp[j] = 0;
 		}
 	}
-	for(int i=2; i<=n; i++) {
-		if(isp[i]) ps.pb(i);
-		pi_small[i] = pi_small[i-1]+isp[i];
+	for (int i = 2; i <= n; i++) {
+		if (isp[i]) ps.pb(i);
+		pi_small[i] = pi_small[i - 1] + isp[i];
 	}
 }
 
@@ -109,7 +109,7 @@ ll pi(ll n) {
 
 	int t = pi(cbrt_n);
 	ll result = phi(n, t) + t - 1;
-	for (int i = t; i <= ps.size() && ps[i] <= sqrt_n; i++) {
+	for (int i = t; i < ps.size() && ps[i] <= sqrt_n; i++) {
 		result -= pi(n / ps[i]) - i;
 	}
 	return pi_cache[n] = result;
@@ -120,9 +120,15 @@ void solve(int test_case [[maybe_unused]]) {
 	cin >> N;
 
 	sieve(A);
-	int t = cbrt(N);
-	ll ans = ub(all(ps), t) - ps.begin();
-	
+	cout << ps.size() << nl;
+	cout << pi(1e10) << nl;
+	// int sqrt_n = sqrt(N);
+	// int cbrt_n = cbrt(N);
+	// ll ans = ub(all(ps), cbrt_n) - ps.begin();
+	// for (int i = 0; i < ps.size() && ps[i] < sqrt_n; i++) {
+	// 	ans += pi(N / ps[i]) - pi(ps[i]);
+	// }
+	// cout << ans << nl;
 }
 
 // **************************************************************************
