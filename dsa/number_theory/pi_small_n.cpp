@@ -34,9 +34,11 @@ void sieve(int n) {
 }
 
 void solve(int test_case [[maybe_unused]]) {
-	ll n = 1000000000;
-	sieve(n);
-	cout << ps.size() << nl;
+	for (int n = 1; n <= 1e8; n *= 10) {
+		ps.clear();
+		sieve(n);
+		cout << ps.size() << nl;
+	}
 }
 
 // **************************************************************************

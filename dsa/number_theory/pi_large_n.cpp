@@ -65,7 +65,7 @@ ll pi(ll n) {
 void solve(int test_case [[maybe_unused]] = 1) {
 	sieve(1e6);
 	for (ll n = 1; n <= 1e11; n *= 10) {
-		cout << n << '\t' << pi(n) << nl;
+		cout << n << ' ' << pi(n) << nl;
 	}
 }
 
