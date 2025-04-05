@@ -71,7 +71,7 @@ ll phi(ll n, int k) {
 
 	// pi(n) = phi(n, [cbrt(n)]) + [cbrt(n)] - 1 - SUM(n/p_i)
 	if (n < MAXV && p * p * p >= n) {
-		int s = sqrt(0.5 + n);
+		int s = sqrt(n);
 		ll ans = pi[n] - k + 1;
 		for (int i = k; i < pi[s]; i++) ans += pi[n / ps[i]] - i;
 		return ans;
@@ -83,8 +83,8 @@ ll phi(ll n, int k) {
 ll count(ll n) {
 	if (n < MAXV) return pi[n];
 
-	ll s = sqrt(0.5 + n);
-	ll c = cbrt(0.5 + n);
+	ll s = sqrt(n);
+	ll c = cbrt(n);
 
 	ll ans = phi(n, pi[c]) + pi[c] - 1;
 	for (int i = pi[c]; i < pi[s]; i++) {

@@ -74,57 +74,85 @@ template <typename T, typename... V> void __print(T t, V... v) {
 #endif
 
 // **************************************************************************
+const int MAXV = 1e7 + 1;
+const int MAXP = 7;
+const int MAXK = 50;
+const int MAXN = 2 * 3 * 5 * 7 * 11 * 13 * 17;
 
-ll N;
-int a = 1e7;
-vector<int> ps, pi_small;
-unordered_map<ll, ll> pi_cache, phi_cache;
+vector<int> pi(MAXV), prod(MAXP), ps;
+vector<vector<int>> dp(MAXK, vector<int>(MAXN));
 
-void sieve(int n) {
-	vector<bool> isp(n + 1, 1);
-	for (int i = 2; i * i <= n; i++) {
+void gen() {
+	bitset<MAXV> isp;
+	isp.set();
+
+	for (int i = 2; i * i < MAXV; i++) {
 		if (isp[i]) {
-			for (int j = i * i; j <= n; j += i) isp[j] = 0;
+			for (int j = i * i; j <= MAXV; j += i) isp[j] = 0;
 		}
 	}
-	pi_small.resize(n);
-	for (int i = 2; i <= n; i++) {
+	for (int i = 2; i < MAXV; i++) {
 		if (isp[i]) ps.pb(i);
-		pi_small[i] = pi_small[i - 1] + isp[i];
+		pi[i] = pi[i - 1] + isp[i];
+	}
+
+	prod[0] = ps[0];
+	for (int i = 1; i < MAXP; i++) prod[i] = prod[i - 1] * ps[i];
+
+	for (int i = 0; i < MAXN; i++) dp[0][i] = i;
+	for (int i = 1; i < MAXK; i++) {
+		for (int j = 1; j < MAXN; j++) {
+			dp[i][j] = dp[i - 1][j] - dp[i - 1][j / ps[i - 1]];
+		}
 	}
 }
+ll phi(ll n, int k) {
+	if (!k) return n;
+	if (k < MAXK && n < MAXN) return dp[k][n];
+	if (k < MAXP)
+		return dp[k][n % prod[k - 1]] +
+			   n / prod[k - 1] * dp[k][n / prod[k - 1]];
 
-ll phi(ll n, ll k) {
-	if (k == 0) return n;
-
-	ll key = n << 20 | k;
-	if (phi_cache.count(key)) return phi_cache[key];
-
-	return phi_cache[key] = phi(n, k - 1) - phi(n / ps[k - 1], k - 1);
+	ll p = ps[k - 1];
+	if (n < MAXV && p * p >= n) return pi[n] - k + 1;
+	if (n < MAXV && p * p * p >= n) {
+		int s = sqrt(n);
+		ll ans = pi[n] - k + 1;
+		for (int i = k; i < pi[s]; i++) ans += pi[n / ps[i]] - i;
+		return ans;
+	}
+	return phi(n, k - 1) - phi(n / p, k - 1);
 }
 
-ll pi(ll n) {
-	if (n <= a) return pi_small[n];
+ll count(ll n) {
+	if (n < MAXV) return pi[n];
 
-	if (pi_cache.count(n)) return pi_cache[n];
+	ll s = sqrt(n), c = cbrt(n);
 
-	ll sqrt_n = sqrt(n);
-	ll cbrt_n = cbrt(n);
-
-	int t = pi(cbrt_n);
-	ll result = phi(n, t) + t - 1;
-	for (int i = t; i <= ps.size() && ps[i] <= sqrt_n; i++)
-		result -= pi(n / ps[i]) - i;
-
-	return pi_cache[n] = result;
+	ll ans = phi(n, pi[c]) + pi[c] - 1;
+	for (int i = pi[s]; i < pi[c]; i++) ans -= pi[n / ps[i]] - i;
+	return ans;
 }
 
 void solve(int test_case [[maybe_unused]]) {
-	cin >> N;
+	// ll N;
+	// cin >> N;
 
-	sieve(a);
-
-	cout << pi(N) << nl;
+	gen();
+	for (ll n = 1; n <= 1e13; n *= 10) {
+		cout << n << ' ' << count(n) << nl;
+	}
+	// ll l = N * (log(N) + log(log(N)) - .6);
+	// ll r = N * (log(N) + log(log(N)) + .9);
+	// while (l < r) {
+	// 	ll m = l + (r - l >> 1);
+	// 	if (count(m) >= N)
+	// 		r = m;
+	// 	else
+	// 		l = m + 1;
+	// }
+	// cout << l << nl;
+	// cout << count(l) << nl;
 }
 
 // **************************************************************************
