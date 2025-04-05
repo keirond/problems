@@ -21,10 +21,9 @@ constexpr char nl [[maybe_unused]] = '\n';
 const int MAXV = 1e7 + 1;
 const int MAXP = 7;
 const int MAXK = 50;
-const int MAXN = 2 * 3 * 7 * 5 * 11 * 13 * 17;	// product of first MAXP primes;
+const int MAXN = 2 * 3 * 5 * 7 * 11 * 13 * 17;
 
-vector<int> ps;
-vector<int> pi(MAXV), prod(MAXP);
+vector<int> pi(MAXV), prod(MAXP), ps;
 vector<vector<int>> dp(MAXK, vector<int>(MAXN));
 
 void sieve() {

@@ -88,9 +88,10 @@ void gen() {
 
 	for (int i = 2; i * i < MAXV; i++) {
 		if (isp[i]) {
-			for (int j = i * i; j <= MAXV; j += i) isp[j] = 0;
+			for (int j = i * i; j < MAXV; j += i) isp[j] = 0;
 		}
 	}
+
 	for (int i = 2; i < MAXV; i++) {
 		if (isp[i]) ps.pb(i);
 		pi[i] = pi[i - 1] + isp[i];
