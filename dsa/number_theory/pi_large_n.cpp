@@ -18,54 +18,86 @@ constexpr char nl [[maybe_unused]] = '\n';
 
 // **************************************************************************
 
-vector<int> ps;
-vector<int> pi_small;
-unordered_map<ll, ll> phi_cache, pi_cache;
+const int MAXV = 1e7 + 1;
+const int MAXP = 7;
+const int MAXK = 50;
+const int MAXN = 2 * 3 * 7 * 5 * 11 * 13 * 17;	// product of first MAXP primes;
 
-void sieve(int n) {
-	vector<bool> isp(n + 1, 1);
-	for (int i = 2; i * i <= n; i++) {
+vector<int> ps;
+vector<int> pi(MAXV), prod(MAXP);
+vector<vector<int>> dp(MAXK, vector<int>(MAXN));
+
+void sieve() {
+	bitset<MAXV> isp;
+	isp.set();
+
+	for (int i = 2; i * i < MAXV; i++) {
 		if (isp[i]) {
-			for (int j = i * i; j <= n; j += i) isp[j] = 0;
+			for (int j = i * i; j < MAXV; j += i) isp[j] = 0;
 		}
 	}
 
-	pi_small.resize(n);
-	for (int i = 2; i <= n; i++) {
+	for (int i = 2; i < MAXV; i++) {
 		if (isp[i]) ps.pb(i);
-		pi_small[i] = pi_small[i - 1] + isp[i];
+		pi[i] = pi[i - 1] + isp[i];
 	}
 }
 
-ll phi(ll x, int a) {
-	if (a == 0) return x;
-	ll key = (x << 20) | a;
-	if (phi_cache.contains(key)) return phi_cache[key];
+void gen() {
+	sieve();
 
-	ll result = phi(x, a - 1) - phi(x / ps[a - 1], a - 1);
-	return phi_cache[key] = result;
+	prod[0] = ps[0];
+	for (int i = 1; i < MAXP; i++) prod[i] = prod[i - 1] * ps[i];
+
+	for (int i = 0; i < MAXN; i++) dp[0][i] = i;
+	for (int i = 1; i < MAXK; i++) {
+		for (int j = 1; j < MAXN; j++) {
+			dp[i][j] = dp[i - 1][j] - dp[i - 1][j / ps[i - 1]];
+		}
+	}
 }
 
-ll pi(ll n) {
-	if (n <= 1e6) return pi_small[n];
+ll phi(ll n, int k) {
+	if (k == 0) return n;
+	if (k < MAXK && n < MAXN) return dp[k][n];
+	if (k < MAXP)
+		return dp[k][n % prod[k - 1]] + n / prod[k - 1] * dp[k][prod[k - 1]];
 
-	if (pi_cache.contains(n)) return pi_cache[n];
+	ll p = ps[k - 1];
 
-	ll sqrt_n = sqrt(n);
-	ll cbrt_n = cbrt(n);
+	// pi(n) = phi(n, [sqrt(n)]) + [sqrt(n)] - 1
+	// = phi(n, k) + k - 1 with k >= sqrt(n)
+	if (n < MAXV && p * p >= n) return pi[n] - k + 1;
 
-	int a = pi(cbrt_n);
-	ll result = phi(n, a) + a - 1;
-	for (int i = a; i <= ps.size() && ps[i] <= sqrt_n; i++) {
-		result -= pi(n / ps[i]) - i;
+	// pi(n) = phi(n, [cbrt(n)]) + [cbrt(n)] - 1 - SUM(n/p_i)
+	if (n < MAXV && p * p * p >= n) {
+		int s = sqrt(0.5 + n);
+		ll ans = pi[n] - k + 1;
+		for (int i = k; i < pi[s]; i++) ans += pi[n / ps[i]] - i;
+		return ans;
 	}
-	return pi_cache[n] = result;
+
+	return phi(n, k - 1) - phi(n / ps[k - 1], k - 1);
+}
+
+ll count(ll n) {
+	if (n < MAXV) return pi[n];
+
+	ll s = sqrt(0.5 + n);
+	ll c = cbrt(0.5 + n);
+
+	ll ans = phi(n, pi[c]) + pi[c] - 1;
+	for (int i = pi[c]; i < pi[s]; i++) {
+		ans -= count(n / ps[i]) - i;
+	}
+	return ans;
 }
 
 void solve(int test_case [[maybe_unused]] = 1) {
-	sieve(1e6);
-	for (ll n = 1; n <= 1e11; n *= 10) {
-		cout << n << ' ' << pi(n) << nl;
+	gen();
+
+	for (ll n = 1; n <= 1e13; n *= 10) {
+		cout << n << ' ' << count(n) << nl;
 	}
 }
 

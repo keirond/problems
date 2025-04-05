@@ -86,6 +86,8 @@ void sieve(int n) {
 			for (int j = i * i; j <= n; j += i) isp[j] = 0;
 		}
 	}
+
+	pi_small.resize(n);
 	for (int i = 2; i <= n; i++) {
 		if (isp[i]) ps.pb(i);
 		pi_small[i] = pi_small[i - 1] + isp[i];
@@ -109,9 +111,8 @@ ll pi(ll n) {
 
 	int t = pi(cbrt_n);
 	ll result = phi(n, t) + t - 1;
-	for (int i = t; i < ps.size() && ps[i] <= sqrt_n; i++) {
+	for (int i = t; i < ps.size() && ps[i] <= sqrt_n; i++)
 		result -= pi(n / ps[i]) - i;
-	}
 	return pi_cache[n] = result;
 }
 
@@ -120,15 +121,13 @@ void solve(int test_case [[maybe_unused]]) {
 	cin >> N;
 
 	sieve(A);
-	cout << ps.size() << nl;
-	cout << pi(1e10) << nl;
-	// int sqrt_n = sqrt(N);
-	// int cbrt_n = cbrt(N);
-	// ll ans = ub(all(ps), cbrt_n) - ps.begin();
-	// for (int i = 0; i < ps.size() && ps[i] < sqrt_n; i++) {
-	// 	ans += pi(N / ps[i]) - pi(ps[i]);
-	// }
-	// cout << ans << nl;
+	int sqrt_n = sqrt(N);
+	int cbrt_n = cbrt(N);
+	ll ans = ub(all(ps), cbrt_n) - ps.begin();
+	for (int i = 0; i < ps.size() && ps[i] <=sqrt_n; i++) {
+		ans += pi(N / ps[i]) - pi(ps[i]);
+	}
+	cout << ans << nl;
 }
 
 // **************************************************************************
