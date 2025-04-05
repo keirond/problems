@@ -75,7 +75,27 @@ template <typename T, typename... V> void __print(T t, V... v) {
 
 // **************************************************************************
 
-void solve(int test_case [[maybe_unused]]) {}
+void solve(int test_case [[maybe_unused]]) {
+	int N, K;
+	cin >> N >> K;
+	vector<int> s(K);
+	vector<ll> a(N);
+	for (int &d : s) cin >> d;
+	for (int i = 1; i < K; i++) {
+		a[N - K + i] = s[i] - s[i - 1];
+	}
+	if (K > 1 && a[N - K + 1] * (N - K + 1) < s[0]) {
+		cout << "NO" << nl;
+		return;
+	}
+	for (int i = N - K + 2; i < N; i++) {
+		if (a[i - 1] > a[i]) {
+			cout << "NO" << nl;
+			return;
+		}
+	}
+	cout << "YES" << nl;
+}
 
 // **************************************************************************
 
@@ -85,7 +105,7 @@ int main() {
 	enable_info();
 
 	int test_cases = 1;
-	// cin >> test_cases;
+	cin >> test_cases;
 	while (test_cases--) {
 		solve(test_cases);
 		cout << flush;
