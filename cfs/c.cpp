@@ -111,8 +111,7 @@ ll phi(ll n, int k) {
 	if (!k) return n;
 	if (k < MAXK && n < MAXN) return dp[k][n];
 	if (k < MAXP)
-		return dp[k][n % prod[k - 1]] +
-			   n / prod[k - 1] * dp[k][n / prod[k - 1]];
+		return dp[k][n % prod[k - 1]] + n / prod[k - 1] * dp[k][prod[k - 1]];
 
 	ll p = ps[k - 1];
 	if (n < MAXV && p * p >= n) return pi[n] - k + 1;
@@ -131,29 +130,29 @@ ll count(ll n) {
 	ll s = sqrt(n), c = cbrt(n);
 
 	ll ans = phi(n, pi[c]) + pi[c] - 1;
-	for (int i = pi[s]; i < pi[c]; i++) ans -= pi[n / ps[i]] - i;
+	for (int i = pi[c]; i < pi[s]; i++) ans -= count(n / ps[i]) - i;
 	return ans;
 }
 
 void solve(int test_case [[maybe_unused]]) {
-	// ll N;
-	// cin >> N;
+	ll N;
+	cin >> N;
 
 	gen();
-	for (ll n = 1; n <= 1e13; n *= 10) {
-		cout << n << ' ' << count(n) << nl;
-	}
-	// ll l = N * (log(N) + log(log(N)) - .6);
-	// ll r = N * (log(N) + log(log(N)) + .9);
-	// while (l < r) {
-	// 	ll m = l + (r - l >> 1);
-	// 	if (count(m) >= N)
-	// 		r = m;
-	// 	else
-	// 		l = m + 1;
+	// for (ll n = 1; n <= 1e13; n *= 10) {
+	// cout << n << ' ' << count(n) << nl;
 	// }
-	// cout << l << nl;
-	// cout << count(l) << nl;
+	ll l = N * (log(N) + log(log(N)) - .6);
+	ll r = N * (log(N) + log(log(N)) + .9);
+	while (l < r) {
+		ll m = l + (r - l >> 1);
+		if (count(m) >= N)
+			r = m;
+		else
+			l = m + 1;
+	}
+	cout << l << nl;
+	cout << count(l) << nl;
 }
 
 // **************************************************************************
