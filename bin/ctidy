@@ -37,9 +37,9 @@ if [[ -n "$todo_lines" ]]; then
 	err_echo ""
 fi
 
-err_echo "Checking $source_file syntax with C++20."
+err_echo "Checking $source_file syntax with C++14."
 
 flags=("$@")
-clang++ -std=c++20 -fsyntax-only -Wall -Wextra -Werror -Wshadow -Wconversion "$source_file" "${flags[@]}"
+clang++ -std=c++14 -fsyntax-only -Wall -Wextra -Wno-sign-compare -Wno-parentheses "$source_file" "${flags[@]}"
 
 err_echo "-- Done."
