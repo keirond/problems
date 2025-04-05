@@ -4,11 +4,20 @@ using namespace std;
 
 using ll = long long;
 
+#define fi first
+#define se second
 #define pb push_back
+#define ins insert
+#define lb lower_bound
+#define up upper_bound
+#define sz(v) (int)(v).size()
+#define all(v) v.begin(), v.end()
+#define range(v, n) v.begin(), v.begin() + n
 
 constexpr char nl [[maybe_unused]] = '\n';
 
 // **************************************************************************
+
 const int MAXV = 1e6 + 1;
 const int MAXP = 7;
 const int MAXK = 50;
@@ -95,13 +104,6 @@ void solve(int test_case [[maybe_unused]]) {
 int main() {
 	ios::sync_with_stdio(0);
 	cin.tie(0), cout.tie(0);
-
-	int test_cases = 1;
-	// cin >> test_cases;
-	while (test_cases--) {
-		solve(test_cases);
-		cout << flush;
-	}
 	return 0;
 }
 
