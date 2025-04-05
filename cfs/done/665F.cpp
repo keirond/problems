@@ -95,37 +95,34 @@ void gen() {
 
 	for (int i = 2; i < MAXV; i++) {
 		if (isp[i]) ps.pb(i);
-		pi[i] = ps[i - 1] + ps[i];
+		pi[i] = pi[i - 1] + isp[i];
 	}
 
 	prod[0] = ps[0];
 	for (int i = 1; i < MAXP; i++) prod[i] = prod[i - 1] * ps[i];
 
 	for (int i = 0; i < MAXN; i++) dp[0][i] = i;
-	for (int i = 0; i < MAXK; i++) {
-		for (int j = 0; j < MAXN; j++) {
+	for (int i = 1; i < MAXK; i++) {
+		for (int j = 1; j < MAXN; j++) {
 			dp[i][j] = dp[i - 1][j] - dp[i - 1][j / ps[i - 1]];
 		}
 	}
 }
-
-ll phi(ll n, ll k) {
+ll phi(ll n, int k) {
 	if (!k) return n;
 	if (k < MAXK && n < MAXN) return dp[k][n];
 	if (k < MAXP)
 		return dp[k][n % prod[k - 1]] + n / prod[k - 1] * dp[k][prod[k - 1]];
 
-	int p = ps[k - 1];
+	ll p = ps[k - 1];
 	if (n < MAXV && p * p >= n) return pi[n] - k + 1;
 	if (n < MAXV && p * p * p >= n) {
 		int s = sqrt(n);
 		ll ans = pi[n] - k + 1;
-		for (int i = k; i < pi[s]; i++) {
-			ans += pi[n / ps[i]] - i;
-		}
+		for (int i = k; i < pi[s]; i++) ans += pi[n / ps[i]] - i;
 		return ans;
 	}
-	return phi(n, k - 1) - phi(n / ps[k - 1], k - 1);
+	return phi(n, k - 1) - phi(n / p, k - 1);
 }
 
 ll count(ll n) {
@@ -143,13 +140,12 @@ void solve(int test_case [[maybe_unused]]) {
 	cin >> N;
 
 	gen();
-	cout << count(1e9) << nl;
-	// int s = sqrt(N), c = cbrt(N);
-	// ll ans = ub(all(ps), c) - ps.begin();
-	// for (int i = 0; i < pi[s]; i++) {
-		// ans += count(N / ps[i]) - count(ps[i]);
-	// }
-	// cout << ans << nl;
+	int s = sqrt(N), c = cbrt(N);
+	ll ans = ub(all(ps), c) - ps.begin();
+	for (int i = 0; i < pi[s]; i++) {
+		ans += count(N / ps[i]) - count(ps[i]);
+	}
+	cout << ans << nl;
 }
 
 // **************************************************************************
