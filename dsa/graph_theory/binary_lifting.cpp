@@ -64,7 +64,6 @@ int lca(int u, int v) {
 void solve(int test_case [[maybe_unused]]) {
 	int N, Q;
 	cin >> N >> Q;
-	LOG = log(N * 2 - 1) / log(2);
 
 	adj.resize(N);
 	depth.resize(N);
