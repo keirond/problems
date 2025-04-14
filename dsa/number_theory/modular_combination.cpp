@@ -35,11 +35,12 @@ int egcd(int a, int b) {
 	return (x % m + m) % ::m;
 }
 
-ll exp(ll a, ll b, ll mod) {
+ll _exp(ll a) {
+	ll b = m - 2;
 	ll ans = 1;
 	a %= m;
 	while (b) {
-		if (b & 1) ans = ans * a % mod;
+		if (b & 1) ans = ans * a % m;
 		a = a * a % m;
 		b >>= 1;
 	}
@@ -47,8 +48,8 @@ ll exp(ll a, ll b, ll mod) {
 }
 
 void solve(int test_case [[maybe_unused]]) {
-	int N, M;
-	cin >> N >> M;
+	int N;
+	cin >> N;
 
 	vector<int> fact(N + 1);
 	vector<int> inv_fact(N + 1), inv_fact_1(N + 1);
@@ -56,19 +57,19 @@ void solve(int test_case [[maybe_unused]]) {
 	for (int i = 1; i <= N; i++) {
 		fact[i] = 1LL * fact[i - 1] * i % m;
 		inv_fact[i] = egcd(fact[i], m);
-		inv_fact_1[i] = exp(fact[i], m - 2, m);
+		inv_fact_1[i] = _exp(fact[i]);
 	}
 
-	cout << 1LL * fact[N] * inv_fact[M] % m * inv_fact[N - M] % m << nl;
+	// cout << 1LL * fact[N] * inv_fact[M] % m * inv_fact[N - M] % m << nl;
 
-	// int cnt = 0;
-	// for (int M = 0; M <= N; M++) {
-	// 	int ans = 1LL * fact[N] * inv_fact[M] % m * inv_fact[N - M] % m;
-	// 	int ans_1 = 1LL * fact[N] * inv_fact_1[M] % m * inv_fact_1[N - M] % m;
-	// 	if (ans == ans_1) cnt++;
-	// }
+	int cnt = 0;
+	for (int M = 0; M <= N; M++) {
+		int ans = 1LL * fact[N] * inv_fact[M] % m * inv_fact[N - M] % m;
+		int ans_1 = 1LL * fact[N] * inv_fact_1[M] % m * inv_fact_1[N - M] % m;
+		if (ans == ans_1) cnt++;
+	}
 
-	// cout << cnt << '/' << N + 1 << " passed!" << nl;
+	cout << cnt << '/' << N + 1 << " passed!" << nl;
 }
 
 // **************************************************************************
