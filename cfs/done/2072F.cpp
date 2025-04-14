@@ -75,13 +75,13 @@ template <typename T, typename... V> void __print(T t, V... v) {
 
 // **************************************************************************
 
-
 bool is_odd(int n, int k) {
-	while(k) {
-		int n1 = n&1, k1 = k&1;
-		if(n1 && k1) 
-		n>>=1, k>>=1;
+	while (k) {
+		int n1 = n & 1, k1 = k & 1;
+		if (k1 > n1) return false;
+		n >>= 1, k >>= 1;
 	}
+	return true;
 }
 
 void solve(int test_case [[maybe_unused]]) {
@@ -90,9 +90,8 @@ void solve(int test_case [[maybe_unused]]) {
 	while (T--) {
 		int N, K;
 		cin >> N >> K;
-		for (int i = 1; i <= N; i++) {
-			int t = N / i;
-			if (t & 1)
+		for (int i = 0; i < N; i++) {
+			if (is_odd(N - 1, i))
 				cout << K << ' ';
 			else
 				cout << 0 << ' ';
