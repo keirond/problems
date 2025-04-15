@@ -8,6 +8,7 @@ using ll = long long;
 #define se second
 #define pb push_back
 #define pp pop_back
+#define pf pop_front
 #define ins insert
 #define lb lower_bound
 #define up upper_bound
@@ -25,12 +26,14 @@ struct AC {
 	vector<int> link, out_link;
 	vector<vector<int>> out;
 
+	AC() { add_node(); }
+
 	int add_node() {
-		nxt.emplace_back(A, 0);
+		next.emplace_back(A, 0);
 		link.emplace_back(0);
 		out_link.emplace_back(0);
 		out.emplace_back();
-		return nxt.size() - 1;
+		return next.size() - 1;
 	}
 
 	int insert(string &s) {
@@ -48,7 +51,7 @@ struct AC {
 		deque<int> q;
 		for (q.pb(0); !q.empty();) {
 			int u = q.front();
-			q.pp();
+			q.pf();
 			for (int c = 0; c < A; ++c) {
 				int v = next[u][c];
 				if (!v)
@@ -62,25 +65,54 @@ struct AC {
 			}
 		}
 	}
+
+	int advance(int u, char c) {
+		int d = c - 'a';
+		while (u && !next[u][d]) u = link[u];
+		return next[u][d];
+	}
 };
 
 void solve(int test_case [[maybe_unused]]) {
 	int N;
 	cin >> N;
 	vector<string> V(N);
-	for (string &d : V) cin >> d;
+	for (string &d : V) {
+		cin >> d;
+	}
+	string S;
+	cin >> S;
 
 	sort(all(V));
 	V.erase(unique(all(V)), V.end());
 
-	int S;
-	cin >> S;
-	int n = S.size();
-	vector<int> dp(n, n + 10);
-	int u = 0;
-	for (int i = 0, u = 0; i < n; i++) {
-		char c = S[i];
+	AC ac;
+	vector<int> pat_len;
+	for (auto &s : V) {
+		ac.insert(s);
 	}
+
+	ac.compute();
+
+	int n = S.size();
+	vector<int> dp(n + 1, n + 10);
+	dp[0] = 0;
+	int u = 0;
+	for (int i = 0; i < n; i++) {
+		u = ac.advance(u, S[i]);
+		for (int v = u; v; v = ac.out_link[v]) {
+			for (int p : ac.out[v]) {
+				int len = V[p].size();
+				if (i + 1 >= len) {
+					dp[i + 1] = min(dp[i + 1], dp[i + 1 - len] + 1);
+				}
+			}
+		}
+	}
+	if (dp[n] >= n + 10)
+		cout << "Impossible" << nl;
+	else
+		cout << dp[n] << nl;
 }
 
 // **************************************************************************
