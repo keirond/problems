@@ -37,14 +37,14 @@ struct AC {
 		int u = 0;
 		for (char c : s) {
 			int d = c - 'a';
-			if (!nxt[u][d]) nxt[u][d] = add_node();
-			u = nxt[u][d];
+			if (!next[u][d]) next[u][d] = add_node();
+			u = next[u][d];
 		}
 		out[u].pb(P);
 		return P++;
 	}
 
-	void build() {
+	void compute() {
 		deque<int> q;
 		for (q.pb(0); !q.empty();) {
 			int u = q.front();
