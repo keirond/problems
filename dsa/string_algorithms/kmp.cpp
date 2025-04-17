@@ -18,29 +18,27 @@ constexpr char nl [[maybe_unused]] = '\n';
 
 // **************************************************************************
 
-vector<int> compute(string &pat) {
-	int m = pat.size();
-	vector<int> pi(m);
-	for (int i = 1, j = 0; i < m; i++) {
-		while (j > 0 && pat[i] != pat[j]) {
-			j = pi[j - 1];
-		}
-		if (pat[i] == pat[j]) j++;
+vector<int> compute(string &s) {
+	int n = s.size();
+	vector<int> pi(n);
+	for (int i = 1, j = 0; i < n; i++) {
+		while (j > 0 && s[i] != s[j]) j = pi[j - 1];
+		if (s[i] == s[j]) j++;
 		pi[i] = j;
 	}
 	return pi;
 }
 
-vector<int> kmp(string &txt, string &pat) {
-	int n = txt.size(), m = pat.size();
-	vector<int> pi = compute(pat), ans;
+vector<int> kmp(string &s, string &pat) {
+	int n = s.size(), m = pat.size();
+	vector<int> pi = compute(pat);
+
+	vector<int> ans;
 	for (int i = 0, j = 0; i < n; i++) {
-		while (j > 0 && txt[i] != pat[j]) {
-			j = pi[j - 1];
-		}
-		if (txt[i] == pat[j]) j++;
+		while (j > 0 && s[i] != pat[j]) j = pi[j - 1];
+		if (s[i] == pat[j]) j++;
 		if (j == m) {
-			ans.push_back(i - m + 1);
+			ans.pb(i - m + 1);
 			j = pi[j - 1];
 		}
 	}
