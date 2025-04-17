@@ -20,71 +20,63 @@ constexpr char nl [[maybe_unused]] = '\n';
 
 const int A = 26;
 struct SA {
-	int last, sz = 0;
-	vector<int> len, link, first_pos;
+	int last = 0, sz = 0;
+	vector<int> link, len;
 	vector<vector<int>> next;
 
-	int add_node() { next.emplace_back(A, 0); }
+	SA() { add_node(); }
+
+	int add_node() {
+		len.emplace_back();
+		next.emplace_back(A, -1);
+		link.emplace_back(-1);
+		return sz++;
+	}
 
 	void extend(char c) {
-		int d = c - 'a';
-		int u = last;
-		if (next[u][d]) {
-			int v = next[u][d];
-			if (len[v] == len[u] + 1) {
-				last = v;
-				return;
-			}
+		int u = add_node();
+		int d = c - 'a', p = last;
+		len[u] = len[p] + 1;
 
-			int clone = sz++;
-			for (int i = 0; i < A; i++) {
-				next[clone][i] = next[v][i];
-			}
-			len[clone] = len[u] + 1;
-			link[v] = clone;
-
-			while (u != 0 && next[u][d] == v) {
-				next[u][d] = clone;
-				u = link[u];
-			}
-			return;
+		while (p != -1 && next[p][d] == -1) {
+			next[p][d] = u;
+			p = link[p];
 		}
 
-		int cur = sz++;
-		len[cur] = len[last] + 1;
-		first_pos[cur] = len[cur];
-		u = last;
-		while (u != 0 && !next[u][d]) {
-			next[u][d] = cur;
-			u = link[u];
-		}
-
-		if (!u)
-			link[cur] = 0;
-		else {
-			int v = next[u][d];
-			if (len[u] + 1 == len[v])
-				link[cur] = v;
-			else {
-				int clone = sz++;
-				for (int i = 0; i < A; i++) {
-					next[clone][i] = next[v][i];
+		if (p == -1) {
+			link[u] = 0;
+		} else {
+			int q = next[p][d];
+			if (len[p] + 1 == len[q]) {
+				link[u] = q;
+			} else {
+				int clone = add_node();
+				len[clone] = len[p] + 1;
+				next[clone] = next[q];
+				link[clone] = link[q];
+				while (p != -1 && next[p][d] == q) {
+					next[p][d] = clone;
+					p = link[p];
 				}
-				len[clone] = len[u] + 1;
-
-				while (u != 0 && next[u][d] == v) {
-					next[u][d] = clone;
-					u = link[u];
-				}
-
-				link[v] = link[cur] = clone;
+				link[u] = link[q] = clone;
 			}
 		}
-		last = cur;
+		last = u;
 	}
 };
 
-void solve(int test_case [[maybe_unused]]) {}
+void solve(int test_case [[maybe_unused]]) {
+	string s;
+	cin >> s;
+	SA sa;
+	for (char c : s) sa.extend(c);
+
+	ll ans = 0;
+	for (int i = 1; i < sa.sz; i++) {
+		ans += sa.len[i] - sa.len[sa.link[i]];
+	}
+	cout << ans << nl;
+}
 
 // **************************************************************************
 
