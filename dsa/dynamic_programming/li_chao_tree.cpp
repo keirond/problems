@@ -21,39 +21,42 @@ constexpr char nl [[maybe_unused]] = '\n';
 void solve(int test_case [[maybe_unused]]) {
 	int N;
 	cin >> N;
-	vector<int> nums(N);
-	for (auto &d : nums) cin >> d;
+	vector<int> coor(N), toll(N), cost(N);
+	for (int &d : coor) cin >> d;
+	for (int &d : cost) cin >> d;
+	for (int &d : toll) cin >> d;
 
-	vector<vector<int>> dp(N, vector<int>(N)), opt(N, vector<int>(N));
-	auto C = [&](int i, int j) {
-		ll ans = 0;
-		for (int k = i; k <= j; k++) {
-			ans += nums[k];
-		}
-		return ans;
+	toll[0] = 0;
+
+	vector<ll> dp(N);
+	deque<pair<ll, ll>> dq;
+
+	auto bad = [&](pair<int, int> v1, pair<int, int> v2, pair<int, int> v3) {
+		return (v2.second - v1.second) * (v1.first - v3.first) >=
+			   (v3.second - v1.second) * (v1.first - v2.first);
 	};
 
 	for (int i = 0; i < N; i++) {
-		opt[i][i] = i;
-		dp[i][i] = nums[i];
-	}
-
-	for (int i = N - 2; i >= 0; i--) {
-		for (int j = i + 1; j < N; j++) {
-			ll mn = LLONG_MAX;
-			ll cost = C(i, j);
-			for (int k = opt[i][j - 1]; k <= min(j - 1, opt[i + 1][j]); k++) {
-				ll t = dp[i][k] + dp[k + 1][j] + cost;
-				if (t < mn) {
-					opt[i][j] = k;
-					mn = t;
-				}
+		if (i == 0)
+			dp[i] = toll[i];
+		else {
+			while (dq.size() > 1 && dq[0].first * coor[i] + dq[0].second >=
+										dq[1].first * coor[i] + dq[1].second) {
+				dq.pop_front();
 			}
-			dp[i][j] = mn;
+			dp[i] = toll[i] + dq.front().first * coor[i] + dq.front().second;
 		}
+
+		pair<int, int> u;
+		u.first = cost[i];
+		u.second = dp[i] - cost[i] * coor[i];
+		while (dq.size() > 1 && bad(dq[dq.size() - 2], dq.back(), u)) {
+			dq.pop_back();
+		}
+		dq.push_back(u);
 	}
 
-	cout << dp[0][N - 1] << nl;
+	cout << dp[N - 1] << nl;
 }
 
 // **************************************************************************
