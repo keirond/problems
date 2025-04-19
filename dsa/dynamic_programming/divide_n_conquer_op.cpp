@@ -25,7 +25,8 @@ void compute(int l, int r, int optl, int optr) {
 	if (l > r) return;
 	int m = l + (r - l >> 1);
 
-	ll mn = LLONG_MAX, opt = -1;
+	int opt = -1;
+	ll mn = LLONG_MAX;
 	for (int k = optl; k <= min(m, optr); k++) {
 		ll t = (k ? dp[k - 1] : 0) + cost[k][m];
 		if (t < mn) {
@@ -56,7 +57,7 @@ void solve(int test_case [[maybe_unused]]) {
 
 	dp.assign(n, 0);
 	for (int i = 0; i < n; i++) {
-		dp[i] = cost[0][i];
+		dp[i] = cost[i][i];
 	}
 
 	for (int i = 1; i < k; i++) {
