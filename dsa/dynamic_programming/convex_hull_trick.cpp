@@ -41,6 +41,7 @@ void solve(int test_case [[maybe_unused]]) {
 	}
 
 	vector<ll> dp(N);
+	deque<int> stop;
 	deque<pair<ll, ll>> dq;
 
 	auto bad = [&](pair<int, int> v1, pair<int, int> v2, pair<int, int> v3) {
@@ -49,47 +50,35 @@ void solve(int test_case [[maybe_unused]]) {
 	};
 
 	for (int i = 0; i < N; i++) {
-		if (i == 0)
+		if (i == 0) {
 			dp[i] = toll[i];
-		else {
+			cout << 0 << ' ' << dp[i] << ' ';
+		} else {
 			while (dq.size() > 1 && dq[0].first * coor[i] + dq[0].second >=
 										dq[1].first * coor[i] + dq[1].second) {
 				dq.pop_front();
+				stop.pop_front();
 			}
 			dp[i] = toll[i] + dq.front().first * coor[i] + dq.front().second;
+
+			int v = stop.front();
+			cout << v << ' ' << cost[v] << "*(" << coor[i] << '-' << coor[v]
+				 << ")+" << toll[i] << "=" << dp[i] << ' ';
 		}
 
 		pair<int, int> u;
 		u.first = cost[i];
 		u.second = dp[i] - cost[i] * coor[i];
-		bool is_add_u = true;
-		while (dq.size() >= 2) {
-			auto &l2 = dq.back();
-			auto &l1 = dq[dq.size() - 2];
-			if (l1.first == u.first) {
-				if (l1.second < u.second) {
-					is_add_u = 0;
-					break;
-				} else {
-					dq.pop_back(), dq.pop_back();
-					dq.pb(l2);
-				}
-			} else if (l2.first == u.first) {
-				if (l2.second <= u.second) {
-					is_add_u = 0;
-					break;
-				} else {
-					dq.pop_back();
-				}
-			} else if (bad(l1, l2, u)) {
-				dq.pop_back();
-			} else
-				break;
+		cout << u.first << ' ' << u.second << nl;
+		while (dq.size() >= 2 && bad(dq[dq.size() - 2], dq.back(), u)) {
+			dq.pop_back();
+			stop.pop_back();
 		}
-		if (is_add_u) dq.push_back(u);
+		dq.push_back(u);
+		stop.push_back(i);
 	}
 
-	cout << dp[N - 1] - toll[0] << nl;
+	cout << dp[N - 1] << nl;
 }
 
 // **************************************************************************
