@@ -62,10 +62,31 @@ void solve(int test_case [[maybe_unused]]) {
 		pair<int, int> u;
 		u.first = cost[i];
 		u.second = dp[i] - cost[i] * coor[i];
-		while (dq.size() > 1 && bad(dq[dq.size() - 2], dq.back(), u)) {
-			dq.pop_back();
+		bool is_add_u = true;
+		while (dq.size() >= 2) {
+			auto &l2 = dq.back();
+			auto &l1 = dq[dq.size() - 2];
+			if (l1.first == u.first) {
+				if (l1.second < u.second) {
+					is_add_u = 0;
+					break;
+				} else {
+					dq.pop_back(), dq.pop_back();
+					dq.pb(l2);
+				}
+			} else if (l2.first == u.first) {
+				if (l2.second <= u.second) {
+					is_add_u = 0;
+					break;
+				} else {
+					dq.pop_back();
+				}
+			} else if (bad(l1, l2, u)) {
+				dq.pop_back();
+			} else
+				break;
 		}
-		dq.push_back(u);
+		if (is_add_u) dq.push_back(u);
 	}
 
 	cout << dp[N - 1] - toll[0] << nl;

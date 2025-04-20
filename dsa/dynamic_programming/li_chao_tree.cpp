@@ -18,6 +18,39 @@ constexpr char nl [[maybe_unused]] = '\n';
 
 // **************************************************************************
 
+struct LCTree {
+	vector<pair<int, int>> tree;
+
+	LCTree *left = nullptr, *right = nullptr;
+
+	ll eval(pair<int, int> line, int x) { return line.first * x + line.second; }
+
+	void add(int node, int l, int r, int ql, int qr, pair<int, int> nw) {
+		if (l > qr || r < ql) return;
+		if (l <= ql && qr <= r) {
+			// bool lef = eval(nw, l) < ;
+			// bool mid = eval(nw, m) < ;
+
+			if (mid) swap line
+		}
+		if (l == r) {
+			tree[node] = nw;
+			return;
+		}
+
+		int m = l + (r - l >> 1);
+	}
+
+	ll query(int node, int l, int r, int ql, int qr, int x) {
+		if (l > qr || r < ql) return LLONG_MAX;
+		if (r - l == 1) return eval(tree[node], x);
+		int m = l + (r - l >> 1);
+		ll ans = eval(tree[m], x);
+		if (x <= m) return min(ans, query(node >> 1, l, m, ql, qr, x));
+		return min(ans, query(node >> 1 | 1, m + 1, r, ql, qr, x));
+	}
+};
+
 void solve(int test_case [[maybe_unused]]) {
 	int N;
 	cin >> N;
@@ -26,34 +59,23 @@ void solve(int test_case [[maybe_unused]]) {
 	for (int &d : cost) cin >> d;
 	for (int &d : toll) cin >> d;
 
-	toll[0] = 0;
-
 	vector<ll> dp(N);
-	deque<pair<ll, ll>> dq;
 
-	auto bad = [&](pair<int, int> v1, pair<int, int> v2, pair<int, int> v3) {
-		return (v2.second - v1.second) * (v1.first - v3.first) >=
-			   (v3.second - v1.second) * (v1.first - v2.first);
-	};
+	int v_mn = *min_element(all(coor)), v_mx = *max_element(all(coor));
+
+	LiChaoTree cht(v_min, v_max);
 
 	for (int i = 0; i < N; i++) {
-		if (i == 0)
+		if (i == 0) {
 			dp[i] = toll[i];
-		else {
-			while (dq.size() > 1 && dq[0].first * coor[i] + dq[0].second >=
-										dq[1].first * coor[i] + dq[1].second) {
-				dq.pop_front();
-			}
-			dp[i] = toll[i] + dq.front().first * coor[i] + dq.front().second;
+		} else {
+			dp[i] = toll[i] + cht.query(coor[i]);
 		}
 
 		pair<int, int> u;
 		u.first = cost[i];
 		u.second = dp[i] - cost[i] * coor[i];
-		while (dq.size() > 1 && bad(dq[dq.size() - 2], dq.back(), u)) {
-			dq.pop_back();
-		}
-		dq.push_back(u);
+		cht.insert(u);
 	}
 
 	cout << dp[N - 1] << nl;
