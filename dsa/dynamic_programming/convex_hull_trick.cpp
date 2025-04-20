@@ -41,7 +41,6 @@ void solve(int test_case [[maybe_unused]]) {
 	}
 
 	vector<ll> dp(N);
-	deque<int> stop;
 	deque<pair<ll, ll>> dq;
 
 	auto bad = [&](pair<int, int> v1, pair<int, int> v2, pair<int, int> v3) {
@@ -52,30 +51,21 @@ void solve(int test_case [[maybe_unused]]) {
 	for (int i = 0; i < N; i++) {
 		if (i == 0) {
 			dp[i] = toll[i];
-			cout << 0 << ' ' << dp[i] << ' ';
 		} else {
 			while (dq.size() > 1 && dq[0].first * coor[i] + dq[0].second >=
 										dq[1].first * coor[i] + dq[1].second) {
 				dq.pop_front();
-				stop.pop_front();
 			}
 			dp[i] = toll[i] + dq.front().first * coor[i] + dq.front().second;
-
-			int v = stop.front();
-			cout << v << ' ' << cost[v] << "*(" << coor[i] << '-' << coor[v]
-				 << ")+" << toll[i] << "=" << dp[i] << ' ';
 		}
 
 		pair<int, int> u;
 		u.first = cost[i];
 		u.second = dp[i] - cost[i] * coor[i];
-		cout << u.first << ' ' << u.second << nl;
 		while (dq.size() >= 2 && bad(dq[dq.size() - 2], dq.back(), u)) {
 			dq.pop_back();
-			stop.pop_back();
 		}
 		dq.push_back(u);
-		stop.push_back(i);
 	}
 
 	cout << dp[N - 1] << nl;

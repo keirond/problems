@@ -25,7 +25,6 @@ struct LiChaoTree {
 	LiChaoTree(int l, int r) {
 		int n = r - l + 1 << 2;
 		tree.assign(n, {-1, -1});
-		stop.assign(n, -1);
 	}
 
 	ll eval(pair<int, int> line, int x) {
@@ -37,10 +36,7 @@ struct LiChaoTree {
 		int m = l + (r - l >> 1);
 		bool lef = eval(nw, l) < eval(tree[node], l);
 		bool mid = eval(nw, m) < eval(tree[node], m);
-		if (mid) {
-			swap(tree[node], nw);
-			swap(stop[node], s);
-		}
+		if (mid) swap(tree[node], nw);
 		if (l == r)
 			return;
 		else if (lef != mid)
@@ -49,18 +45,12 @@ struct LiChaoTree {
 			insert(node << 1 | 1, m + 1, r, nw, s);
 	}
 
-	pair<ll, int> query(int node, int l, int r, int x) {
+	ll query(int node, int l, int r, int x) {
 		int m = l + (r - l >> 1);
 		ll ans = eval(tree[node], x);
-		if (l == r) return {ans, stop[node]};
-		if (x <= m) {
-			auto [t1, t2] = query(node << 1, l, m, x);
-			if (t1 < ans) return {t1, t2};
-			return {ans, stop[node]};
-		}
-		auto [t1, t2] = query(node << 1 | 1, m + 1, r, x);
-		if (t1 < ans) return {t1, t2};
-		return {ans, stop[node]};
+		if (l == r) return ans;
+		if (x <= m) return min(ans, query(node << 1, l, m, x));
+		return min(ans, query(node << 1 | 1, m + 1, r, x));
 	}
 };
 
@@ -79,20 +69,14 @@ void solve(int test_case [[maybe_unused]]) {
 	LiChaoTree cht(v_mn, v_mx);
 
 	for (int i = 0; i < N; i++) {
-		if (i == 0) {
+		if (i == 0)
 			dp[i] = toll[i];
-			cout << 0 << ' ' << dp[i] << ' ';
-		} else {
-			auto [t1, v] = cht.query(1, v_mn, v_mx, coor[i]);
-			dp[i] = toll[i] + t1;
-			cout << v << ' ' << cost[v] << "*(" << coor[i] << '-' << coor[v]
-				 << ")+" << toll[i] << "=" << dp[i] << ' ';
-		}
+		else
+			dp[i] = toll[i] + cht.query(1, v_mn, v_mx, coor[i]);
 
 		pair<int, int> u;
 		u.first = cost[i];
 		u.second = dp[i] - cost[i] * coor[i];
-		cout << u.first << ' ' << u.second << nl;
 		cht.insert(1, v_mn, v_mx, u, i);
 	}
 
