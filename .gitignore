@@ -1,4 +1,5 @@
 .idea/
+node_modules/
 
 *.in.txt
 *.out.txt
