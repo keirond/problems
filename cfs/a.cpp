@@ -16,24 +16,22 @@ using vpii = vector<pii>;
 
 #define fi first
 #define se second
-#define mp make_pair
 #define pb push_back
 #define eb emplace_back
 #define ins insert
+#define mp make_pair
+#define mtp make_tuple
 #define lb lower_bound
 #define ub upper_bound
+
 #define sz(v) (int)(v).size()
 #define all(v) v.begin(), v.end()
-#define range(v, n) v.begin(), v.begin() + n
+#define par(v, n) v.begin(), v.begin() + n
 
-#define FOR(a, b, c) for (int a = (b); (a) <= (c); ++(a))
-#define FORd(a, b, c) for (int a = (b); (a) >= (c); --(a))
-#define FORsq(a, b, c) for (int a = (b); (a) * (a) <= (c); ++(a))
-#define FORsqd(a, b, c) for (int a = (b); (a) * (a) >= (c); --(a))
-#define FORc(a, b, c) for (char a = (b); (a) <= (c); ++(a))
-#define EACH(a, b) for (auto &a : (b))
-#define REP(i, n) FOR(i, 0, n - 1)
-#define REPd(i, n) FORd(i, n - 1, 0)
+#define range(i, s, e, j) \
+	for (auto i = (s); ((j) > 0) ? (i <= (e)) : (i >= (e)); i += (j))
+#define iter(i, n) range(i, 0, n - 1, 1)
+#define each(i, arr) for (auto &i : (arr))
 
 constexpr double EPS [[maybe_unused]] = 1e-9;
 constexpr double PI [[maybe_unused]] = 3.14159265358979323846;
