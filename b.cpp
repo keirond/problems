@@ -7,14 +7,37 @@ using ll = long long;
 #define fi first
 #define se second
 #define pb push_back
+#define eb emplace_back
 #define ins insert
+#define mp make_pair
+#define mtp make_tuple
 #define lb lower_bound
 #define ub upper_bound
+
 #define sz(v) (int)(v).size()
 #define all(v) v.begin(), v.end()
-#define range(v, n) v.begin(), v.begin() + n
+#define par(v, n) v.begin(), v.begin() + n
 
+#define range(i, s, e, j) \
+	for (auto i = (s); ((j) > 0) ? (i <= (e)) : (i >= (e)); i += (j))
+#define iter(i, n) range(i, 0, n - 1, 1)
+#define each(i, arr) for (auto &i : (arr))
+
+constexpr double EPS [[maybe_unused]] = 1e-9;
+constexpr double PI [[maybe_unused]] = 3.14159265358979323846;
 constexpr char nl [[maybe_unused]] = '\n';
+
+// --------------------------------------------------------------------------
+
+template <class T> using max_heap = priority_queue<T>;
+template <class T> using min_heap = priority_queue<T, vector<T>, greater<T>>;
+
+string to_upper(string a) {
+	return transform(a.begin(), a.end(), a.begin(), ::toupper), a;
+}
+string to_lower(string a) {
+	return transform(a.begin(), a.end(), a.begin(), ::tolower), a;
+}
 
 // --------------------------------------------------------------------------
 
