@@ -4,3 +4,5 @@ node_modules/
 *.in.txt
 *.out.txt
 *.out
+
+cfs/temp/*.cpp
