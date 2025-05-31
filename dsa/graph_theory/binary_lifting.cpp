@@ -21,34 +21,37 @@ constexpr char nl [[maybe_unused]] = '\n';
 int MD = 20;
 
 void solve(int test_case [[maybe_unused]]) {
-	int N, M, Q;
-	cin >> N >> M >> Q;
+	int N, Q;
+	cin >> N >> Q;
 
 	vector<vector<int>> adj(N), dp(N, vector<int>(MD));
-	vector<int> depth(N);
-	adj.resize(N);
-	for (int i = 0; i < M; i++) {
+	for (int i = 0; i < N - 1; i++) {
 		int U, V;
 		cin >> U >> V;
 		U--, V--;
 		adj[U].push_back(V);
-		dp[V][0] = U;
+		adj[V].push_back(U);
 	}
 
-	deque<pair<int, int>> dq;
-	dq.push_back({0, 0});
+	vector<int> depth(N), vt(N);
+	deque<int> dq;
+	dq.push_back(0);
 	while (!dq.empty()) {
-		auto cur = dq.front();
+		int u = dq.front();
 		dq.pop_front();
-		depth[cur.first] = cur.second;
-		for (int v : adj[cur.first]) {
-			dq.push_back({v, cur.second + 1});
+		vt[u] = 1;
+		for (int v : adj[u]) {
+			if (!vt[v]) {
+				dq.push_back(v);
+				depth[v] = depth[u] + 1;
+				dp[v][0] = u;
+			}
 		}
 	}
 
-	for (int i = 1; i < MD; i++) {
-		for (int j = 0; j < N; j++) {
-			dp[j][i] = dp[dp[j][i - 1]][i - 1];
+	for (int j = 1; j < MD; j++) {
+		for (int i = 0; i < N; i++) {
+			dp[i][j] = dp[dp[i][j - 1]][j - 1];
 		}
 	}
 
@@ -62,17 +65,16 @@ void solve(int test_case [[maybe_unused]]) {
 			if (dif & 1 << i) U = dp[U][i];
 		}
 
-		if (U == V) {
-			cout << U + 1 << nl;
-			continue;
-		}
-		for (int i = MD - 1; i >= 0; i--) {
-			if (dp[U][i] != dp[V][i]) {
-				U = dp[U][i];
-				V = dp[V][i];
+		if (U != V) {
+			for (int i = MD - 1; i >= 0; i--) {
+				if (dp[U][i] != dp[V][i]) {
+					U = dp[U][i];
+					V = dp[V][i];
+				}
 			}
+			U = dp[U][0];
 		}
-		cout << dp[U][0] + 1 << nl;
+		cout << U + 1 << nl;
 	}
 }
 
