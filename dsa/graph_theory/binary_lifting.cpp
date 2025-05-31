@@ -18,68 +18,61 @@ constexpr char nl [[maybe_unused]] = '\n';
 
 // **************************************************************************
 
-int LOG = 20;
-
-vector<vector<int>> adj;
-vector<vector<int>> dp;
-vector<int> depth;
-
-void dfs(int u, int p) {
-	dp[u][0] = p;
-	for (int i = 1; i < LOG; i++) {
-		dp[u][i] = dp[dp[u][i - 1]][i - 1];
-	}
-
-	for (int v : adj[u]) {
-		if (v != p) {
-			depth[v] = depth[u] + 1;
-			dfs(v, u);
-		}
-	}
-}
-
-int lift(int u, int k) {
-	for (int i = 0; i < LOG; i++) {
-		if (k & (1 << i)) {
-			u = dp[u][i];
-		}
-	}
-	return u;
-}
-
-int lca(int u, int v) {
-	if (depth[u] < depth[v]) swap(u, v);
-	u = lift(u, depth[u] - depth[v]);
-
-	if (u == v) return u;
-	for (int i = LOG - 1; i >= 0; i--) {
-		if (dp[u][i] != dp[v][i]) {
-			u = dp[u][i];
-			v = dp[v][i];
-		}
-	}
-	return dp[u][0];
-}
+int MD = 20;
 
 void solve(int test_case [[maybe_unused]]) {
-	int N, Q;
-	cin >> N >> Q;
+	int N, M, Q;
+	cin >> N >> M >> Q;
 
+	vector<vector<int>> adj(N), dp(N, vector<int>(MD));
+	vector<int> depth(N);
 	adj.resize(N);
-	depth.resize(N);
-	for (int i = 1; i < N; i++) {
-		int p;
-		cin >> p;
-		adj[p].pb(i);
+	for (int i = 0; i < M; i++) {
+		int U, V;
+		cin >> U >> V;
+		U--, V--;
+		adj[U].push_back(V);
+		dp[V][0] = U;
 	}
 
-	dp.assign(N, vector<int>(LOG));
-	dfs(0, 0);
+	deque<pair<int, int>> dq;
+	dq.push_back({0, 0});
+	while (!dq.empty()) {
+		auto cur = dq.front();
+		dq.pop_front();
+		depth[cur.first] = cur.second;
+		for (int v : adj[cur.first]) {
+			dq.push_back({v, cur.second + 1});
+		}
+	}
+
+	for (int i = 1; i < MD; i++) {
+		for (int j = 0; j < N; j++) {
+			dp[j][i] = dp[dp[j][i - 1]][i - 1];
+		}
+	}
 
 	while (Q--) {
-		int u, v;
-		cin >> u >> v;
-		cout << lca(u, v) << nl;
+		int U, V;
+		cin >> U >> V;
+		U--, V--;
+		if (depth[U] < depth[V]) swap(U, V);
+		int dif = depth[U] - depth[V];
+		for (int i = 0; i < MD; i++) {
+			if (dif & 1 << i) U = dp[U][i];
+		}
+
+		if (U == V) {
+			cout << U + 1 << nl;
+			continue;
+		}
+		for (int i = MD - 1; i >= 0; i--) {
+			if (dp[U][i] != dp[V][i]) {
+				U = dp[U][i];
+				V = dp[V][i];
+			}
+		}
+		cout << dp[U][0] + 1 << nl;
 	}
 }
 
