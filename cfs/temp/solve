@@ -1,10 +1,22 @@
 #!/bin/bash
 
-if [[ -n $(./valid "$1") ]]; then
-	./valid "$1"
-	exit 1
+file="$1"
+
+if [[ "$file" == *.cpp ]]; then
+    base="${file%.cpp}"
+elif [[ "$file" == *.out ]]; then
+    base="${file%.out}"
+else
+    base="$file"
 fi
-if [[ ! -f "$1.cpp" ]]; then
-	cp ../b.cpp "$1.cpp"
+
+if [[ -n $(./valid "$base") ]]; then
+    ./valid "$base"
+    exit 1
 fi
-subl "$1.cpp"
+
+if [[ ! -f "$base.cpp" ]]; then
+    cp ../b.cpp "$base.cpp"
+fi
+
+subl "$base.cpp"
