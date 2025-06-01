@@ -1,4 +1,14 @@
 #!/bin/bash
 
-mv $1.cpp ../done
+file="$1"
+
+if [[ "$file" == *.cpp ]]; then
+    base="${file%.cpp}"
+elif [[ "$file" == *.out ]]; then
+    base="${file%.out}"
+else
+    base="$file"
+fi
+
+mv "$base".cpp ../done
 clean -b -s
