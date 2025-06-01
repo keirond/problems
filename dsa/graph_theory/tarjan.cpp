@@ -18,69 +18,66 @@ constexpr char nl [[maybe_unused]] = '\n';
 
 // **************************************************************************
 
-int ti = 0, cnt = 0;
-vector<vector<int>> adj, scc;
-vector<int> low, disc;
+vector<vector<int>> adj;
+vector<int> disc, lowlink;
+vector<bool> vt;
 deque<int> stk;
-vector<bool> in_stk;
+vector<vector<int>> SCCs;
+int idx = 0;
 
-void dfs(int u) {
-	disc[u] = low[u] = ti++;
-	stk.pb(u);
-	in_stk[u] = 1;
+void tarjan(int u) {
+	disc[u] = lowlink[u] = idx++;
+	stk.push_back(u);
+	vt[u] = 1;
 
 	for (int v : adj[u]) {
-		if (disc[v] == -1) {
-			dfs(v);
-			low[u] = min(low[u], low[v]);
-		} else if (in_stk[v]) {
-			low[u] = min(low[u], disc[v]);
-		}
-	}
-
-	if (low[u] == disc[u]) {
-		vector<int> temp;
-		while (1) {
-			int v = stk.back();
-			stk.pop_back();
-			in_stk[v] = 0;
-			temp.push_back(v);
-			if (v == u) break;
-		}
-		scc.pb(temp);
-		cnt++;
-	}
-}
-
-void tarjan(int V) {
-	for (int u = 0; u < V; u++) {
 		if (disc[u] == -1) {
-			dfs(u);
+			tarjan(v);
+			lowlink[u] = min(lowlink[u], lowlink[v]);
+		} else if (vt[v]) {
+			lowlink[u] = min(lowlink[u], disc[v]);
 		}
+	}
+
+	// if u is root of SCC
+	if (lowlink[u] == disc[u]) {
+		vector<int> curr_scc;
+		int v;
+		do {
+			v = stk.back();
+			stk.pop_back();
+			vt[v] = 0;
+			curr_scc.push_back(v);
+		} while (v != u);
+		SCCs.push_back(curr_scc);
 	}
 }
 
 void solve(int test_case [[maybe_unused]]) {
-	int V, E;
-	cin >> V >> E;
+	int N, M;
+	cin >> N >> M;
 
-	adj.resize(V);
-	while (E--) {
-		int u, v;
-		cin >> u >> v;
-		adj[u].pb(v);
+	for (int i = 0; i < M; i++) {
+		int U, V;
+		cin >> U >> V;
+		U--, V--;
+		adj[U].push_back(V);
+		// adj[V].push_back(U);
 	}
 
-	disc.assign(V, -1);
-	low.resize(V);
-	in_stk.resize(V);
-	tarjan(V);
+	disc.assign(N, -1);
+	lowlink.assign(N, -1);
+	vt.resize(N);
 
-	cout << cnt << nl;
-	for (int i = cnt - 1; i >= 0; i--) {
-		auto &d = scc[i];
-		cout << d.size();
-		for (int e : d) cout << ' ' << e;
+	for (int i = 0; i < N; i++) {
+		if (disc[i] == -1) tarjan(i);
+	}
+
+	cout << SCCs.size() << nl;
+	for (auto &scc : SCCs) {
+		for (int node : scc) {
+			cout << node << ' ';
+		}
 		cout << nl;
 	}
 }
