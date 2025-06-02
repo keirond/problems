@@ -19,11 +19,11 @@ constexpr char nl [[maybe_unused]] = '\n';
 // **************************************************************************
 
 void solve(int test_case [[maybe_unused]]) {
-	int N;
-	cin >> N;  // the number of vertices
+	int N, M;
+	cin >> N >> M;
 
 	vector<vector<int>> adj(N);
-	for (int i = 1; i < N; i++) {
+	for (int i = 0; i < M; i++) {
 		int U, V;
 		cin >> U >> V;
 		U--, V--;
@@ -31,31 +31,30 @@ void solve(int test_case [[maybe_unused]]) {
 		adj[V].push_back(U);
 	}
 
-	int fN = 0, fDist = 0;
-	vector<bool> vt(N);
+	vector<int> vt(N), match(N, -1);
 
-	deque<pair<int, int>> dq;
-
-	auto call = [&](int fN) {
-		vt.assign(N, 0);
-		dq.push_back({fN, 0});
-		while (!dq.empty()) {
-			auto cur = dq.back();
-			dq.pop_back();
-			int u = cur.first, dist = cur.second;
-			if (dist > fDist) {
-				fN = u;
-				fDist = dist;
+	function<bool(int)> call = [&](int u) {
+		if (vt[u]) return 0;
+		vt[u] = 1;
+		for (int v : adj[u]) {
+			if (match[v] == -1 || call(match[v])) {
+				match[v] = u;
+				return 1;
 			}
-			if (vt[u]) continue;
-			vt[u] = 1;
-			for (int v : adj[u]) dq.push_back({v, dist + 1});
 		}
+		return 0;
 	};
 
-	call(fN);
-	call(fN);
-	cout << fDist << nl;
+	for (int i = 0; i < N; i++) {
+		vt.assign(N, 0);
+		call(i);
+	}
+
+	for (int i = 0; i < N; i++) {
+		if (match[i] == -1) {
+			cout << match[i] + 1 << ' ' << i + 1 << nl;
+		}
+	}
 }
 
 // **************************************************************************
