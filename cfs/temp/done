@@ -3,11 +3,13 @@
 file="$1"
 
 if [[ "$file" == *.cpp ]]; then
-    base="${file%.cpp}"
+	base="${file%.cpp}"
 elif [[ "$file" == *.out ]]; then
-    base="${file%.out}"
+	base="${file%.out}"
+elif [[ "$file" = *. ]]; then
+	base="${file%.}"
 else
-    base="$file"
+	base="$file"
 fi
 
 mv "$base".cpp ../done

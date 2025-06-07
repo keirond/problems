@@ -3,20 +3,22 @@
 file="$1"
 
 if [[ "$file" == *.cpp ]]; then
-    base="${file%.cpp}"
+	base="${file%.cpp}"
 elif [[ "$file" == *.out ]]; then
-    base="${file%.out}"
+	base="${file%.out}"
+elif [[ "$file" = *. ]]; then
+	base="${file%.}"
 else
-    base="$file"
+	base="$file"
 fi
 
 if [[ -n $(./valid "$base") ]]; then
-    ./valid "$base"
-    exit 1
+	./valid "$base"
+	exit 1
 fi
 
 if [[ ! -f "$base.cpp" ]]; then
-    cp ../b.cpp "$base.cpp"
+	cp ../b.cpp "$base.cpp"
 fi
 
 subl "$base.cpp"
