@@ -3,6 +3,7 @@
 using namespace std;
 
 using ll = long long;
+using pii = pair<int, int>;
 
 constexpr char nl [[maybe_unused]] = '\n';
 
@@ -23,10 +24,6 @@ void solve(int test_case [[maybe_unused]]) {
 	vector<int> dist(N, INT_MAX), prev(N, -1);
 	vector<bool> vt(N);
 	dist[0] = 0;
-
-	for(int i=0; i<N-1; i++) {
-		for()
-	}
 
 	if (dist[N - 1] == INT_MAX) {
 		cout << -1 << nl;
