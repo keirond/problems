@@ -12,18 +12,32 @@ constexpr char nl [[maybe_unused]] = '\n';
 void solve(int test_case [[maybe_unused]]) {
 	int N, M;
 	cin >> N >> M;
-	vector<vector<pii>> adj(N);
+	vector<vector<int>> edges;
 	for (int i = 0; i < M; i++) {
 		int U, V, W;
 		cin >> U >> V >> W;
 		U--, V--;
-		adj[U].push_back({V, W});
-		adj[V].push_back({U, W});
+		edges.push_back({U, V, W});
 	}
 
 	vector<int> dist(N, INT_MAX), prev(N, -1);
 	vector<bool> vt(N);
 	dist[0] = 0;
+
+	for (int i = 0; i < N - 1; i++) {
+		for (auto &d : edges) {
+			if (dist[d[0]] != INT_MAX && (ll)dist[d[0]] + d[2] < dist[d[1]]) {
+				dist[d[1]] = dist[d[0]] + d[2];
+			}
+		}
+	}
+
+	for (auto &d : edges) {
+		if (dist[d[0]] != INT_MAX && (ll)dist[d[0]] + d[2] < dist[d[1]]) {
+			cout << -1 << nl;
+			return;
+		}
+	}
 
 	if (dist[N - 1] == INT_MAX) {
 		cout << -1 << nl;
