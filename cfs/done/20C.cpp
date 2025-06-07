@@ -24,7 +24,6 @@ void solve(int test_case [[maybe_unused]]) {
 	vector<int> dist(N, INT_MAX), prev(N, -1);
 	vector<bool> vt(N);
 	dist[0] = 0;
-
 	priority_queue<pii, vector<pii>, greater<pii>> pq;
 	pq.emplace(0, 0);
 	while (!pq.empty()) {
@@ -57,8 +56,13 @@ void solve(int test_case [[maybe_unused]]) {
 int main() {
 	ios::sync_with_stdio(0);
 	cin.tie(0), cout.tie(0);
-	solve(1);
-	cout << flush;
+
+	int test_cases = 1;
+	// cin >> test_cases;
+	while (test_cases--) {
+		solve(test_cases);
+		cout << flush;
+	}
 	return 0;
 }
 
