@@ -65,6 +65,31 @@ void solve(int test_case [[maybe_unused]]) {
 		}
 	}
 	cout << flow << nl;
+
+	// Minimum Cut
+	vt.assign(n, false);
+	deque<int> dq;
+	dq.push_back(s);
+	vt[s] = 1;
+	while (!dq.empty()) {
+		int u = dq.front();
+		dq.pop_front();
+		for (int v = 0; v < n; v++) {
+			if (cap[u][v] > 0 && !vt[v]) {
+				vt[v] = 1;
+				dq.push_back(v);
+			}
+		}
+	}
+
+	for (int u = 0; u < n; u++) {
+		if (!vt[u]) continue;
+		for (int v = 0; v < n; v++) {
+			if (!vt[u] && cap[u][v] == 0) {
+				cout << u + 1 << ' ' << v + 1 << nl;
+			}
+		}
+	}
 }
 
 // **************************************************************************
