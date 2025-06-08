@@ -24,7 +24,6 @@ void solve(int test_case [[maybe_unused]]) {
 	cin >> s >> t;
 
 	vector<int> level;
-	vector<bool> vt;
 
 	function<bool()> bfs = [&]() {
 		level.assign(n, -1);
@@ -36,6 +35,7 @@ void solve(int test_case [[maybe_unused]]) {
 			for (int v = 0; v < n; v++) {
 				if (cap[u][v] && level[v] == -1) {
 					level[v] = level[u] + 1;
+					dq.push_back(v);
 				}
 			}
 		}
@@ -50,6 +50,7 @@ void solve(int test_case [[maybe_unused]]) {
 				int tr = dfs(v, min(pushed, cap[u][v]));
 				if (t > 0) {
 					cap[u][v] -= tr;
+					cap[v][u] += tr;
 					return tr;
 				}
 			}
@@ -59,7 +60,6 @@ void solve(int test_case [[maybe_unused]]) {
 
 	ll flow = 0;
 	while (bfs()) {
-		vt.assign(n, false);
 		while (int pushed = dfs(s, INT_MAX)) {
 			flow += pushed;
 		}
@@ -67,7 +67,7 @@ void solve(int test_case [[maybe_unused]]) {
 	cout << flow << nl;
 
 	// Minimum Cut
-	vt.assign(n, false);
+	vector<bool> vt(n, false);
 	deque<int> dq;
 	dq.push_back(s);
 	vt[s] = 1;
