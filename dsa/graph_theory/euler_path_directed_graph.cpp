@@ -26,16 +26,18 @@ void solve(int test_case [[maybe_unused]]) {
 		idx++;
 	}
 
-	int odd = 0, start = 0;
+	int odd = 0, start = -1;
 	for (int i = 0; i < n; i++) {
 		if (deg_in[i] != deg_out[i]) {
 			odd++;
-			start = i;
+			if (deg_out[i] == deg_in[i] + 1) {
+				start = i;
+			}
 		}
 	}
 
-	if (odd != 0 && odd != 2) {
-		cout << "NO" << nl;
+	if (odd != 0 && odd != 2 || start == -1) {
+		cout << "no" << nl;
 		return;
 	}
 

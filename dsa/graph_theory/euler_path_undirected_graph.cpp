@@ -36,7 +36,7 @@ void solve(int test_case [[maybe_unused]]) {
 	}
 
 	if (odd != 0 && odd != 2) {
-		cout << "NO" << nl;
+		cout << "no" << nl;
 		return;
 	}
 
