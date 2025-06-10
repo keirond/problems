@@ -41,6 +41,8 @@ void rotate(Node *x) {
 			g->left = x;
 		else
 			g->right = x;
+	} else {
+		root = x;
 	}
 }
 
@@ -50,7 +52,7 @@ void splay(Node *x) {
 		Node *g = p->parent;
 
 		if (!g) {
-			rotate(x);	// Zig
+			rotate(x);
 		} else if ((g->left == p) == (p->left == x)) {
 			rotate(p);
 			rotate(x);
@@ -59,6 +61,7 @@ void splay(Node *x) {
 			rotate(x);
 		}
 	}
+	root = x;
 }
 
 Node *find_node(int key) {
@@ -120,10 +123,12 @@ void erase(int key) {
 	} else {
 		Node *left = x->left;
 		left->parent = nullptr;
+
 		Node *max_left = left->right;
 		while (max_left->right) {
 			max_left = max_left->right;
 		}
+		
 		splay(max_left);
 		max_left->right = x->right;
 		if (x->right) x->right->parent = max_left;

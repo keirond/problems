@@ -11,36 +11,93 @@ constexpr char nl [[maybe_unused]] = '\n';
 
 struct Node {
 	Node *left = nullptr, *right = nullptr, *parent = nullptr;
-	bool reversed = false;
+	int key = 0;
 	int value = 0;
-	int subtree_value = 0;
+	bool reversed = false;
+	int sum = 0;
 
-	Node(int val) : value(val) {}
+	Node(int key, int value) : key(key), value(value) {}
+
+	void pull();
+	void push();
+	void update();
 };
 
-void push(Node *x) {
-	if (!x || !x->reversed) return;
-	swap(x->left, x->right);
-	if (x->left) x->left->reversed ^= 1;
-	if (x->right) x->right->reversed ^= 1;
-	x->reversed = 0;
+void rotate(Node *x) {
+	Node *p = x->parent;
+	if (!p) return;
+	Node *g = p->parent;
+
+	p->parent = x;
+	x->parent = g;
+	if (p->left == x) {
+		p->left = x->right;
+		if (x->right) x->right->parent = p;
+		x->right = p;
+	} else {
+		p->right = x->left;
+		if (x->left) x->left->parent = p;
+		x->left = p;
+	}
+
+	if (g) {
+		if (g->left == p)
+			g->left = x;
+		else
+			g->right = x;
+	}
+}
+void splay(Node *x) {
+	while (x->parent) {
+		Node *p = x->parent;
+		Node *g = p->parent;
+		if (!g) {
+			rotate(x);
+		} else if ((g->left == p) == (p->left == x)) {
+			rotate(p);
+			rotate(x);
+		} else {
+			rotate(x);
+			rotate(x);
+		}
+	}
 }
 
-void pull();
-void update();
-void splay(Node *x) { x->push(); }
-
-void access(Node *x) { splay(x); }
-
-void make_root(Node *x) {
-	access(x);
-	x->reversed ^= 1;
-	x->push();
+void access(Node *u) {
+	Node *last = nullptr;
+	while (u) {
+		splay(u);
+		u->left = last;
+		last = u;
+		u = u->parent;
+	}
 }
 
-void link(Node *child, Node *parent);
-void cut(Node *x);
-Node *find_root(Node *x);
+// Tree Queries
+Node *find_root(Node *u);
+int lca(Node *u, Node *v);
+int depth(Node *u);
+
+// Tree Modifications
+void link(Node *u, Node *v);
+void cut(Node *u, Node *v);
+void make_root(Node *u) {
+	access(u);
+	splay(u);
+	u->rev ^= 1;
+	u->push();
+}
+
+// Path Operations
+int path_sum(Node *u, Node *v) {
+	make_root(u);
+	access(v);
+	splay(v);
+	return v->sum;
+}
+
+int path_max(Node *u, Node *v);
+void path_update(Node *u, Node *v, int val);
 
 void update(Node *u, int val);
 
