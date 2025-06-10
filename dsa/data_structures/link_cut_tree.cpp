@@ -10,23 +10,85 @@ constexpr char nl [[maybe_unused]] = '\n';
 // **************************************************************************
 
 struct Node {
-	Node *left, *right, *parent;
-	bool reversed;
-	int value, subtree_value;
+	Node *left = nullptr, *right = nullptr, *parent = nullptr;
+	bool reversed = false;
+	int value = 0;
+	int subtree_value = 0;
 
-	void push();
-	void update();
+	Node(int val) : value(val) {}
 };
 
-void splay(Node *x);
-void access(Node *x);
-void make_root(Node *x);
+void push(Node *x) {
+	if (!x || !x->reversed) return;
+	swap(x->left, x->right);
+	if (x->left) x->left->reversed ^= 1;
+	if (x->right) x->right->reversed ^= 1;
+	x->reversed = 0;
+}
+
+void pull();
+void update();
+void splay(Node *x) { x->push(); }
+
+void access(Node *x) { splay(x); }
+
+void make_root(Node *x) {
+	access(x);
+	x->reversed ^= 1;
+	x->push();
+}
+
 void link(Node *child, Node *parent);
 void cut(Node *x);
 Node *find_root(Node *x);
 
+void update(Node *u, int val);
+
+int path_query(Node *u, Node *v) {
+	make_root(u);
+	access(v);
+	return v->subtree_value;
+}
+
+bool connected(Node *u, Node *v);
+
 void solve(int test_case [[maybe_unused]]) {
-	
+	int n, q;
+	cin >> n >> q;
+	vector<Node *> tr(n);
+	for (int i = 0; i < n; i++) {
+		int val;
+		cin >> val;
+		tr[i] = new Node(val);
+	}
+
+	for (int i = 0; i < n - 1; i++) {
+		int u, v;
+		cin >> u >> v;
+		u--, v--;
+		link(tr[v], tr[u]);
+	}
+
+	while (q--) {
+		int op;
+		cin >> op;
+		if (op == 1) {
+			int u, v;
+			cin >> u >> v;
+			u--, v--;
+			cout << path_query(tr[u], tr[v]) << nl;
+		} else if (op == 2) {
+			int u, v;
+			cin >> u >> v;
+			u--, v--;
+			cout << (connected(tr[u], tr[v]) ? "YES" : "NO") << nl;
+		} else if (op == 3) {
+			int u, val;
+			cin >> u >> val;
+			u--;
+			update(tr[u], val);
+		}
+	}
 }
 
 // **************************************************************************

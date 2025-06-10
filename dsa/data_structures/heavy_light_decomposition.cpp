@@ -65,6 +65,7 @@ void build(int node = 1, int l = 1, int r = timer) {
 	build(node << 1 | 1, m + 1, r);
 	st[node] = st[node << 1] + st[node << 1 | 1];
 }
+
 void update(int x, int val, int node = 0, int l = 1, int r = timer) {
 	if (l == r) {
 		st[node] = val;
@@ -77,6 +78,7 @@ void update(int x, int val, int node = 0, int l = 1, int r = timer) {
 		update(x, val, node << 1 | 1, m + 1, r);
 	st[node] = st[node << 1] + st[node << 1 | 1];
 }
+
 int query(int ql, int qr, int node = 1, int l = 1, int r = timer) {
 	if (ql > r || qr < l) return 0;
 	if (ql <= l && r <= qr) return st[node];
@@ -101,8 +103,8 @@ int path_query(int u, int v) {
 int subtree_query(int u) { return query(in[u], out[u]); }
 
 void solve(int test_case [[maybe_unused]]) {
-	int n;
-	cin >> n;
+	int n, q;
+	cin >> n >> q;
 
 	values.assign(n, 0);
 	adj.assign(n, vector<int>());
@@ -137,8 +139,6 @@ void solve(int test_case [[maybe_unused]]) {
 
 	build();
 
-	int q;
-	cin >> q;
 	while (q--) {
 		int op;
 		cin >> op;
@@ -150,10 +150,12 @@ void solve(int test_case [[maybe_unused]]) {
 		} else if (op == 2) {
 			int u;
 			cin >> u;
+			u--;
 			cout << subtree_query(u) << nl;
 		} else if (op == 3) {
 			int u, val;
 			cin >> u >> val;
+			u--;
 			update(in[u], val);
 		}
 	}
