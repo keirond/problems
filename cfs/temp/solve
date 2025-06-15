@@ -21,4 +21,4 @@ if [[ ! -f "$base.cpp" ]]; then
 	cp ../b.cpp "$base.cpp"
 fi
 
-subl "$base.cpp"
+code "$base.cpp"
