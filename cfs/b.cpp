@@ -3,6 +3,7 @@
 using namespace std;
 
 using ll = long long;
+using ld = long double;
 using pii = pair<int, int>;
 
 constexpr char nl [[maybe_unused]] = '\n';
