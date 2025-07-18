@@ -12,19 +12,22 @@ constexpr char nl [[maybe_unused]] = '\n';
 struct Vector {
 	double x, y;
 
+	Vector operator*(double k) const { return {x * k, y * k}; }
 	Vector operator/(double k) const { return {x / k, y / k}; }
 
 	double norm() const { return hypot(x, y); }
 
-	double dot(Vector other) const { return x * other.x + y * other.y; }
+	double dot(const Vector &other) const { return x * other.x + y * other.y; }
 
-	double cross(Vector other) const { return x * other.y - y * other.x; }
+	double cross(const Vector &other) const {
+		return x * other.y - y * other.x;
+	}
 
-	double angle(Vector other) const {
-		double normA = norm();
-		double normB = other.norm();
+	double angle(const Vector &other) const {
+		double magA = norm();
+		double magB = other.norm();
 		double dotAB = dot(other);
-		double cosTheta = dotAB / (normA * normB);
+		double cosTheta = dotAB / (magA * magB);
 		cosTheta = max(-1.0, min(1.0, cosTheta));
 		double angleTheta = acos(cosTheta);
 		return angleTheta * 180 / M_PI;
@@ -44,9 +47,19 @@ struct Vector {
 struct Point {
 	double x, y;
 
-	Vector operator-(Point other) const { return {x - other.x, y - other.y}; }
+	Vector operator-(const Point &other) const {
+		return {x - other.x, y - other.y};
+	}
 
-	double dist(Point other) const { return (*this - other).norm(); }
+	Point operator+(const Vector &other) const {
+		return {x + other.x, y + other.y};
+	}
+
+	Point operator-(const Vector &other) const {
+		return {x - other.x, y - other.y};
+	}
+
+	double dist(const Point &other) const { return (*this - other).norm(); }
 };
 
 bool isPointOnLine(const Point &p, const Point &a, const Point &b) {
@@ -55,15 +68,38 @@ bool isPointOnLine(const Point &p, const Point &a, const Point &b) {
 
 bool isPointOnSegment(const Point &p, const Point &a, const Point &b) {
 	if (!isPointOnLine(p, a, b)) return false;
-	return (a - p).dot(a - b) >= -1e-9;
+	return (p - a).dot(b - a) >= -1e-9;
 }
 
-double distPointLine(const Point &p, const Point &a, const Point &b) {}
+double distPointLine(const Point &p, const Point &a, const Point &b) {
+	double cross = (p - a).cross(b - a);
+	double mag = (b - a).norm();
+	return abs(cross) / mag;
+}
 
-double distPointSegment(const Point &p, const Point &a, const Point &b) {}
+double distPointSegment(const Point &p, const Point &a, const Point &b) {
+	double magSquared = (b - a).dot(b - a);
+	if (abs(magSquared) < 1e-9) return (p - a).norm();
+
+	double t = (p - a).dot(b - a) / magSquared;
+	if (t < 0.0) return (p - a).norm();
+	if (t > 1.0) return (p - b).norm();
+
+	return distPointLine(p, a, b);
+}
 
 optional<Point> lineLineIntersection(const Point &a1, const Point &a2,
-									 const Point &b1, const Point &b2) {}
+									 const Point &b1, const Point &b2) {
+	Vector da = a2 - a1;
+	Vector db = b2 - b1;
+	Vector dc = a1 - b1;
+
+	double s = da.cross(db);
+	if (abs(s) < 1e-9) return nullopt;
+
+	double t = dc.cross(db) / s;
+	return a1 - da * t;
+}
 
 bool areSegmentsIntersect(const Point &a1, const Point &a2, const Point &b1,
 						  const Point &b2) {}
