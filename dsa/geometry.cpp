@@ -104,6 +104,15 @@ optional<Point> lineLineIntersection(const Point &a1, const Point &a2,
 bool areSegmentsIntersect(const Point &a1, const Point &a2, const Point &b1,
 						  const Point &b2) {}
 
+int orientation(const Point &a, const Point &b, const Point &c) {
+	// 0: go straight
+	// 1: turn left
+	// -1: turn right
+	double cross = (b - a).cross(c - b);
+	if (abs(cross) < 1e-9) return 0;
+	return (cross > 0) ? 1 : -1;
+}
+
 void solve(int test_case [[maybe_unused]]) {}
 
 // **************************************************************************
