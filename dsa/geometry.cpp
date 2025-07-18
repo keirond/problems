@@ -71,13 +71,13 @@ bool isPointOnSegment(const Point &p, const Point &a, const Point &b) {
 	return (p - a).dot(b - a) >= -1e-9;
 }
 
-double distPointLine(const Point &p, const Point &a, const Point &b) {
+double distPointToLine(const Point &p, const Point &a, const Point &b) {
 	double cross = (p - a).cross(b - a);
 	double mag = (b - a).norm();
 	return abs(cross) / mag;
 }
 
-double distPointSegment(const Point &p, const Point &a, const Point &b) {
+double distPointToSegment(const Point &p, const Point &a, const Point &b) {
 	double magSquared = (b - a).dot(b - a);
 	if (abs(magSquared) < 1e-9) return (p - a).norm();
 
@@ -85,24 +85,22 @@ double distPointSegment(const Point &p, const Point &a, const Point &b) {
 	if (t < 0.0) return (p - a).norm();
 	if (t > 1.0) return (p - b).norm();
 
-	return distPointLine(p, a, b);
+	Point proj = a + (b - a) * t;
+	return (p - proj).norm();
 }
 
 optional<Point> lineLineIntersection(const Point &a1, const Point &a2,
 									 const Point &b1, const Point &b2) {
 	Vector da = a2 - a1;
 	Vector db = b2 - b1;
-	Vector dc = a1 - b1;
+	Vector dc = b1 - a1;  // notice here
 
 	double s = da.cross(db);
 	if (abs(s) < 1e-9) return nullopt;
 
 	double t = dc.cross(db) / s;
-	return a1 - da * t;
+	return a1 + da * t;
 }
-
-bool areSegmentsIntersect(const Point &a1, const Point &a2, const Point &b1,
-						  const Point &b2) {}
 
 int orientation(const Point &a, const Point &b, const Point &c) {
 	// 0: go straight
@@ -112,6 +110,50 @@ int orientation(const Point &a, const Point &b, const Point &c) {
 	if (abs(cross) < 1e-9) return 0;
 	return (cross > 0) ? 1 : -1;
 }
+
+bool areSegmentsIntersect(const Point &a1, const Point &a2, const Point &b1,
+						  const Point &b2) {
+	int o1 = orientation(a1, a2, b1);
+	int o2 = orientation(a1, a2, b2);
+	int o3 = orientation(b1, b2, a1);
+	int o4 = orientation(b1, b2, a2);
+
+	if (o1 != o2 && o3 != o4) return true;
+
+	if (o1 == 0 && isPointOnSegment(b1, a1, a2)) return true;
+	if (o2 == 0 && isPointOnSegment(b2, a1, a2)) return true;
+	if (o3 == 0 && isPointOnSegment(a1, b1, b2)) return true;
+	if (o4 == 0 && isPointOnSegment(a2, b1, b2)) return true;
+
+	return false;
+}
+
+bool areParallel(const Point &a1, const Point &a2, const Point &b1,
+				 const Point &b2) {
+	double cross = (a2 - a1).cross(b2 - b1);
+	if (abs(cross) < 1e-9) return true;
+	return false;
+}
+
+bool arePerpendicular(const Point &a1, const Point &a2, const Point &b1,
+					  const Point &b2) {
+	double dot = (a2 - a1).dot(b2 - b1);
+	if (abs(dot) < 1e-9) return true;
+	return false;
+}
+
+Point projectPointOnToLine(const Point &p, const Point &a, const Point &b) {
+	double magSquared = (b - a).dot(b - a);
+	double t = (p - a).dot(b - a) / magSquared;
+	return a + (b - a) * t;
+}
+
+Point reflectPointOverLine(const Point &p, const Point &a, const Point &b) {
+	Point q = projectPointOnToLine(p, a, b);
+	return q + (q - p);
+}
+
+// **************************************************************************
 
 void solve(int test_case [[maybe_unused]]) {}
 
