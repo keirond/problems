@@ -13,7 +13,10 @@ constexpr char nl [[maybe_unused]] = '\n';
 struct Vector {
 	double x, y;
 
+	Point pt() const { return {x, y}; }
+
 	Vector operator+(const Vector &v) const { return {x + v.x, y + v.y}; }
+	Vector operator-(const Vector &v) const { return {x - v.x, y - v.y}; }
 	Vector operator*(double k) const { return {x * k, y * k}; }
 	Vector operator/(double k) const { return {x / k, y / k}; }
 
@@ -43,7 +46,7 @@ struct Vector {
 		return {x * cosTheta - y * sinTheta, x * sinTheta + y * cosTheta};
 	}
 
-	Vector normal() const { return {-y, x}; }
+	Vector perp() const { return {-y, x}; }
 };
 
 struct Point {
@@ -60,6 +63,8 @@ struct Point {
 	Point operator-(const Vector &other) const {
 		return {x - other.x, y - other.y};
 	}
+
+	Vector vec() const { return {x, y}; }
 
 	double dist(const Point &other) const { return (*this - other).norm(); }
 
@@ -342,20 +347,41 @@ vector<pair<Point, Point>> tangentsFromCircleToCircle(const Point &c1,
 	return ans;
 }
 
+Point circumcenter(const Point &a, const Point &b, const Point &c) {
+	Vector ab = b - a;
+	Vector ac = c - a;
+
+	double ab2 = ab.dot(ab);
+	double ac2 = ac.dot(ac);
+	double d = ab.cross(ac) * 2.0;
+
+	Vector u = (ac.perp() * ab2 - ab.perp() * ac2) / d;
+	return a + u;
+}
+
+double circumradius(const Point &o, const Point &a) { return (a - o).norm(); }
+
+Point incyclecenter(const Point &a, const Point &b, const Point &c) {
+	double A = (b - c).norm();
+	double B = (a - c).norm();
+	double C = (b - a).norm();
+
+	Vector ans = (a.vec() * A + b.vec() * B + c.vec() * C) / (A + B + C);
+	return ans.pt();
+}
+
+double incycleradius(const Point &a, const Point &b, const Point &c) {
+	double A = (b - c).norm();
+	double B = (a - c).norm();
+	double C = (b - a).norm();
+	double s = (A + B + C) * 0.5;
+	double area = abs((b - a).cross(c - a)) * 0.5;
+	return area / s;
+}
+
 // **************************************************************************
 
-void solve(int test_case [[maybe_unused]]) {
-	Point c1{0, 0}, c2{5, 0};
-	double r1 = 1, r2 = 1;
-	{
-		vector<pair<Point, Point>> ans =
-			tangentsFromCircleToCircle(c1, r1, c2, r2);
-		for (auto &d : ans) {
-			cout << d.first.x << '-' << d.first.y << ' ' << d.second.x << '-'
-				 << d.second.y << nl;
-		}
-	}
-}
+void solve(int test_case [[maybe_unused]]) {}
 
 // **************************************************************************
 
