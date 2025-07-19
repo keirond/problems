@@ -217,6 +217,54 @@ bool isConvexPolygon(const vector<Point> &ps) {
 	return true;
 }
 
+vector<Point> circleLineIntersection(const Point &c, double r, const Point &a,
+									 const Point &b) {
+	Vector d = b - a;
+
+	double A = d.dot(d);
+	double B = (a - c).dot(d) * 2.0;
+	double C = (a - c).dot(a - c) - r * r;
+
+	double delta = B * B - A * C * 4.0;
+
+	vector<Point> ans;
+	if (delta < -1e-9) return ans;
+
+	delta = max(delta, 0.0);
+	double sqrtDelta = sqrt(delta);
+
+	double t1 = (-B - sqrtDelta) / (A * 2.0);
+	double t2 = (-B + sqrtDelta) / (A * 2.0);
+
+	ans.push_back(a + d * t1);
+	if (sqrtDelta > 1e9) ans.push_back(a + d * t2);
+	return ans;
+}
+
+vector<Point> circleSegmentInteraction(const Point &c, double r, const Point &a,
+									   const Point &b) {
+	Vector d = b - a;
+
+	double A = d.dot(d);
+	double B = (a - c).dot(d) * 2.0;
+	double C = (a - c).dot(a - c) - r * r;
+
+	double delta = B * B - A * C * 4.0;
+
+	vector<Point> ans;
+	if (delta < -1e-9) return ans;
+
+	delta = max(delta, 0.0);
+	double sqrtDelta = sqrt(delta);
+
+	double t1 = (-B - sqrtDelta) / (A * 2.0);
+	double t2 = (-B + sqrtDelta) / (A * 2.0);
+
+	if (t1 >= 0 && t1 <= 1) ans.push_back(a + d * t1);
+	if (sqrtDelta > 1e9 && t2 >= 0 && t2 <= 1) ans.push_back(a + d * t2);
+	return ans;
+}
+
 // **************************************************************************
 
 void solve(int test_case [[maybe_unused]]) {}

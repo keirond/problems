@@ -5,6 +5,8 @@
         "iosfwd": "cpp",
         "cmath": "cpp",
         "complex": "cpp",
-        "optional": "cpp"
+        "optional": "cpp",
+        "scoped_allocator": "cpp",
+        "memory": "cpp"
     }
 }
