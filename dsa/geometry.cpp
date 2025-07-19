@@ -196,6 +196,7 @@ bool isConvexPolygon(const vector<Point> &ps) {
 	int n = ps.size();
 	if (n < 3) return false;
 
+	int sign = 0;
 	for (int i = 0; i < n; i++) {
 		Point a = ps[i];
 		Point b = ps[(i + 1) % n];
@@ -205,8 +206,15 @@ bool isConvexPolygon(const vector<Point> &ps) {
 		Vector bc = c - b;
 
 		double cross = ab.cross(bc);
-		i
+
+		if (abs(cross) < 1e-9) continue;
+		if (sign == 0) {
+			sign = (cross > 0) ? 1 : -1;
+		} else if ((cross > 0 && sign < 0) || (cross < 0 && sign > 0)) {
+			return false;
+		}
 	}
+	return true;
 }
 
 // **************************************************************************
