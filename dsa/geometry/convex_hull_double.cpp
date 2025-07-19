@@ -10,13 +10,13 @@ constexpr char nl [[maybe_unused]] = '\n';
 // **************************************************************************
 
 struct Point {
-	ll x, y;
+	double x, y;
 	bool operator<(const Point &p) const {
-		return make_pair(x, y) < make_pair(p.x, p.y);
+		return abs(x - p.x) > 1e-9 ? x < p.x : y < p.y;
 	}
 };
 
-int cross(const Point &a, const Point &b, const Point &c) {
+double cross(const Point &a, const Point &b, const Point &c) {
 	return (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
 }
 
@@ -29,12 +29,12 @@ vector<Point> convex_hull(const vector<Point> &ps) {
 
 	int k = 0;
 	for (int i = 0; i < n; i++) {
-		while (k >= 2 && cross(hull[k - 2], hull[k - 1], ps[i]) <= 0) k--;
+		while (k >= 2 && cross(hull[k - 2], hull[k - 1], ps[i]) < -1e-9) k--;
 		hull[k++] = ps[i];
 	}
 
 	for (int i = n - 2, t = k + 1; i >= 0; --i) {
-		while (k >= t && cross(hull[k - 2], hull[k - 1], ps[i]) <= 0) k--;
+		while (k >= t && cross(hull[k - 2], hull[k - 1], ps[i]) < -1e-9) k--;
 		hull[k++] = ps[i];
 	}
 
