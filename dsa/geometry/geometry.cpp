@@ -13,6 +13,7 @@ constexpr char nl [[maybe_unused]] = '\n';
 struct Vector {
 	double x, y;
 
+	Vector operator+(const Vector &v) const { return {x + v.x, y + v.y}; }
 	Vector operator*(double k) const { return {x * k, y * k}; }
 	Vector operator/(double k) const { return {x / k, y / k}; }
 
@@ -271,7 +272,7 @@ vector<Point> circleCircleIntersection(const Point &c1, double r1,
 
 	if (dist > r1 + r2 + 1e-9) return {};
 	if (dist < abs(r1 - r2) - 1e-9) return {};
-	if (dist <= 1e-9 && abs(r1 - r2) <= 1e-9) return {};
+	if (dist <= 1e-9) return {};
 
 	double a = (r1 * r1 - r2 * r2 + dist2) / (dist * 2.0);
 	double h2 = r1 * r1 - a * a;
@@ -285,55 +286,76 @@ vector<Point> circleCircleIntersection(const Point &c1, double r1,
 	return {q + perp, q - perp};
 }
 
-optional<pair<Point, Point>> tangentsFromPointToCircle(const Point &p,
-													   const Point &c,
-													   double r) {
+vector<Point> tangentsFromPointToCircle(const Point &p, const Point &c,
+										double r) {
 	Vector d = p - c;
-	double dist2 = d.dot(d);
-	double r2 = r * r;
-
-	if (dist2 < r2 - 1e-9) return nullopt;
-	if (abs(dist2 - r2) < 1e-9) return {{p, p}};
-
 	double dist = d.norm();
+	double dist2 = d.dot(d);
+
+	double r2 = r * r;
+	if (dist2 < r2 - 1e-9) return {};
+	if (abs(dist2 - r2) < 1e-9) return {p};
 
 	Vector ud = d / dist;
 	Vector uperp{-ud.y, ud.x};
 
-	double e = r2 / dist;
-	double h = sqrt(r2 - e * e);
-	Point t1 = c + ud * e + uperp * h;
-	Point t2 = c + ud * e - uperp * h;
+	double l = sqrt(dist2 - r2);
 
-	return {{t1, t2}};
+	vector<Point> ans;
+	for (int sign : {-1, 1}) {
+		Vector u = ud * r + uperp * l * sign;
+		Point p = c + u * r / dist;
+		ans.push_back(p);
+	}
+	return ans;
 }
 
-optional<pair<Point, Point>> tangentsFromCircleToCircle(const Point &p,
-													   const Point &c,
-													   double r) {
-	Vector d = p - c;
-	double dist2 = d.dot(d);
-	double r2 = r * r;
-
-	if (dist2 < r2 - 1e-9) return nullopt;
-	if (abs(dist2 - r2) < 1e-9) return {{p, p}};
-
+vector<pair<Point, Point>> tangentsFromCircleToCircle(const Point &c1,
+													  double r1,
+													  const Point &c2,
+													  double r2) {
+	Vector d = c2 - c1;
 	double dist = d.norm();
+	double dist2 = d.dot(d);
+
+	if (dist < abs(r1 - r2) - 1e-9) return {};
+	if (dist <= 1e-9) return {};
 
 	Vector ud = d / dist;
-	Vector uperp{-ud.y, ud.x};
+	Vector uperp = {-ud.y, ud.x};
 
-	double e = r2 / dist;
-	double h = sqrt(r2 - e * e);
-	Point t1 = c + ud * e + uperp * h;
-	Point t2 = c + ud * e - uperp * h;
+	vector<pair<Point, Point>> ans;
+	for (int sign1 : {-1, 1}) {	 // outer / inner
+		double r = r1 + sign1 * r2;
+		double l = sqrt(dist2 - r * r);
 
-	return {{t1, t2}};
+		if (abs(l) <= 1e-9) continue;
+		l = max(l, 0.0);
+
+		for (int sign2 : {-1, 1}) {
+			Vector u = ud * r + uperp * l * sign2;
+			Point p1 = c1 + u * r1 / dist;
+			Point p2 = c2 + u * r2 / dist;
+			ans.push_back({p1, p2});
+		}
+	}
+	return ans;
 }
 
 // **************************************************************************
 
-void solve(int test_case [[maybe_unused]]) {}
+void solve(int test_case [[maybe_unused]]) {
+	Point c1{0, 0}, c2{5, 0};
+	double r1 = 1, r2 = 1;
+	{
+		vector<pair<Point, Point>> ans =
+			tangentsFromCircleToCircle(c1, r1, c2, r2);
+		for (auto &d : ans) {
+			cout << d.first.x << '-' << d.first.y << ' ' << d.second.x << '-'
+				 << d.second.y << nl;
+		}
+	}
+}
 
 // **************************************************************************
 
