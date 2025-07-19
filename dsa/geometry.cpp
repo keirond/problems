@@ -3,6 +3,7 @@
 using namespace std;
 
 using ll = long long;
+using ld = long double;
 using pii = pair<int, int>;
 
 constexpr char nl [[maybe_unused]] = '\n';
@@ -60,6 +61,8 @@ struct Point {
 	}
 
 	double dist(const Point &other) const { return (*this - other).norm(); }
+
+	double cross(const Point &other) const { return x * other.y - y * other.x; }
 };
 
 bool isPointOnLine(const Point &p, const Point &a, const Point &b) {
@@ -151,6 +154,59 @@ Point projectPointOnToLine(const Point &p, const Point &a, const Point &b) {
 Point reflectPointOverLine(const Point &p, const Point &a, const Point &b) {
 	Point q = projectPointOnToLine(p, a, b);
 	return q + (q - p);
+}
+
+double area(const Point &a, const Point &b, const Point &c) {
+	return abs((b - a).cross(c - a)) * 0.5;
+}
+
+double area(const vector<Point> &ps) {
+	int n = ps.size();
+	double ans = 0.0;
+	for (int i = 0; i < n; i++) {
+		Point a = ps[i];
+		Point b = ps[(i + 1) % n];
+		ans += a.cross(b);
+	}
+	return abs(ans) * 0.5;
+}
+
+bool isPointInsidePolygon(const Point &p, const vector<Point> &ps) {
+	int n = ps.size();
+	ll cnt = 0;
+	for (int i = 0; i < n; i++) {
+		Point a = ps[i];
+		Point b = ps[(i + 1) % n];
+
+		double cross = (b - a).cross(p - a);
+
+		// if point-on-edge is included
+		if (abs(cross) < 1e-9 && isPointOnSegment(p, a, b)) return true;
+
+		if (a.y <= p.y) {
+			if (b.y > p.y && cross > 0) cnt++;
+		} else {
+			if (b.y <= p.y && cross < 0) cnt--;
+		}
+	}
+	return cnt != 0;
+}
+
+bool isConvexPolygon(const vector<Point> &ps) {
+	int n = ps.size();
+	if (n < 3) return false;
+
+	for (int i = 0; i < n; i++) {
+		Point a = ps[i];
+		Point b = ps[(i + 1) % n];
+		Point c = ps[(i + 2) % n];
+
+		Vector ab = b - a;
+		Vector bc = c - b;
+
+		double cross = ab.cross(bc);
+		i
+	}
 }
 
 // **************************************************************************
