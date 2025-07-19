@@ -285,6 +285,52 @@ vector<Point> circleCircleIntersection(const Point &c1, double r1,
 	return {q + perp, q - perp};
 }
 
+optional<pair<Point, Point>> tangentsFromPointToCircle(const Point &p,
+													   const Point &c,
+													   double r) {
+	Vector d = p - c;
+	double dist2 = d.dot(d);
+	double r2 = r * r;
+
+	if (dist2 < r2 - 1e-9) return nullopt;
+	if (abs(dist2 - r2) < 1e-9) return {{p, p}};
+
+	double dist = d.norm();
+
+	Vector ud = d / dist;
+	Vector uperp{-ud.y, ud.x};
+
+	double e = r2 / dist;
+	double h = sqrt(r2 - e * e);
+	Point t1 = c + ud * e + uperp * h;
+	Point t2 = c + ud * e - uperp * h;
+
+	return {{t1, t2}};
+}
+
+optional<pair<Point, Point>> tangentsFromCircleToCircle(const Point &p,
+													   const Point &c,
+													   double r) {
+	Vector d = p - c;
+	double dist2 = d.dot(d);
+	double r2 = r * r;
+
+	if (dist2 < r2 - 1e-9) return nullopt;
+	if (abs(dist2 - r2) < 1e-9) return {{p, p}};
+
+	double dist = d.norm();
+
+	Vector ud = d / dist;
+	Vector uperp{-ud.y, ud.x};
+
+	double e = r2 / dist;
+	double h = sqrt(r2 - e * e);
+	Point t1 = c + ud * e + uperp * h;
+	Point t2 = c + ud * e - uperp * h;
+
+	return {{t1, t2}};
+}
+
 // **************************************************************************
 
 void solve(int test_case [[maybe_unused]]) {}
